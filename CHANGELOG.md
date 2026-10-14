@@ -13,6 +13,12 @@
 - p5 autocomplete through `@types/p5`
 - `picture shaders` collection in `public/extensions/picture-shaders/` for shaders made from reference pictures, with its own extensions tab
 - `moebius()`, `moebiusColor()` and `.engrave()` picture shaders, after Escher's Möbius Strip I
+- the editor works offline: hydra-synth, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
+- bundled example gif and image for the hydra-gif and hydra-src examples
+
+## Changed
+- hydra-synth is now the version installed by npm (1.4.0) instead of the latest one on jsdelivr
+- the favicon is a local svg
 
 # [1.5.3] - 2023 - 02 - 19
 - fixed error reporting

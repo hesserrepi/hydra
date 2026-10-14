@@ -15,3 +15,7 @@ reference pictures, see its README.
 Do not edit the vendored files here; fix things upstream and re-run
 `npm run vendor-extensions`. Which function names load which file is defined in
 `src/extensions/registry.js`.
+
+The community extension catalog (`../hydra-extensions/`) and the editor translations
+(`../l10n/`) are copied the same way from https://github.com/hydra-synth/hydra-extensions
+and https://github.com/hydra-synth/l10n.
