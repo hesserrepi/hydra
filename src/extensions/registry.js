@@ -13,6 +13,8 @@
 //
 // When two extensions provide the same name, the one listed first wins.
 
+import { effects, EFFECTS_CDN } from './effects.js'
+
 const HYPER_HYDRA_CDN = 'https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/'
 const HYPER_HYDRA_DOCS = 'https://github.com/geikha/hyper-hydra/blob/main/doc/'
 const HYPER_HYDRA_README = 'https://github.com/geikha/hyper-hydra#'
@@ -32,6 +34,13 @@ export const collections = [
     name: 'extra shaders',
     author: 'Thomas Jourdan',
     homepage: 'https://gitlab.com/metagrowing/extra-shaders-for-hydra',
+    license: 'AGPL-3.0'
+  },
+  {
+    id: 'effects',
+    name: 'effects',
+    author: 'hesserrepi',
+    homepage: 'https://github.com/hesserrepi/hydra/tree/main/public/extensions/effects',
     license: 'AGPL-3.0'
   }
 ]
@@ -427,12 +436,15 @@ render()`]
   .mult(rtri(12, -0.1))
   .color(1, 0.5, 0.8)
   .out()`]
-  })
+  }),
+
+  ...effects
 ]
 
 // URLs people already use in sketches, mapped to the bundled copies:
 // cdn.jsdelivr.net/gh/geikha/hyper-hydra[@latest|@main]/hydra-x[.min].js
 // metagrowing.org/extra-shaders-for-hydra/lib-x.js (and all.js for every lib)
+// the fork's own effects on jsDelivr (see ./effects.js)
 export function extensionsForURL(url) {
   let parsed
   try {
@@ -444,6 +456,10 @@ export function extensionsForURL(url) {
   let match = hostname === 'cdn.jsdelivr.net' &&
     pathname.match(/^\/gh\/(?:geikha|ritchse)\/hyper-hydra(?:@(?:latest|main))?\/hydra-([a-z0-9]+)(?:\.min)?\.js$/)
   if (match) return extensions.filter((ext) => ext.id === `hyper-hydra/${match[1]}`)
+
+  if (parsed.href.startsWith(EFFECTS_CDN)) {
+    return extensions.filter((ext) => ext.url === parsed.href)
+  }
 
   match = hostname === 'metagrowing.org' && pathname.match(/^\/extra-shaders-for-hydra\/(?:lib-([a-z]+)|all)\.js$/)
   if (match) {
