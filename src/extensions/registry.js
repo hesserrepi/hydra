@@ -13,6 +13,8 @@
 //
 // When two extensions provide the same name, the one listed first wins.
 
+import { pictureShaders } from './picture-shaders.js'
+
 const HYPER_HYDRA_CDN = 'https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/'
 const HYPER_HYDRA_DOCS = 'https://github.com/geikha/hyper-hydra/blob/main/doc/'
 const HYPER_HYDRA_README = 'https://github.com/geikha/hyper-hydra#'
@@ -32,6 +34,13 @@ export const collections = [
     name: 'extra shaders',
     author: 'Thomas Jourdan',
     homepage: 'https://gitlab.com/metagrowing/extra-shaders-for-hydra',
+    license: 'AGPL-3.0'
+  },
+  {
+    id: 'picture-shaders',
+    name: 'picture shaders',
+    author: 'hesserrepi',
+    homepage: 'https://github.com/hesserrepi/hydra/tree/main/public/extensions/picture-shaders',
     license: 'AGPL-3.0'
   }
 ]
@@ -427,7 +436,9 @@ render()`]
   .mult(rtri(12, -0.1))
   .color(1, 0.5, 0.8)
   .out()`]
-  })
+  }),
+
+  ...pictureShaders
 ]
 
 // URLs people already use in sketches, mapped to the bundled copies:
