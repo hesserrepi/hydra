@@ -1,6 +1,6 @@
 // Copies the libraries the editor page loads at runtime from node_modules into
 // public/vendor/, so the editor works without an internet connection.
-// Runs after `npm install` and before `npm run dev` / `npm run build`.
+// Runs after `npm install` and before `npm run dev`, `npm run live` and `npm run build`.
 import { cpSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'

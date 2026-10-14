@@ -5,3 +5,4 @@ node_modules
 *~
 backend/certs
 public/vendor
+*.vsix

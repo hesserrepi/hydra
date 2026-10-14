@@ -159,6 +159,8 @@ pb.list()
 
 ## Using p5.js with hydra
 
+p5.js (1.x) is bundled with the editor, so it works offline. Running `new P5()` again (for example when a sketch file is saved in live mode) replaces the previous p5 canvas; pass `{ keep: true }` to keep both. Example sketches combining the two are in [`sketches/examples/p5`](sketches/examples/p5): p5 as a source, text as a mask, particles in a feedback loop, 3D with `WEBGL`, audio-reactive, and p5 as a mouse/keyboard controller. In VS Code they are also under `Hydra: Insert example`, and `p5.` autocompletes with p5's own types.
+
 ```javascript
 // Initialize a new p5 instance It is only necessary to call this once
 p5 = new P5() // {width: window.innerWidth, height:window.innerHeight, mode: 'P2D'}
@@ -249,6 +251,23 @@ Browse them, with examples and documentation, in the extensions window (puzzle i
 
 The bundled files live in `public/extensions/`, unmodified and pinned to an upstream commit. To update them, change the commit in `scripts/vendor-extensions.sh` and run `npm run vendor-extensions`. The function names that trigger loading are listed in `src/extensions/registry.js`.
 
+## Writing sketches in a desktop editor
+
+Sketches can live in `.js` files and be written in any code editor, with the hydra window in the browser showing the result.
+
+**Any editor:** run `npm run live`. It starts the editor, opens it in the browser and watches `sketches/`: saving a `.js` file there runs the whole file. Watch other files or folders with `npm run live -- path/to/sketch.js other-folder`.
+
+**VS Code:** install the extension in `editors/vscode` (`npm run vscode:package`, then `code --install-extension editors/vscode/hydra-live-0.1.0.vsix`) and run `npm run dev`. In sketch files (anything under a `sketches/` folder, or `*.hydra.js`):
+
+- `ctrl+enter` runs the line or selection, `alt+enter` the block, `ctrl+shift+enter` the file, `ctrl+shift+h` hushes, as in the web editor
+- autocomplete, parameter hints and docs for hydra, hyper-hydra and extra shaders
+- errors from the hydra window are underlined in the code
+- `Hydra: Insert extension example`, `Hydra: Toggle run on save`, and a status bar item showing whether a hydra window is connected
+
+See [editors/vscode/README.md](editors/vscode/README.md).
+
+**Autocomplete in other editors:** `sketches/jsconfig.json` points the JavaScript language server at `editors/vscode/types/hydra.d.ts`, so editors that use it (Zed, Neovim, Sublime Text with LSP) complete hydra functions in `sketches/` too. Regenerate the types after changing hydra-synth or the bundled extensions with `npm run types`.
+
 ## Running locally
 To run locally, you must have nodejs installed. Install node and npm from: https://nodejs.org/en/. 
 
@@ -272,7 +291,7 @@ extensions are all served from your machine:
 
 * `npm install` copies hydra-synth and the libraries that `hydra-debug` uses from
   `node_modules` into `public/vendor/` (`scripts/copy-runtime.mjs`, also run before
-  `npm run dev` and `npm run build`).
+  `npm run dev`, `npm run live` and `npm run build`). p5 is bundled with the editor code.
 * The extensions, the [extension catalog](https://github.com/hydra-synth/hydra-extensions)
   and the [translations](https://github.com/hydra-synth/l10n) are committed copies,
   pinned to upstream commits. `npm run vendor-extensions` refreshes them.

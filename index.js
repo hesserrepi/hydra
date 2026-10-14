@@ -8,6 +8,7 @@ import languageStore from './src/stores/language-store.js'
 import extensionStore from './src/stores/extension-store.js'
 import editorStore from './src/stores/editor-store.js'
 import galleryStore from './src/stores/gallery-store.js'
+import liveStore from './src/live/live-store.js'
 
 import mainView from './src/views/main.js'
 
@@ -19,6 +20,7 @@ app.use(galleryStore)
 
 app.use(languageStore)
 app.use(extensionStore)
+app.use(liveStore)
 app.route('/', mainView)
 app.route('/dev', mainView)
 app.mount('body')
