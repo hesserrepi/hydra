@@ -11,7 +11,12 @@ import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const read = (p) => fs.readFileSync(path.join(root, p), 'utf8')
-const importSource = (p) => import('data:text/javascript,' + encodeURIComponent(read(p)))
+// as a data: URL so Node doesn't need "type": "module"; relative imports are inlined the same way
+const dataURL = (p) => 'data:text/javascript;base64,' + Buffer.from(read(p).replace(
+  /(\bfrom\s+['"])(\.\.?\/[^'"]+)(['"])/g,
+  (m, before, rel, after) => before + dataURL(path.join(path.dirname(p), rel)) + after
+)).toString('base64')
+const importSource = (p) => import(dataURL(p))
 
 const glslFunctions = (await importSource('node_modules/hydra-synth/src/glsl/glsl-functions.js')).default()
 const { extensions, collections } = await importSource('src/extensions/registry.js')
@@ -141,6 +146,52 @@ for (const ext of extensions.filter((e) => e.collection === 'hyper-hydra' && e.a
       seenMembers.add(`${obj}.${prop}`)
       target.push(doc(lines) + (obj === 'mouse' ? `  ${prop}: number` : `  ${prop}(...args: any[]): any`))
     }
+  }
+}
+
+// effects written for this editor: signatures by hand
+const effectTypes = {
+  ink: `type InkMode = 'push' | 'fluid' | 'comb'
+/** Options of ink(); numbers may also be functions, e.g. () => time % 2. See public/extensions/effects/hydra-ink.js. */
+interface InkOptions {
+  mode?: InkMode
+  radius?: HydraParam
+  force?: HydraParam
+  relax?: HydraParam
+  decay?: HydraParam
+  dissipation?: HydraParam
+  curl?: HydraParam
+  iterations?: number
+  resolution?: number
+  tines?: HydraParam
+  spacing?: HydraParam
+  sharpness?: HydraParam
+  drop?: HydraParam
+  button?: 0 | 1 | 2
+  key?: 'shift' | 'alt' | 'ctrl' | 'meta'
+  id?: string
+}`
+}
+const effectSignatures = {
+  ink: {
+    global: `declare const ink: {\n  (source: HydraTexture, mode?: InkMode | InkOptions, options?: InkOptions): HydraSource\n  /** Undo every deformation, or only the layer with this id. */\n  reset(id?: string): void\n}`,
+    method: `  ink(mode?: InkMode | InkOptions, options?: InkOptions): HydraSource`
+  }
+}
+for (const ext of extensions.filter((e) => e.collection === 'effects')) {
+  const lines = extDoc(ext)
+  const { globals = [], methods = [] } = ext.provides
+  const short = ext.id.split('/')[1]
+  if (effectTypes[short]) globalsOut.push(effectTypes[short])
+  for (const name of globals) {
+    if (seenGlobals.has(name)) continue
+    seenGlobals.add(name)
+    globalsOut.push(doc(lines).replace(/^ {2}/gm, '') + (effectSignatures[name]?.global || `declare function ${name}(...args: HydraArg[]): HydraSource`))
+  }
+  for (const name of methods) {
+    if (seenMethods.has(name)) continue
+    seenMethods.add(name)
+    methodsOut.push(doc(lines) + (effectSignatures[name]?.method || `  ${name}(...args: HydraArg[]): HydraSource`))
   }
 }
 

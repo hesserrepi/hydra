@@ -2134,6 +2134,12 @@ interface HydraSource {
   z(): HydraSource
   /** Swizzle channels, from hyper-hydra/swizzle. @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-swizzle.md */
   w(): HydraSource
+  /**
+   * Click and drag to push the colours around like ink on water. Modes: push (smear), fluid (stirred fluid) and comb (marbling, hold still to drop ink).
+   * From effects/ink, loaded automatically.
+   * @see extensions/effects/hydra-ink.js
+   */
+  ink(mode?: InkMode | InkOptions, options?: InkOptions): HydraSource
 }
 
 /** An output buffer: o0, o1, o2, o3. */
@@ -3698,6 +3704,36 @@ declare function vec2(...args: HydraArg[]): HydraSource
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-wrap.md
  */
 declare var hydraWrap: any
+type InkMode = 'push' | 'fluid' | 'comb'
+/** Options of ink(); numbers may also be functions, e.g. () => time % 2. See public/extensions/effects/hydra-ink.js. */
+interface InkOptions {
+  mode?: InkMode
+  radius?: HydraParam
+  force?: HydraParam
+  relax?: HydraParam
+  decay?: HydraParam
+  dissipation?: HydraParam
+  curl?: HydraParam
+  iterations?: number
+  resolution?: number
+  tines?: HydraParam
+  spacing?: HydraParam
+  sharpness?: HydraParam
+  drop?: HydraParam
+  button?: 0 | 1 | 2
+  key?: 'shift' | 'alt' | 'ctrl' | 'meta'
+  id?: string
+}
+/**
+ * Click and drag to push the colours around like ink on water. Modes: push (smear), fluid (stirred fluid) and comb (marbling, hold still to drop ink).
+ * From effects/ink, loaded automatically.
+ * @see extensions/effects/hydra-ink.js
+ */
+declare const ink: {
+  (source: HydraTexture, mode?: InkMode | InkOptions, options?: InkOptions): HydraSource
+  /** Undo every deformation, or only the layer with this id. */
+  reset(id?: string): void
+}
 
 interface Array<T> {
   /** Speed at which the array is cycled through. */

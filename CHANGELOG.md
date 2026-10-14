@@ -11,6 +11,7 @@
 - p5.js is bundled (1.11) instead of loaded from a CDN; `new P5()` replaces the previous p5 canvas unless `{ keep: true }`
 - p5 + hydra example sketches in `sketches/examples/p5`, also offered by the VS Code extension's `Insert example`
 - p5 autocomplete through `@types/p5`
+- `ink()`: click and drag on the canvas to push the colours around like ink on water, in `push`, `fluid` or `comb` (marbling) mode; loads automatically and has autocomplete
 
 # [1.5.3] - 2023 - 02 - 19
 - fixed error reporting

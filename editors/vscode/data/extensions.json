@@ -13,6 +13,13 @@
       "author": "Thomas Jourdan",
       "homepage": "https://gitlab.com/metagrowing/extra-shaders-for-hydra",
       "license": "AGPL-3.0"
+    },
+    {
+      "id": "effects",
+      "name": "effects",
+      "author": "hesserrepi",
+      "homepage": "https://github.com/hesserrepi/hydra/tree/main/public/extensions/effects",
+      "license": "AGPL-3.0"
     }
   ],
   "sketches": [
@@ -1486,6 +1493,28 @@
           "rtri",
           "stripes",
           "rstripes"
+        ]
+      }
+    },
+    {
+      "id": "effects/ink",
+      "collection": "effects",
+      "name": "hydra-ink",
+      "author": "hesserrepi",
+      "documentation": "extensions/effects/hydra-ink.js",
+      "description": "Click and drag to push the colours around like ink on water. Modes: push (smear), fluid (stirred fluid) and comb (marbling, hold still to drop ink).",
+      "examples": [
+        "osc(6, 0.3, 0.8)\n  .color(1, 0.5, 0.4)\n  .ink('comb')\n  .out()",
+        "noise(3, 0.1)\n  .color(1, 0.4, 0.8)\n  .out(o1)\nink(o1, 'fluid', { radius: 0.1 })\n  .out(o0)",
+        "osc(30, 0.02, 1.4)\n  .kaleid(4)\n  .ink('push', { relax: 0.3 })\n  .out()"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "ink"
+        ],
+        "methods": [
+          "ink"
         ]
       }
     }
