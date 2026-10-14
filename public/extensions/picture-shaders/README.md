@@ -9,9 +9,12 @@ are ours, so edit them freely.
 
 | path | what |
 | --- | --- |
-| `lib-<name>.js` | the shader(s) for one picture |
-| `pictures/<name>.<ext>` | the reference picture |
-| `thumbnails/<name>.png` | 60×60 preview for the extensions window (optional) |
+| `lib-<name>.js` | the shader(s) for one picture; its header comment documents them |
+| `thumbnails/<name>.png` | preview for the extensions window, rendered from the shader |
+
+Reference pictures are not stored here: most are photos of other people's
+artwork, so the entry in `src/extensions/picture-shaders.js` just names the
+picture (`picture: ...`).
 
 Each file must also be listed in `src/extensions/picture-shaders.js` with the
 function names it defines, so that using one in a sketch loads the file
@@ -45,6 +48,16 @@ Techniques taken from the models:
 - layered octaves, halving amplitude and doubling frequency each pass (`wave`, `concentric`, `turb`)
 - hydra's built-in `_noise(vec3)` and `_hsvToRgb` for organic variation and colour (`blinking`)
 - `time` multiplied by a `speed` input so every pattern animates but can be frozen with `speed = 0`
+
+If two functions share most of their GLSL, build the strings in JavaScript and wrap
+the file in `(() => { ... })()` so reloading it doesn't redeclare anything
+(`lib-moebius.js` does this).
+
+## Shaders
+
+| file | picture | functions |
+| --- | --- | --- |
+| `lib-moebius.js` | M.C. Escher, *Möbius Strip I* (1961) | `moebius()`, `moebiusColor()`, `.engrave()` |
 
 A picture shader usually keeps the structure in grey (so it composes with
 `.color()`, `.diff()`, `.modulate()`) and offers the picture's palette as an

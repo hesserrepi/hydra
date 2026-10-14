@@ -13,7 +13,7 @@
 //
 // When two extensions provide the same name, the one listed first wins.
 
-import { pictureShaders } from './picture-shaders.js'
+import { pictureShaders, PICTURE_SHADERS_CDN } from './picture-shaders.js'
 
 const HYPER_HYDRA_CDN = 'https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/'
 const HYPER_HYDRA_DOCS = 'https://github.com/geikha/hyper-hydra/blob/main/doc/'
@@ -444,6 +444,7 @@ render()`]
 // URLs people already use in sketches, mapped to the bundled copies:
 // cdn.jsdelivr.net/gh/geikha/hyper-hydra[@latest|@main]/hydra-x[.min].js
 // metagrowing.org/extra-shaders-for-hydra/lib-x.js (and all.js for every lib)
+// the fork's own picture shaders on jsDelivr (see ./picture-shaders.js)
 export function extensionsForURL(url) {
   let parsed
   try {
@@ -455,6 +456,10 @@ export function extensionsForURL(url) {
   let match = hostname === 'cdn.jsdelivr.net' &&
     pathname.match(/^\/gh\/(?:geikha|ritchse)\/hyper-hydra(?:@(?:latest|main))?\/hydra-([a-z0-9]+)(?:\.min)?\.js$/)
   if (match) return extensions.filter((ext) => ext.id === `hyper-hydra/${match[1]}`)
+
+  if (parsed.href.startsWith(PICTURE_SHADERS_CDN)) {
+    return extensions.filter((ext) => ext.url === parsed.href)
+  }
 
   match = hostname === 'metagrowing.org' && pathname.match(/^\/extra-shaders-for-hydra\/(?:lib-([a-z]+)|all)\.js$/)
   if (match) {
