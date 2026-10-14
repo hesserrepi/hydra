@@ -7,8 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build",
     "dev": "vite . --host",
+    "live": "node scripts/live.mjs",
     "publish": "git subtree push --prefix=dist origin gh-pages",
-    "vendor-extensions": "./scripts/vendor-extensions.sh"
+    "vendor-extensions": "./scripts/vendor-extensions.sh",
+    "types": "node scripts/generate-types.mjs",
+    "vscode:package": "npm run types && cd editors/vscode && npx --yes @vscode/vsce@3 package --allow-missing-repository --skip-license"
   },
   "author": "",
   "license": "AGPL",

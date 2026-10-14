@@ -249,6 +249,23 @@ Browse them, with examples and documentation, in the extensions window (puzzle i
 
 The bundled files live in `public/extensions/`, unmodified and pinned to an upstream commit. To update them, change the commit in `scripts/vendor-extensions.sh` and run `npm run vendor-extensions`. The function names that trigger loading are listed in `src/extensions/registry.js`.
 
+## Writing sketches in a desktop editor
+
+Sketches can live in `.js` files and be written in any code editor, with the hydra window in the browser showing the result.
+
+**Any editor:** run `npm run live`. It starts the editor, opens it in the browser and watches `sketches/`: saving a `.js` file there runs the whole file. Watch other files or folders with `npm run live -- path/to/sketch.js other-folder`.
+
+**VS Code:** install the extension in `editors/vscode` (`npm run vscode:package`, then `code --install-extension editors/vscode/hydra-live-0.1.0.vsix`) and run `npm run dev`. In sketch files (anything under a `sketches/` folder, or `*.hydra.js`):
+
+- `ctrl+enter` runs the line or selection, `alt+enter` the block, `ctrl+shift+enter` the file, `ctrl+shift+h` hushes, as in the web editor
+- autocomplete, parameter hints and docs for hydra, hyper-hydra and extra shaders
+- errors from the hydra window are underlined in the code
+- `Hydra: Insert extension example`, `Hydra: Toggle run on save`, and a status bar item showing whether a hydra window is connected
+
+See [editors/vscode/README.md](editors/vscode/README.md).
+
+**Autocomplete in other editors:** `sketches/jsconfig.json` points the JavaScript language server at `editors/vscode/types/hydra.d.ts`, so editors that use it (Zed, Neovim, Sublime Text with LSP) complete hydra functions in `sketches/` too. Regenerate the types after changing hydra-synth or the bundled extensions with `npm run types`.
+
 ## Running locally
 To run locally, you must have nodejs installed. Install node and npm from: https://nodejs.org/en/. 
 
