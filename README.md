@@ -281,7 +281,29 @@ npm install
 ```
 run dev environment
 ```
-npm dev
+npm run dev
+```
+
+### Working offline
+After `npm install`, the editor needs no internet connection. hydra-synth, p5, the
+fonts, the translations, the extension catalog with its thumbnails and the bundled
+extensions are all served from your machine:
+
+* `npm install` copies hydra-synth and the libraries that `hydra-debug` uses from
+  `node_modules` into `public/vendor/` (`scripts/copy-runtime.mjs`, also run before
+  `npm run dev`, `npm run live` and `npm run build`). p5 is bundled with the editor code.
+* The extensions, the [extension catalog](https://github.com/hydra-synth/hydra-extensions)
+  and the [translations](https://github.com/hydra-synth/l10n) are committed copies,
+  pinned to upstream commits. `npm run vendor-extensions` refreshes them.
+
+Community extensions and external libraries that are not bundled (for example
+hydra-midi, Tone.js or three.js) still load from their own websites, so they need a
+connection.
+
+To serve the built editor instead of the dev server:
+```
+npm run build
+npx vite preview
 ```
 
 ## Connecting to server from dev/ local editor environment

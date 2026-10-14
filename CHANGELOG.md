@@ -12,6 +12,12 @@
 - p5 + hydra example sketches in `sketches/examples/p5`, also offered by the VS Code extension's `Insert example`
 - p5 autocomplete through `@types/p5`
 - `ink()`: click and drag on the canvas to push the colours around like ink on water, in `push`, `fluid` or `comb` (marbling) mode; loads automatically and has autocomplete
+- the editor works offline: hydra-synth, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
+- bundled example gif and image for the hydra-gif and hydra-src examples
+
+## Changed
+- hydra-synth is now the version installed by npm (1.4.0) instead of the latest one on jsdelivr
+- the favicon is a local svg
 
 # [1.5.3] - 2023 - 02 - 19
 - fixed error reporting
