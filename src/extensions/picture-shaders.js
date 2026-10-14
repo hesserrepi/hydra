@@ -21,7 +21,7 @@ export const pictureShader = (name, { thumbnail = true, ...rest }) => ({
   file: `${DIR}/lib-${name}.js`,
   url: `${PICTURE_SHADERS_CDN}lib-${name}.js`,
   // the file's header comment lists its functions and inputs
-  documentation: `extensions/${DIR}/lib-${name}.js`,
+  documentation: `https://github.com/hesserrepi/hydra/blob/main/public/extensions/${DIR}/lib-${name}.js`,
   thumbnail: thumbnail ? `extensions/${DIR}/thumbnails/${name}.png` : undefined,
   autoload: true,
   ...rest

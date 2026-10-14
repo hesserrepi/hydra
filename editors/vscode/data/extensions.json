@@ -13,6 +13,13 @@
       "author": "Thomas Jourdan",
       "homepage": "https://gitlab.com/metagrowing/extra-shaders-for-hydra",
       "license": "AGPL-3.0"
+    },
+    {
+      "id": "picture-shaders",
+      "name": "picture shaders",
+      "author": "hesserrepi",
+      "homepage": "https://github.com/hesserrepi/hydra/tree/main/public/extensions/picture-shaders",
+      "license": "AGPL-3.0"
     }
   ],
   "sketches": [
@@ -1486,6 +1493,29 @@
           "rtri",
           "stripes",
           "rstripes"
+        ]
+      }
+    },
+    {
+      "id": "picture-shaders/moebius",
+      "collection": "picture-shaders",
+      "name": "moebius",
+      "author": "hesserrepi",
+      "documentation": "https://github.com/hesserrepi/hydra/blob/main/public/extensions/picture-shaders/lib-moebius.js",
+      "description": "A twisting Möbius band knotted into a trefoil, engraved with fine lines, with oval eyes cut through it. engrave() hatches any source the same way.",
+      "examples": [
+        "moebiusColor()\n  .out()",
+        "moebius(0.8, 0.13, 12, 3, 0.1)\n  .modulate(noise(2, 0.2), 0.05)\n  .mult(osc(20, 0.05, 1.2).kaleid(3))\n  .out()",
+        "moebiusColor(0.8, 0.14, 16, 5, 0.2, 1, 0)\n  .rotate(() => time * 0.05)\n  .engrave(90, 0.6, 0.15, 1)\n  .out()"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "moebius",
+          "moebiusColor"
+        ],
+        "methods": [
+          "engrave"
         ]
       }
     }

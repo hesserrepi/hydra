@@ -499,6 +499,15 @@ interface HydraSource {
    */
   centermag(r?: HydraParam, h?: HydraParam, cx?: HydraParam, cy?: HydraParam): HydraSource
   /**
+   * engrave: color transform (picture shaders/moebius, loaded automatically)
+   * @param lines default 80
+   * @param angle default 0.5
+   * @param soft default 0.15
+   * @param keep default 0
+   * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/picture-shaders/lib-moebius.js
+   */
+  engrave(lines?: HydraParam, angle?: HydraParam, soft?: HydraParam, keep?: HydraParam): HydraSource
+  /**
    * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
    * From hyper-hydra/arithmetics, loaded automatically.
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
@@ -2720,6 +2729,30 @@ declare function stripes(frequency?: HydraParam, speed?: HydraParam): HydraSourc
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function rstripes(frequency?: HydraParam, speed?: HydraParam): HydraSource
+/**
+ * moebius: source (picture shaders/moebius, loaded automatically)
+ * @param size default 0.8
+ * @param width default 0.13
+ * @param lines default 12
+ * @param twist default 3
+ * @param flow default 0.1
+ * @param fold default 1
+ * @param eyes default 3
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/picture-shaders/lib-moebius.js
+ */
+declare function moebius(size?: HydraParam, width?: HydraParam, lines?: HydraParam, twist?: HydraParam, flow?: HydraParam, fold?: HydraParam, eyes?: HydraParam): HydraSource
+/**
+ * moebiusColor: source (picture shaders/moebius, loaded automatically)
+ * @param size default 0.8
+ * @param width default 0.13
+ * @param lines default 12
+ * @param twist default 3
+ * @param flow default 0.1
+ * @param fold default 1
+ * @param eyes default 3
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/picture-shaders/lib-moebius.js
+ */
+declare function moebiusColor(size?: HydraParam, width?: HydraParam, lines?: HydraParam, twist?: HydraParam, flow?: HydraParam, fold?: HydraParam, eyes?: HydraParam): HydraSource
 /**
  * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
  * From hyper-hydra/arithmetics, loaded automatically.
