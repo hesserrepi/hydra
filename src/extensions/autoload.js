@@ -2,7 +2,7 @@
 // uses that hydra doesn't define yet and load the extensions that provide them.
 // Also serves the bundled copy when a sketch loadScript()s a known extension URL.
 import { Parser } from 'acorn'
-import { extensions, extensionsForURL } from './registry.js'
+import { extensions, extensionsForURL, localCopyForURL } from './registry.js'
 
 const lookup = { globals: new Map(), methods: new Map(), arrays: new Map(), members: new Map() }
 extensions.filter((ext) => ext.autoload).forEach((ext) => {
@@ -208,11 +208,13 @@ export async function autoload(code) {
   return results.filter((r) => r.status === 'fulfilled').map((r) => r.value)
 }
 
-// make loadScript() serve the bundled copy of known extension URLs
+// make loadScript() serve the bundled copy of known extension and library URLs
 export function install() {
   const loadScript = window.loadScript
   if (typeof loadScript !== 'function' || loadScript.bundled) return
   const wrapped = function (url = '', ...rest) {
+    const local = localCopyForURL(url)
+    if (local) return loadScript.call(this, local, ...rest)
     const exts = extensionsForURL(url)
     if (exts.length === 0) return loadScript.call(this, url, ...rest)
     return Promise.all(exts.map((ext) => load(ext, true))).catch((err) => {

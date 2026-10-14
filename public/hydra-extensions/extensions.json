@@ -1,0 +1,270 @@
+[
+    {
+        "name": "Color manipulation",
+        "description":  "Filters to manipulate or generate colors.",
+        "documentation": "https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md",
+        "author": "Thomas Jourdan",
+        "thumbnail": "kandid-lib-color.png",
+        "load": "await loadScript(\"https://metagrowing.org/extra-shaders-for-hydra/lib-color.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwbGljZW5zZWQlMjB3aXRoJTIwQ0MlMjBCWS1OQy1TQSUyMDQuMCUyMGh0dHBzJTNBJTJGJTJGY3JlYXRpdmVjb21tb25zLm9yZyUyRmxpY2Vuc2VzJTJGYnktbmMtc2ElMkY0LjAlMkYlMEFhd2FpdCUyMGxvYWRTY3JpcHQoJTIyaHR0cHMlM0ElMkYlMkZtZXRhZ3Jvd2luZy5vcmclMkZleHRyYS1zaGFkZXJzLWZvci1oeWRyYSUyRmxpYi1jb2xvci5qcyUyMiklMEElMEFvc2MoMyUyQyUyMDAuNSUyQyUyMDEpJTBBJTA5LnJvdGF0ZSgoKSUyMCUzRCUzRSUyMC0wLjE3JTIwKiUyMHRpbWUpJTBBJTA5LmNvbHJlZmxlY3Qob3NjKDEyJTJDJTIwMC4yMyUyQyUyMDEpJTBBJTA5JTA5LnJvdGF0ZSgoKSUyMCUzRCUzRSUyMDAuMSUyMColMjB0aW1lKSUyQyUyMDAuMyklMEElMDkub3V0KG8wKSUwQXJlbmRlcihvMCklMEE%3D",
+            "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwbGljZW5zZWQlMjB3aXRoJTIwQ0MlMjBCWS1OQy1TQSUyMDQuMCUyMGh0dHBzJTNBJTJGJTJGY3JlYXRpdmVjb21tb25zLm9yZyUyRmxpY2Vuc2VzJTJGYnktbmMtc2ElMkY0LjAlMkYlMEFhd2FpdCUyMGxvYWRTY3JpcHQoJTIyaHR0cHMlM0ElMkYlMkZtZXRhZ3Jvd2luZy5vcmclMkZleHRyYS1zaGFkZXJzLWZvci1oeWRyYSUyRmxpYi1jb2xvci5qcyUyMiklMEElMEFzMC5pbml0Q2FtKCklMEFzcmMoczApLm1vbm90b25lKDMlMkMlMjAoKSUyMCUzRCUzRSUyMDAuMSp0aW1lJTJDJTIwMC44KS5vdXQobzApJTBBc3JjKHMwKS5sZXZlbHMoMyUyQyUyMDAuNSkub3V0KG8xKSUwQXNyYyhzMCkuZ3Jhcm9zZSgwLjUpLm91dChvMiklMEFzcmMoczApLmdyYXdhdmUoMC4zKS5vdXQobzMpJTBBcmVuZGVyKCklMEE%3D"
+        ]
+    },
+    {
+        "name": "Noise generators",
+        "description": "Additional noise and turbulence generators",
+        "documentation": "https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/noise/README.md",
+        "author": "Thomas Jourdan",
+        "thumbnail": "kandid-lib-noise.png",
+        "load": "await loadScript(\"https://metagrowing.org/extra-shaders-for-hydra/lib-noise.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwbGljZW5zZWQlMjB3aXRoJTIwQ0MlMjBCWS1OQy1TQSUyMDQuMCUyMGh0dHBzJTNBJTJGJTJGY3JlYXRpdmVjb21tb25zLm9yZyUyRmxpY2Vuc2VzJTJGYnktbmMtc2ElMkY0LjAlMkYlMEFhd2FpdCUyMGxvYWRTY3JpcHQoJTIyaHR0cHMlM0ElMkYlMkZtZXRhZ3Jvd2luZy5vcmclMkZleHRyYS1zaGFkZXJzLWZvci1oeWRyYSUyRmxpYi1ub2lzZS5qcyUyMiklMEElMEF0dXJiKDMlMkMlMjAwJTJDJTIwJTIwKCklMjAlM0QlM0UlMjA2JTIwKiUyMCgoMC41JTIwKiUyMHRpbWUpJTIwJTI1JTIwMS4wKSkub3V0KG8wKSUzQiUwQXV0dXJiKDMlMkMlMjAwJTJDJTIwKCklMjAlM0QlM0UlMjA2JTIwKiUyMCgoMC41JTIwKiUyMHRpbWUpJTIwJTI1JTIwMS4wKSkub3V0KG8xKSUzQiUwQXdhcnAoMyUyQyUyMDAlMkMlMjAlMjAoKSUyMCUzRCUzRSUyMDYlMjAqJTIwKCgwLjUlMjAqJTIwdGltZSklMjAlMjUlMjAxLjApJTJDJTIwKCklMjAlM0QlM0UlMjA2JTIwKiUyMCgoMC41JTIwKiUyMHRpbWUpJTIwJTI1JTIwMS4wKSkub3V0KG8yKSUzQiUwQWN3YXJwKDMlMkMlMjAwJTJDJTIwKCklMjAlM0QlM0UlMjA2JTIwKiUyMCgoMC41JTIwKiUyMHRpbWUpJTIwJTI1JTIwMS4wKSUyQyUyMCgpJTIwJTNEJTNFJTIwNiUyMColMjAoKDAuNSUyMColMjB0aW1lKSUyMCUyNSUyMDEuMCkpLm91dChvMyklM0IlMEFyZW5kZXIoKSUwQQ%3D%3D"
+        ]
+    },
+    {
+        "name": "Op-art patterns",
+        "description": "Additional fragment shaders inspired by op-art patterns.",
+        "documentation": "https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/pattern/README.md",
+        "author": "Thomas Jourdan",
+        "thumbnail": "kandid-lib-pattern.png",
+        "load": "await loadScript(\"https://metagrowing.org/extra-shaders-for-hydra/lib-pattern.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwbGljZW5zZWQlMjB3aXRoJTIwQ0MlMjBCWS1OQy1TQSUyMDQuMCUyMGh0dHBzJTNBJTJGJTJGY3JlYXRpdmVjb21tb25zLm9yZyUyRmxpY2Vuc2VzJTJGYnktbmMtc2ElMkY0LjAlMkYlMEFhd2FpdCUyMGxvYWRTY3JpcHQoJTIyaHR0cHMlM0ElMkYlMkZtZXRhZ3Jvd2luZy5vcmclMkZleHRyYS1zaGFkZXJzLWZvci1oeWRyYSUyRmxpYi1wYXR0ZXJuLmpzJTIyKSUwQSUwQWElMjAlM0QlMjAoKSUyMCUzRCUzRSUyMDAuMTM3JTIwKiUyMHRpbWUlM0IlMEFzcGlyYWwoMi4wJTJDJTIwNS4wJTJDJTIwMC4zKS5yb3RhdGUoKCklMjAlM0QlM0UlMjAtMi4wJTIwKiUyMGEoKSkub3V0KG8wKSUwQXNwaXJhbCgyLjAlMkMlMjA1LjAlMkMlMjAwLjMpLnJvdGF0ZShhKS5kaWZmKGNvbmNlbnRyaWMoMTAwLjAlMkMwLjI1JTJDMC4yNSkpLm91dChvMSklMEFzcGlyYWwoMi4wJTJDJTIwNS4wJTJDJTIwMC4zKS5yb3RhdGUoYSkubXVsdChzcGlyYWwoMS4wJTJDJTIwMy4wJTJDJTIwMC4zKSkub3V0KG8yKSUwQXNwaXJhbCgxLjAlMkMlMjA1LjAlMkMlMjAwLjEpLnJvdGF0ZShhKS5kaWZmKGJyaWNrKCkpLm91dChvMyklMEFyZW5kZXIoKSUwQSUwQSUwQQ%3D%3D"
+        ]
+    },
+    {
+        "name": "Soft patterns",
+        "description": "These shaders generate patterns with smooth transitions. In terms of behavior they are similar to the known osc() function, but create more complex shapes.",
+        "documentation": "https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/softpattern/README.md",
+        "author": "Thomas Jourdan",
+        "thumbnail": "kandid-lib-softpattern.png",
+        "load": "await loadScript(\"https://metagrowing.org/extra-shaders-for-hydra/lib-softpattern.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=YXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGbWV0YWdyb3dpbmcub3JnJTJGZXh0cmEtc2hhZGVycy1mb3ItaHlkcmElMkZsaWItc29mdHBhdHRlcm4uanMlMjIpJTBBJTBBYmxvYnMoMC4xMyUyQyUyMDAuMiUyQyUyMDAuMiklMEElMDkubW9kdWxhdGUoYmxvYnMoMC4yMSUyQyUyMDAuNSUyQyUyMDAuMiklMEElMDklMDkubW9kdWxhdGUoYmxvYnMoMC4yMyUyQyUyMDAuOSUyQyUyMDAuMiklMkMlMjAxKSUyQyUyMDEpJTBBJTA5LnNoaWZ0KCklMEElMDkub3V0KG8wKSUwQSUwQXJlbmRlcihvMCk%3D"
+        ]
+    },
+    {
+        "name": "Screen space operations",
+        "description": "Dithering, edge detection and pixel sort running in screen space.",
+        "documentation": "https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md",
+        "author": "Thomas Jourdan",
+        "thumbnail": "kandid-lib-screen.png",
+        "load": "await loadScript(\"https://metagrowing.org/extra-shaders-for-hydra/lib-screen.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwbGljZW5zZWQlMjB3aXRoJTIwQ0MlMjBCWS1OQy1TQSUyMDQuMCUyMGh0dHBzJTNBJTJGJTJGY3JlYXRpdmVjb21tb25zLm9yZyUyRmxpY2Vuc2VzJTJGYnktbmMtc2ElMkY0LjAlMkYlMEFhd2FpdCUyMGxvYWRTY3JpcHQoJTIyaHR0cHMlM0ElMkYlMkZtZXRhZ3Jvd2luZy5vcmclMkZleHRyYS1zaGFkZXJzLWZvci1oeWRyYSUyRmxpYi1zY3JlZW4uanMlMjIpJTBBJTBBd2luZG93LmZyYW1lJTIwJTNEJTIwMCUwQXJlbmRlcihvMyklMEElMEFvc2MoMzAlMkMlMjAwLjElMkMlMjAyKS5rYWxlaWQoMykub3V0KG8yKSUwQXNyYyhvMyklMEElMjAlMjAlMjAlMjAucHhzb3J0KDAuMSUyQyUyMCgpJTIwJTNEJTNFJTIwJTdCcmV0dXJuJTIwZnJhbWUlMkIlMkIlM0IlN0QpJTBBJTIwJTIwJTIwJTIwLmJsZW5kKG8yJTJDJTIwKCklMjAlM0QlM0UlMjAlN0JyZXR1cm4lMjAoKGZyYW1lJTIwJTI1JTIwMzAwKSUyMCUzRCUzRCUyMDApJTIwJTNGJTIwMSUyMCUzQSUyMDAuMDElM0IlN0QpJTBBJTIwJTIwJTIwJTIwLmNvbnRyYXN0KDEuMDEpJTBBJTIwJTIwJTIwJTIwLm91dChvMyklMEE%3D",
+            "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwbGljZW5zZWQlMjB3aXRoJTIwQ0MlMjBCWS1OQy1TQSUyMDQuMCUyMGh0dHBzJTNBJTJGJTJGY3JlYXRpdmVjb21tb25zLm9yZyUyRmxpY2Vuc2VzJTJGYnktbmMtc2ElMkY0LjAlMkYlMEFhd2FpdCUyMGxvYWRTY3JpcHQoJTIyaHR0cHMlM0ElMkYlMkZtZXRhZ3Jvd2luZy5vcmclMkZleHRyYS1zaGFkZXJzLWZvci1oeWRyYSUyRmxpYi1jb25kLmpzJTIyKSUwQWF3YWl0JTIwbG9hZFNjcmlwdCglMjJodHRwcyUzQSUyRiUyRm1ldGFncm93aW5nLm9yZyUyRmV4dHJhLXNoYWRlcnMtZm9yLWh5ZHJhJTJGbGliLXNjcmVlbi5qcyUyMiklMEElMEFzMC5pbml0Q2FtKCklM0IlMEFzcmMoczApLmVkZ2UoKS5vdXQobzEpJTBBc3JjKG8xKS5kaWxhdGUoKS5jb2xvcigyLjUlMkMlMjAyLjUlMkMlMjAyLjUpLm91dChvMiklMEFzcmMobzIpLnNwbGl0dmlldyhzMCkub3V0KG8zKSUwQXJlbmRlcihvMyklMEE%3D"
+        ]
+    },
+    {
+        "name": "if then else",
+        "description": "Switch between different branches of your animation.",
+        "documentation": "https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/cond/README.md",
+        "author": "Thomas Jourdan",
+        "thumbnail": "kandid-lib-cond.png",
+        "load": "await loadScript(\"https://metagrowing.org/extra-shaders-for-hydra/lib-cond.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwbGljZW5zZWQlMjB3aXRoJTIwQ0MlMjBCWS1OQy1TQSUyMDQuMCUyMGh0dHBzJTNBJTJGJTJGY3JlYXRpdmVjb21tb25zLm9yZyUyRmxpY2Vuc2VzJTJGYnktbmMtc2ElMkY0LjAlMkYlMEFhd2FpdCUyMGxvYWRTY3JpcHQoJTIyaHR0cHMlM0ElMkYlMkZtZXRhZ3Jvd2luZy5vcmclMkZleHRyYS1zaGFkZXJzLWZvci1oeWRyYSUyRmxpYi1jb25kLmpzJTIyKSUwQSUwQW5vaXNlKCkucmVwZWF0KCklMjAlMkYlMkYlMjBkZWZhdWx0JTIwYnJhbmNoJTBBJTA5LmlmemVybyhvc2MoNSUyQyUyMC4yKS5yZXBlYXQoKS5rYWxlaWQoKSUyQyUyMCUyRiUyRiUyMGFsdGVybmF0ZSUyMGJyYW5jaCUyQyUyMG9ubHklMjB3aGVuJTIwY29uZGlkaXRpb24lMjBpcyUyMG1ldCUwQSUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCgpJTIwJTNEJTNFJTIwTWF0aC5zaW4oNS4xKnRpbWUpJTBBJTA5JTA5JTA5JTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwKiUyME1hdGguY29zKDcuMSp0aW1lKSklMjAlMkYlMkYlMjB2YWx1ZSUyMGZvciUyMHRoZSUyMGNvbmRpdGlvbiUyMCUyMmlmJTIwemVybyUyMiUyMHRvJTIwYmUlMjB0ZXN0ZWQlMEElMDkub3V0KG8wKSUwQQ%3D%3D"
+        ]
+    },
+    {
+        "name": "hydra-arithmetics",
+        "description": "Adds many functions related to visual arithmetics.",
+        "documentation":  "https://github.com/ritchse/hyper-hydra/blob/main/doc/hydra-arithmetics.md",
+        "author": "geikha",
+        "thumbnail": "ritchse-hydra-arithmetics.png",
+        "load": "await loadScript(\"https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/hydra-arithmetics.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTBBYXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRmdoJTJGZ2Vpa2hhJTJGaHlwZXItaHlkcmElNDBsYXRlc3QlMkZoeWRyYS1hcml0aG1ldGljcy5qcyUyMiklMEElMEFvc2MoMTAlMkMuMSUyQzIpJTBBJTA5Lm1vZChncmFkaWVudCgpLmFzaW4oKS5jb3MoKSklMEElMDkuc3RlcChub2lzZSgyKS51bmlwb2xhcigpLmRpdihvMCkpJTBBJTA5LmJsZW5kKG8wJTJDLjIpJTBBJTA5Lm91dCgpJTBB"
+        ]
+    },
+    {
+        "name": "hydra-blend",
+        "description": "Adds many common blending modes to hydra, such as darken, screen, colorBurn.",
+        "documentation": "https://github.com/ritchse/hyper-hydra/blob/main/doc/hydra-blend.md",
+        "author": "geikha",
+        "thumbnail": "ritchse-hydra-blend.png",
+        "load": "await loadScript(\"https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/hydra-blend.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTBBYXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRmdoJTJGZ2Vpa2hhJTJGaHlwZXItaHlkcmElNDBsYXRlc3QlMkZoeWRyYS1ibGVuZC5qcyUyMiklMEElMEFvc2MoMzApJTBBJTA5LnNjcmVlbihub2lzZSgzJTJDMSkucG0oKSklMEElMDkubGluZWFyQnVybihncmFkaWVudCgxKS5odWUoLjMpKSUwQSUwOS5vdXQoKSUwQQ%3D%3D"
+        ]
+    },
+    {
+        "name": "hydra-fractals",
+        "description": "Adds mirroring and other functions that can be useful for making fractals. see also: hydra-wrap",
+        "documentation": "https://github.com/ritchse/hyper-hydra/blob/main/doc/hydra-fractals.md",
+        "author": "geikha",
+        "thumbnail": "ritchse-hydra-fractals.png",
+        "load": "await loadScript(\"https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/hydra-fractals.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTBBYXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRmdoJTJGZ2Vpa2hhJTJGaHlwZXItaHlkcmElNDBsYXRlc3QlMkZoeWRyYS1mcmFjdGFscy5qcyUyMiklMEElMEElMkYlMkZhd2FpdCUyMGxvYWRTY3JpcHQoJTIyaHR0cHMlM0ElMkYlMkZjZG4uanNkZWxpdnIubmV0JTJGZ2glMkZnZWlraGElMkZoeXBlci1oeWRyYSU0MGxhdGVzdCUyRmh5ZHJhLW91dHB1dHMuanMlMjIpJTBBJTBBJTJGJTJGb1Muc2V0TGluZWFyKCklMEElMEFzcmMobzApJTBBJTA5LnNjYWxlKC43NSklMEElMDkuYWRkKG5vaXNlKDIlMkMxKSUyQy40KSUwQSUwOS5pbnZlcnQoKSUwQSUwOS5pbnZlcnNpb24oKSUwQSUwOS5taXJyb3JYMigpJTBBJTA5LmJsZW5kKG8wJTJDLjMpJTBBJTA5Lm91dCgpJTBBJTBB"
+        ]
+    },
+    {
+        "name": "hydra-gif",
+        "description": "Let's you load .gif files into Hydra.",
+        "documentation": "https://github.com/ritchse/hyper-hydra/blob/main/doc/hydra-gif.md",
+        "author": "geikha",
+        "thumbnail": "ritchse-hydra-gif.png",
+        "load": "await loadScript(\"https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/hydra-gif.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTBBYXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRmdoJTJGZ2Vpa2hhJTJGaHlwZXItaHlkcmElNDBsYXRlc3QlMkZoeWRyYS1naWYuanMlMjIpJTBBJTBBczAuaW5pdEdpZignaHR0cHMlM0ElMkYlMkZpLmdpcGh5LmNvbSUyRm1lZGlhJTJGa1pxYkJUNjRFQ3RqeSUyRmdpcGh5LmdpZicpJTBBJTBBc3JjKHMwKS5zY2FsZSgxJTJDLjYpJTBBJTA5Lm91dCgpJTBB"
+        ]
+    },
+    {
+        "name": "hydra-outputs",
+        "description": "Change settings of framebuffers used by Hydra's outputs. The most common use case is setting framebuffers to use linear interpolation instead of the default, nearest neighbour.",
+        "documentation": "https://github.com/ritchse/hyper-hydra/blob/main/doc/hydra-outputs.md",
+        "author": "geikha",
+        "thumbnail": "ritchse-hydra-outputs.png",
+        "load": "await loadScript(\"https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/hydra-outputs.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTBBYXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRmdoJTJGZ2Vpa2hhJTJGaHlwZXItaHlkcmElNDBsYXRlc3QlMkZoeWRyYS1vdXRwdXRzLmpzJTIyKSUwQSUwQW8wLnNldE5lYXJlc3QoKSUwQW8xLnNldExpbmVhcigpJTBBJTBBc3JjKG8wKSUwQSUyMC5sYXllcihvc2MoMzAlMkMuMiUyQzEpLm1hc2soc2hhcGUoNCUyQy4xJTJDMCkpKSUwQSUyMC5zY2FsZSgxLjAxKS5yb3RhdGUoLjAxKSUwQSUyMC5vdXQobzApJTBBJTBBc3JjKG8xKSUwQSUyMC5sYXllcihvc2MoMzAlMkMuMiUyQzEpLm1hc2soc2hhcGUoNCUyQy4xJTJDMCkpKSUwQSUyMC5zY2FsZSgxLjAxKS5yb3RhdGUoLjAxKSUwQSUyMC5vdXQobzEpJTBBJTBBcmVuZGVyKCklMEE%3D"
+        ]
+    },
+    {
+        "name": "hydra-text",
+        "description": "Configurable canvas text generator to use as a hydra source.",
+        "documentation": "https://github.com/ritchse/hyper-hydra/blob/main/doc/hydra-text.md",
+        "author": "geikha",
+        "thumbnail": "ritchse-hydra-text.png",
+        "load": "await loadScript(\"https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/hydra-text.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTBBYXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRmdoJTJGZ2Vpa2hhJTJGaHlwZXItaHlkcmElNDBsYXRlc3QlMkZoeWRyYS10ZXh0LmpzJTIyKSUwQSUwQWF3YWl0JTIwbG9hZFNjcmlwdCglMjJodHRwcyUzQSUyRiUyRmh5cGVyLWh5ZHJhLmdsaXRjaC5tZSUyRmh5ZHJhLXRleHQuanMlMjIpJTBBJTBBaHlkcmFUZXh0LmZvbnQlMjAlM0QlMjAlMjJzZXJpZiUyMiUwQWh5ZHJhVGV4dC5saW5lV2lkdGglMjAlM0QlMjAlMjIyJTI1JTIyJTBBc3RyJTIwJTNEJTIwJTIyJTIwaHlkcmFfISUyMCUyMiUwQXNvbGlkKDElMkMuMiklMEElMDkuYmxlbmQoc3JjKG8wKS5zY2FsZSgxLjAyKS5jb2xvcmFtYSguMDIpKSUwQSUwOS5sYXllcih0ZXh0KHN0cikpJTBBJTA5LmRpZmYoc3Ryb2tlVGV4dChzdHIpLm1vZHVsYXRlU2NhbGUobm9pc2UoMSUyQzEpJTJDJTIwLjQpKSUwQSUwOS5vdXQoKSUwQQ%3D%3D"
+        ]
+    },
+    {
+        "name": "hydra-wrap",
+        "description": "Change how Hydra wraps textures, and control the wrapping of source functions such as osc() and noise().",
+        "documentation": "https://github.com/ritchse/hyper-hydra/blob/main/doc/hydra-wrap.md",
+        "author": "geikha",
+        "thumbnail": "ritchse-hydra-wrap.png",
+        "load": "await loadScript(\"https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/hydra-wrap.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=JTBBYXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRmdoJTJGZ2Vpa2hhJTJGaHlwZXItaHlkcmElNDBsYXRlc3QlMkZoeWRyYS13cmFwLmpzJTIyKSUwQSUwQWh5ZHJhV3JhcC5zZXRNaXJyb3IoKSUwQSUwQXNyYyhvMCklMEElMDkubGF5ZXIob3NjKCkucm90YXRlKCkubWFzayhzaGFwZSg0JTJDMSUyQzApKSklMEElMDkuc2NhbGUoLjUpJTBBJTA5LmJsZW5kKG5vaXNlKCklMkMuMiklMEElMDkub3V0KCklMEE%3D"
+        ]
+    },
+    {
+        "name": "hydrated-gradient",
+        "description": "make gradients with specified colors",
+        "documentation": "https://hydrated.savamala.top/",
+        "author": "Joan Queralt",
+        "thumbnail": "gradient.png",
+        "load": "await loadScript(\"https://hydrated.savamala.top/hydra-gradient.js\")",
+        "examples": [
+           "https://hydra.ojack.xyz/?code=YXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGaHlkcmF0ZWQuc2F2YW1hbGEudG9wJTJGaHlkcmEtZ3JhZGllbnQuanMlMjIpJTBBJTBBJTJGJTJGJTIwVXNlJTIwZ3JhZGllbnQyJTIwdG8lMjBjcmVhdGUlMjBhJTIwZ3JhZGllbnQlMjBiZXR3ZWVuJTIwdHdvJTIwY29sb3JzJTNBJTBBJTJGJTJGJTIwZ3JhZGllbnQyKHIwJTNEMSUyQ2cwJTNEMCUyQ2IwJTNEJTJDcjElM0QwJTJDZzElM0QwJTJDYjElM0QxJTJDc3BlZWQlM0QwKSUwQSUwQWdyYWRpZW50MigxJTJDMCUyQzAlMkMwLjglMkMwJTJDMC44JTJDMC4yKS5vdXQoKSUwQSUwQXJlbmRlcihvMCk%3D"
+        ]
+    },
+    {
+        "name": "hydra-shaderpark",
+        "description": "extension to use hydra with Shader Park - A JavaScript library for creating interactive procedural 2D and 3D shaders.",
+        "www": "https://shaderpark.com/",
+        "documentation": "https://shaderpark.com/",
+        "author": "emptyflash, Torin Blankensmith and Peter Whidden",
+        "thumbnail": "shader-park.png",
+        "load": "const { sculptToHydraRenderer } = await import(\"https://unpkg.com/shader-park-core/dist/shader-park-core.esm.js\")",
+        "examples": [
+           "https://hydra.ojack.xyz/?code=Y29uc3QlMjAlN0IlMjBzY3VscHRUb0h5ZHJhUmVuZGVyZXIlMjAlN0QlMjAlM0QlMjBhd2FpdCUyMGltcG9ydCglMjJodHRwcyUzQSUyRiUyRnVucGtnLmNvbSUyRnNoYWRlci1wYXJrLWNvcmUlMkZkaXN0JTJGc2hhZGVyLXBhcmstY29yZS5lc20uanMlMjIpJTBBJTBBc2N1bHB0VG9IeWRyYVJlbmRlcmVyKCgpJTIwJTNEJTNFJTIwJTdCJTBBJTA5JTA5cm90YXRlWCh0aW1lJTIwJTJGJTIwNSklMEElMDklMDlyb3RhdGVaKHRpbWUlMjAlMkYlMjAzKSUwQSUwOSUwOWRpc3BsYWNlKHNpbih0aW1lKSUyQyUyMDElMkMlMjAwKSUwQSUwOSUwOW1pcnJvck4oMyUyQyUyMDMpJTBBJTA5JTA5dG9ydXMoMC44JTJDJTIwMC4zOCUyMCUyQiUyMDAuMSUyMColMjBzaW4odGltZSkpJTBBJTA5JTdEKSUwQSUwOS5vdXQobzApJTBBJTBBcmVuZGVyKG8wKSUwQQ%3D%3D",
+            "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwbGljZW5zZWQlMjB3aXRoJTIwQ0MlMjBCWS1OQy1TQSUyMDQuMCUyMGh0dHBzJTNBJTJGJTJGY3JlYXRpdmVjb21tb25zLm9yZyUyRmxpY2Vuc2VzJTJGYnktbmMtc2ElMkY0LjAlMkYlMEElMkYlMkZjb25zdCUyMHNjcmlwdCUyMGJ5JTIwVG9yaW4lMjBCbGFua2Vuc21pdGglMjAtJTIwRXhhbXBsZSUyMGJ5JTIwRmxvciUyMGRlJTIwRnVlZ28lMEFjb25zdCUyMCU3QiUwQSUwOXNjdWxwdFRvSHlkcmFSZW5kZXJlciUwQSU3RCUyMCUzRCUyMGF3YWl0JTIwaW1wb3J0KCUyMmh0dHBzJTNBJTJGJTJGdW5wa2cuY29tJTJGc2hhZGVyLXBhcmstY29yZSUyRmRpc3QlMkZzaGFkZXItcGFyay1jb3JlLmVzbS5qcyUyMiklMEElMEFzY3VscHRUb0h5ZHJhUmVuZGVyZXIoKCklMjAlM0QlM0UlMjAlN0IlMEElMDklMDlsZXQlMjBzY2FsZSUyMCUzRCUyMDIuMCUzQiUwQSUwOSUwOWxldCUyMHMlMjAlM0QlMjBnZXRTcGFjZSgpJTNCJTBBJTA5JTA5bGV0JTIwbiUyMCUzRCUyMDAuMyUyMColMjBub2lzZShzY2FsZSUyMColMjBzJTIwJTJCJTIwdGltZSUyRjQpJTNCJTBBJTA5JTA5Y29sb3Iobm9ybWFsLnglMkMlMjBub3JtYWwueSUyQyUyMG5vcm1hbC56KSUzQiUwQSUwOSUwOXNoaW5lKDAuOSklM0IlMEElMDklMDltZXRhbCguOSklM0IlMEElMDklMDlyb3RhdGVZKHRpbWUlMjAlMkYlMjAyKSUzQiUwQSUwOSUwOSUyRiUyRnJvdGF0ZVgodGltZSklM0IlMEElMDklMDklMkYlMkZncmlkKDIlMkMlMjAuMSUyQyUyMC4xKSUzQiUwQSUwOSUwOSUyRiUyRnVuaW9uKCklM0IlMEElMDklMDlyb3RhdGVZKC10aW1lKSUzQiUwQSUwOSUwOXNwaGVyZSgwLjMlMjAlMkIlMjBuKSUzQiUwQSUwOSU3RCklMEElMDkub3V0KG8wKSUwQSUwQXNyYyhvMSklMEElMDkubGF5ZXIoc3JjKG8wKSUwQSUwOSUwOS5sdW1hKDAuMDElMkMlMjAwKSUwQSUwOSUwOS5zYXR1cmF0ZSgwKSUwQSUwOSUwOS5tdWx0KG9zYygxMzAlMkMlMjAwLjElMkMlMjAlNUIwJTJDMCUyQzIlNUQuc21vb3RoKCkpJTBBJTA5JTA5Lm1vZHVsYXRlKHNyYyhvMCkpKSklMEElMDkub3V0KG8xKSUwQSUwQXJlbmRlcihvMSk%3D"
+        ]
+    },
+    {
+        "name": "hydra-midi",
+        "description": "midi in hydra",
+        "www": "https://github.com/arnoson/hydra-midi",
+        "documentation": "https://github.com/arnoson/hydra-midi",
+        "author": "Arno Schlipf",
+        "thumbnail": "hydra-midi.png",
+        "load": "await loadScript(\"https://cdn.jsdelivr.net/npm/hydra-midi@latest/dist/index.js\")",
+        "examples": [
+           "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwWW91JTIwY2FuJTIwZWl0aGVyJTIwdXNlJTIwJTYwJTQwbGF0ZXN0JTYwJTIwb3IlMjBsb2FkJTIwYSUyMHNwZWNpZmljJTIwdmVyc2lvbiUyMHdpdGglMkMlMjBmb3IlMjBleGFtcGxlJTJDJTIwJTYwJTQwMC40LjAlNjAuJTBBYXdhaXQlMjBsb2FkU2NyaXB0KCUwQSUyMCUyMCdodHRwcyUzQSUyRiUyRmNkbi5qc2RlbGl2ci5uZXQlMkZucG0lMkZoeWRyYS1taWRpJTQwbGF0ZXN0JTJGZGlzdCUyRmluZGV4LmpzJyUwQSklMEElMEElMkYlMkYlMjBVc2UlMjBtaWRpJTIwbWVzc2FnZXMlMjBmcm9tJTIwYWxsJTIwY2hhbm5lbHMlMjBvZiUyMGFsbCUyMGlucHV0cy4lMEFhd2FpdCUyMG1pZGkuc3RhcnQoJTdCJTIwY2hhbm5lbCUzQSUyMCcqJyUyQyUyMGlucHV0JTNBJTIwJyonJTIwJTdEKSUwQSUyRiUyRiUyMFNob3clMjBhJTIwc21hbGwlMjBtaWRpJTIwbW9uaXRvciUyMChzaW1pbGFyJTIwdG8lMjBoeWRyYSdzJTIwJTYwYS5zaG93KCklNjApLiUwQW1pZGkuc2hvdygpJTBBJTBBJTJGJTJGJTIwVXNlJTIwYW55JTIwbm90ZSUyMHRvJTIwY29udHJvbCUyMHRoZSUyMHJlZCUyMGFtb3VudCUyMG9mJTIwaHlkcmEncyUyMCU2MHNvbGlkKCklNjAlMjBmdW5jdGlvbi4lMEFzb2xpZChub3RlKCcqJyklMkMlMjAwJTJDJTIwMSkub3V0KCklMEElMEElMkYlMkYlMjBPciUyQyUyMGlmJTIweW91JTIwYXJlJTIwdXNpbmclMjBhJTIwbWlkaSUyMGNvbnRyb2xsZXIlMjBhbmQlMjBub3QlMjBhJTIwa2V5Ym9hcmQlM0ElMEElMkYlMkYlMjBVc2UlMjBhJTIwY29udHJvbCUyMGNoYW5nZSUyMHZhbHVlJTIwdG8lMjBjb250cm9sJTIwdGhlJTIwcmVkJTIwYW1vdW50LiUwQSUyRiUyRiUyMHNvbGlkKGNjKDc0KSUyQyUyMDAlMkMlMjAxKS5vdXQoKQ%3D%3D"
+        ]
+    },
+    {
+        "name": "hydra-strudel",
+        "description": "strudel in hydra",
+        "www": "https://github.com/atfornes/Hydra-strudel-extension",
+        "documentation": "https://github.com/atfornes/Hydra-strudel-extension",
+        "author": "Olivia Jack, Felix Roos, Ámbar Tenorio",
+        "thumbnail": "hydra-strudel.png",
+        "load": "await loadScript(\"https://cdn.jsdelivr.net/gh/atfornes/Hydra-strudel-extension@latest/hydra-strudel.js\")\nawait initHydraStrudel()",
+      "examples": [
+        "https://hydra.ojack.xyz/dev/?code=JTJGJTJGJTIwJTIyU3ludGhlc3RoZXNpYSUzQSUyMHNoYXJpbmclMjBwYXR0ZXJucyUyMGZvciUyMGElMjBjaG9yZW9ncmFwaGljJTIwYXVkaW8lMjBhbmQlMjB2aXN1YWwlMjBsaXZlJTIwY29kaW5nJTIwZXhwZXJpZW5jZSUyMiUwQSUyRiUyRiUyMCU0MGJ5JTIwJUMzJTgxbWJhciUyMFRlbm9yaW8tRm9ybiVDMyVBOXMlMjAlMjYlMjBPbGl2aWElMjBKYWNrJTBBJTJGJTJGJTIwJTQwbGljZW5zZSUyMENDJTIwQlklMEElMkYlMkYlMjAlNDB1cmwlMjBodHRwcyUzQSUyRiUyRmdpdGh1Yi5jb20lMkZhdGZvcm5lcyUyRkh5ZHJhLXN0cnVkZWwtZXh0ZW5zaW9uJTBBJTJGJTJGJTIwLS0tLSUwQSUwQSUyRiUyRiUyMFdoYXQlMjBpZiUyMHdlJTIwY291bGQlMjB1c2UlMjB0aGUlMjBzYW1lJTIwcGF0dGVybnMlMjB0byUyMHByb2R1Y2UlMjBhdWRpbyUyMGFuZCUyMHZpc3VhbHMlM0YlMEElMkYlMkYlMjBUaGUlMjBkZXNpcmUlMjB3YXMlMjBzdHJvbmclMkMlMjBzbyUyMHdlJTIwZGV2ZWxvcGVkJTIwYW4lMjBleHRlbnNpb24lMjBmb3IlMjB0aGUlMjB2aXN1YWxzJTIwbGl2ZSUyMGNvZGluZyUyMGVudmlyb25tZW50JTIwJTVCSHlkcmElNUQoaHR0cHMlM0ElMkYlMkZoeWRyYS5vamFjay54eXolMkYpLiUwQSUyRiUyRiUyMFRoaXMlMjBleHRlbnNpb24lMjBpcyUyMGF2YWlsYWJsZSUyMGFzJTIwYSUyMHBsdWdpbiUyMGluJTIwdGhlJTIwZGV2ZWxvcG1lbnQlMjBicmFuY2glMjBvZiUyMGh5ZHJhJTJDJTIwYW5kJTIwY2FuJTIwYmUlMjBpbXBvcnRlZCUyMHdpdGglMjB0aGUlMjBmb2xsb3dpbmclMjBzdGF0ZW1lbnRzJTNBJTBBYXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRmdoJTJGYXRmb3JuZXMlMkZIeWRyYS1zdHJ1ZGVsLWV4dGVuc2lvbiU0MDElMkZoeWRyYS1zdHJ1ZGVsLmpzJTIyKSUwQWF3YWl0JTIwaW5pdEh5ZHJhU3RydWRlbCgpJTBBJTBBJTJGJTJGJTIwUGF0dGVybiUyMGxhbmd1YWdlcyUyMGFyZSUyMHVzZWQlMjB0byUyMHByb2R1Y2UlMjBzb3VuZCUyQyUyMGJ1dCUyMGFsc28lMjB0byUyMGV4cHJlc3MlMjBncmFwaGljJTIwZWxlbWVudHMlMkMlMjBsaWtlJTIwa25pdHRpbmclMjBkZXNpbmdzLiUwQSUyRiUyRiUyMEZvciUyMGluc3RhbmNlJTJDJTIwYSUyMHBhdHRlcm4lMjBleHByZXNzaW5nJTIwMyUyQyUyMDQlMkMlMjAzJTJDJTIwNSUyQyUyMDMlMkMlMjA2JTJDJTIwMyUyQyUyMDclMjBjYW4lMjBiZSUyMHdyaXR0ZW4lMjBhcyUzQSUwQXBhdHRlcm4lMjAlM0QlMjAlMjIzJTIwJTNDNCUyMDUlMjA2JTIwNyUzRSUyMiUwQSUyRiUyRiUyMHVzaW5nJTIwJTVCdGlkYWwlMjBtaW5pJTIwbm90YXRpb24lNUQoaHR0cHMlM0ElMkYlMkZ0aWRhbGN5Y2xlcy5vcmclMkZkb2NzJTJGcmVmZXJlbmNlJTJGbWluaV9ub3RhdGlvbiUyRiklMEElMEElMkYlMkYlMjBBbmQlMjB3ZSUyMGNvdWxkJTIwdXNlJTIwdGhpcyUyMHBhdHRlcm4lMjB0byUyMHByb2R1Y2UlMjB0cmlhbmdsZXMlMkMlMjB0aGVuJTIwc3F1YXJlcyUyQyUyMHRoZW4lMjB0cmlhbmdsZXMlMjBhbmQlMjBzbyUyMG9uJTNBJTBBc2hhcGUoUChwYXR0ZXJuKSklMEElMDkub3V0KG8wKSUwQSUwQSUyRiUyRiUyMEhvd2V2ZXIlMkMlMjBvdXIlMjBnb2FsJTIwd2FzJTIwbm90JTIwb25seSUyMHRvJTIwdXNlJTIwcGF0dGVybnMlMjB0byUyMHByb2R1Y2UlMjB2aXN1YWxzJTJDJTIwYnV0JTIwdG8lMjBiZSUyMGFibGUlMjB0byUyMHN5bmNocm9uaXplJTIwdGhlJTIwJTIwc3ludGhlc2lzJTIwb2YlMjBhdWRpbyUyMGFuZCUyMHZpc3VhbHMlMkMlMjBwcm9kdWNpbmclMjAlMjJzeW50aGVzdGhlc2lhJTIyLiUwQSUyRiUyRiUyMFRodXMlMkMlMjB3ZSUyMGNhbiUyMHJldXNlJTIwdGhlJTIwc2FtZSUyMHBhdHRlcm4lMjB0byUyMHByb2R1Y2UlMjBzb3VuZHMuJTIwVGhpcyUyMHBhdHRlcm4lMjBjYW4lMjBhbHNvJTIwcmVmZXIlMjB0byUyMG5vdGVzJTIwaW4lMjBhJTIwY2xhc3NpY2FsJTIwQyUyMG1ham9yJTIwc2NhbGUuJTIwV2l0aCUyMDAlMjBtYXBwZWQlMjB0byUyMEMlMkMlMjAxJTIwdG8lMjBEJTJDJTIwYW5kJTIwc28lMjBvbiUyQyUyMGl0JTIwd291bGQlMjBzb3VuZCUyMGxpa2UlMjB0aGlzJTNBJTBBJTBBbihwYXR0ZXJuKSUwQSUwOS5zY2FsZSglMjJDJTNBbWFqb3IlMjIpJTBBJTA5LnBsYXkoKSUwQSUwQSUyRiUyRiUyMHRoaXMlMjBpcyUyMGFscmVhZHklMjBwcm9kdWNpbmclMjBzb21lJTIwc3luZXN0aGV0aWMlMjBleHBlcmllbmNlJTIwd2hlcmUlMjBub3RlcyUyMGFyZSUyMGxpbmtlZCUyMHRvJTIwc2hhcGVzJTJDJTIwYnV0JTIwbGV0cyUyMG1ha2UlMjBpdCUyMGJldHRlciUyMGluY2x1ZGluZyUyMGNvbG9ycyElMEElMEFzcmMobzApJTBBJTA5LmNvbG9yKCUwQSUwOSUwOSgpJTIwJTNEJTNFJTIwUChwYXR0ZXJuKSgpJTIwJTI1JTIwMiUyQyUwQSUwOSUwOSgpJTIwJTNEJTNFJTIwUChwYXR0ZXJuKSgpJTIwJTI1JTIwMyUyQyUwQSUwOSUwOSgpJTIwJTNEJTNFJTIwUChwYXR0ZXJuKSgpJTIwJTI1JTIwNSklMEElMDkub3V0KG8xKSUwQXJlbmRlcihvMSklMEElMEElMEElMkYlMkYlMjBhbmQlMjBzdGFjayUyMHNvbWUlMjBwZXJjdXNzaW9uJTIwb24lMjB0b3AlMjBvZiUyMHRoZSUyMG5vdGVzLi4uJTBBcGVyY3Vzc2lvblBhdHRlcm4lMjAlM0QlMjAlMjJiZCUyMHNkJTJDJTIwaGgqMiEzJTIwJTNDb2glMjBoaCUzRSUyMiUwQXN0YWNrKCUwQSUwOSUwOXMocGVyY3Vzc2lvblBhdHRlcm4pJTJDJTBBJTA5JTA5bihwYXR0ZXJuKSUwQSUwOSUwOS5zY2FsZSglMjJDJTNBbWFqb3IlMjIpJTBBJTA5KSUwQSUwOS5wbGF5KCklMEElMEElMkYlMkYlMjB3ZSUyMGNvdWxkJTIwYWxzbyUyMGFkZCUyMHNvbWUlMjBtb2R1bGF0aW9ucyUyMHJlc3BvbmRpbmclMjB0byUyMHRoZSUyMGJhc3MlMjBkcnVtLiUwQXNyYyhvMSklMEElMDkubW9kdWxhdGUob3NjKDQyMCklMkMlMEElMDklMDkoKSUyMCUzRCUzRSUyMC4xJTIwKiUyMChQKHBlcmN1c3Npb25QYXR0ZXJuKSgpJTIwJTNEJTNEJTNEJTIwJTIyYmQlMjIpJTBBJTA5KS5vdXQobzIpJTBBJTBBJTJGJTJGJTIwRmluYWxseSUyQyUyMHNvbWUlMjBzY3JvbGwlMjBhbmQlMjBibGVuZGluZyUyMGNhbiUyMG1ha2UlMjB0aGUlMjB2aXN1YWxzJTIwZ2xvdyElMEFzcmMobzIpLmJsZW5kKHNyYyhvMikuc2Nyb2xsWSguMSUyQy4yKSklMDklMEEub3V0KG8zKSUwQSUwQXJlbmRlcigp",
+        "https://hydra.ojack.xyz/?code=YXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRmdoJTJGYXRmb3JuZXMlMkZIeWRyYS1zdHJ1ZGVsLWV4dGVuc2lvbiU0MGxhdGVzdCUyRmh5ZHJhLXN0cnVkZWwuanMlMjIpJTBBYXdhaXQlMjBpbml0SHlkcmFTdHJ1ZGVsKCklMEFzMC5pbml0SW1hZ2UoJTIyaHR0cHMlM0ElMkYlMkZzdHJ1ZGVsLnRpZGFsY3ljbGVzLm9yZyUyRmljb25zJTJGc3RydWRlbF9pY29uLnBuZyUyMiklMEElMEElMkYlMkYlMjBTdHJ1ZGVsJTIwbWluaS1ub3RhdGlvbiUyMHBhdHRlcm4lMEFteVBhdHRlcm4lMjAlM0QlMjAnMCUyMDEwJTIwJTVCMiUyMDUxJTVEKjQnLnNsb3coMiklMEElMEElMkYlMkYlMjBwbGF5JTIwdGhlJTIwcGF0dGVybiUwQW5vdGUobXlQYXR0ZXJuKSUwQSUwOS5wbGF5KCklMEElMEElMkYlMkYlMjByZXBlYXQlMjBTdHJ1ZGVsJTIwbG9nbyUyMGZvbGxvd2luZyUyMHRoZSUyMHBhdHRlcm4lMEFzcmMoczApJTBBJTA5LnJlcGVhdChQKG15UGF0dGVybikpJTBBJTA5Lm91dCgpJTBBJTBBJTJGJTJGJTIwU3RvcCUyMHNvdW5kJTNBJTBBJTJGJTJGJTIwQ3RybCUyMCUyQiUyMC4lMEElMkYlMkYlMjBvcg%3D%3D"
+      ]
+    },
+    {
+      "name": "scrawlink QR extension",
+      "description": "Share your code live with QR codes",
+      "www": "https://github.com/Scrawlink/scrawlink-extension/",
+      "documentation": "https://github.com/Scrawlink/scrawlink-extension/",
+      "author": "Ámbar Tenorio",
+      "thumbnail": "scrawlink.png",
+      "load":"await loadScript(\"https://cdn.jsdelivr.net/gh/Scrawlink/scrawlink-extension@latest/scripts/hydra-extension/hydra-scrawlink.js\")",
+        "examples": [
+          "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwbGljZW5zZWQlMjB3aXRoJTIwQ0MlMjBCWS1OQy1TQSUyMDQuMCUyMGh0dHBzJTNBJTJGJTJGY3JlYXRpdmVjb21tb25zLm9yZyUyRmxpY2Vuc2VzJTJGYnktbmMtc2ElMkY0LjAlMkYlMEElMkYlMkYlMjBmbG9hdGluZyUyMHNxdWFyZXMlMEElMkYlMkYlMjBieSUyMFRBQ0hBfiUwQWF3YWl0JTIwbG9hZFNjcmlwdCglMjJodHRwcyUzQSUyRiUyRmNkbi5qc2RlbGl2ci5uZXQlMkZnaCUyRlNjcmF3bGluayUyRnNjcmF3bGluay1leHRlbnNpb24lNDBsYXRlc3QlMkZzY3JpcHRzJTJGaHlkcmEtZXh0ZW5zaW9uJTJGaHlkcmEtc2NyYXdsaW5rLmpzJTIyKSUwQSUwQSUyRiUyRmNoYW5nZSUyMHRoZSUyMGNvZGUlMjB0byUyMGdldCUyMHRoZSUyMFFSJTIwb2YlMjBjdXJyZW50JTIwdmlzdWFscyUwQXNoYXBlKDQlMkMuMjEpLnNjcm9sbCglNUIuMSUyQyUyMC4wMyU1RC4lMjBzbW9vdGglMjAoKSUyQyUyMCU1QjIlMkMuMTQlMkMuMSU1RC5mYXN0KC4zKS5zbW9vdGgoKSkuYmxlbmQoc3JjKG8wKS5zY2FsZSguNCkpLm91dChvMCklMEE%3D"
+        ]
+    },
+    {
+      "name": "Noise Room (Audio Effects)",
+      "description": "Use and control live audio effects",
+      "www": "https://github.com/atfornes/noise-room",
+      "documentation": "https://github.com/atfornes/noise-room",
+      "author": "Ámbar Tenorio",
+      "thumbnail": "noise-room.png",
+      "load":"await loadScript(\"https://atfornes.github.io/noise-room/addIframe.js\")",
+        "examples": [
+          "https://hydra.ojack.xyz/?code=JTJGJTJGJTIwTm9pc2UlMjBSb29tJTBBJTJGJTJGJTIwQ0MtQnklMEElMkYlMkYlMjAlNDBCeSUyMFRBQ0hBfiUwQSUwQWF3YWl0JTIwbG9hZFNjcmlwdCglMjJodHRwcyUzQSUyRiUyRmF0Zm9ybmVzLmdpdGh1Yi5pbyUyRm5vaXNlLXJvb20lMkZhZGRJZnJhbWUuanMlMjIpJTBBJTBBJTJGJTJGJTIwVXNlJTIwQ1RSTCUyMCUyQiUyME1vdXNlJTIwcG9zaXRpb24lMjBvdmVyJTIwYXVkaW8lMjBlZmZlY3RzJTIwdG8lMjBjb250cm9sJTNBJTBBJTJGJTJGJTIwRWZmZWN0JTIwTWl4JTNBJTIweCUyMGF4aXMlMEElMkYlMkYlMjBSZXNvbmFuY2UlM0ElMjB5JTIwYXhpcyUzQSUwQSUwQWEuc2V0U21vb3RoKC42OCklMEFzaGFwZSgzKSUwQSUwOS5jb2xvciglNUItMS4xJTJDJTIwMSU1RC5zbW9vdGgoKSUyQyUyMCU1Qi4zJTJDMCU1RC5zbW9vdGgoKS5mYXN0KC40KSUyQyUyMC41KSUwQSUwOS5zY2FsZSgoKSUyMCUzRCUzRSUyMDAuMyUyMCUyQiUyMGEuZmZ0JTVCMCU1RCUyMColMjAzKS5vdXQobzApJTBBJTBBc3JjKG8wKS5tb2R1bGF0ZShzcmMobzApLmRpZmYoc3JjKG8wKS5yZXBlYXQoJTVCLTElMkMzJTVELnNtb290aCgpKSkpJTBBJTA5Lm91dChvMSklMEElMEFzcmMobzEpLmRpZmYoc3JjKG8xKS5zY2FsZSguOSkpLm91dChvMiklMEElMEFyZW5kZXIobzIpJTBBJTBB"
+        ]
+    },
+    {
+      "name": "hydra-superdirt",
+      "description": "Handle SuperDirt RMS events (envelope follower)",
+      "www": "https://github.com/munshkr/hydra-superdirt",
+      "documentation": "https://github.com/munshkr/hydra-superdirt/blob/main/README.md",
+      "author": "munshkr",
+      "thumbnail": "hydra-superdirt.png",
+      "load": "await loadScript(\"https://cdn.jsdelivr.net/npm/hydra-superdirt@latest\")",
+      "examples": [
+        "https://hydra.ojack.xyz/?code=YXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLmpzZGVsaXZyLm5ldCUyRm5wbSUyRmh5ZHJhLXN1cGVyZGlydCU0MGxhdGVzdCUyRmluZGV4LmpzJTIyKSUwQSUwQXJtc0Nvbm5lY3QoKSUwQSUwQXNvbGlkKCgpJTIwJTNEJTNFJTIwcm1zKDApKS5vdXQoKSUwQSUwQQ%3D%3D"
+      ]
+    },
+     {
+        "name": "Hydra-FCS",
+        "description": "Algebraic Geometry Inspired Visuals",
+        "documentation": "https://github.com/ymaltsman/Hydra-FCS/tree/main",
+        "author": "FriendlySpinach",
+        "thumbnail": "FCS.png",
+        "load": "await loadScript(\"https://cdn.statically.io/gh/ymaltsman/Hydra-FCS/3449358/HydraFCS.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=YXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLnN0YXRpY2FsbHkuaW8lMkZnaCUyRnltYWx0c21hbiUyRkh5ZHJhLUZDUyUyRjM0NDkzNTglMkZIeWRyYUZDUy5qcyUyMiklMEElMEFpQ2FyZGlvaWQoMSUyQyUyMC4yKSUyMCUyRiUyRmltcGxpY2l0JTIwY3VydmVzJTIwYXJlJTIwc291cmNlJTIwdGV4dHVyZSUyQyUyMCUwQSUwOS5wTmVwaHJvaWQoJTIwJTJGJTJGcGFyYW1ldHJpYyUyMGN1cnZlcyUyMHRha2UlMjBpbXBsaWNpdCUyMGN1cnZlcyUyMGFzJTIwaW5wdXQlMjBhbmQlMjBtb2R1bGF0ZSUyMGV4aXN0aW5nJTIwdGV4dHVyZXMlMjAlMEElMjAlMjAlMDklMDklMDlpREZvbGl1bSgyJTJDJTIwLjIlMkMlMjAzKSUyQyUwQSUyMCUyMC4yKSUwQSUwOS5wU3BpcmFsKCUwQSUyMCUyMCUwOSUwOWlBc3Ryb2lkKCklMEElMjAlMjApJTBBJTA5LmNvbG9yKCUyMCUyRiUyRmltcGxpY2l0JTIwY3VydmVzJTIwZ2VuZXJhdGUlMjBibGFjayUyRndoaXRlJTIwdGV4dHVyZXMlMkMlMjBidXQlMjB5b3UlMjBjYW4lMjBtYXAlMjB0byUyMGFueSUyMG90aGVyJTIwY29sb3IlMEElMjAlMjAlMDklNUIuNyUyQyUyMC4yJTVEJTJDJTIwJTBBJTIwJTIwJTIwJTIwJTVCLjMlMkMlMjAxJTJDJTIwLjUlNUQlMkMlMEElMjAlMjAlMDklNUIuMiUyQyUyMDElMkMlMjAxJTJDJTIwLjIlNUQpJTBBLm91dCgpJTBB",
+            "https://hydra.ojack.xyz/?code=YXdhaXQlMjBsb2FkU2NyaXB0KCUyMmh0dHBzJTNBJTJGJTJGY2RuLnN0YXRpY2FsbHkuaW8lMkZnaCUyRnltYWx0c21hbiUyRkh5ZHJhLUZDUyUyRjM0NDkzNTglMkZIeWRyYUZDUy5qcyUyMiklMEElMEElMkYlMkZ0aGlzJTIwaXMlMjB0aGUlMjBjb21wbGljYXRlZCUyMGV4YW1wbGUlMkMlMjB0byUyMHNlZSUyMHNpbXBsZXIlMjBleGFtcGxlcyUyMGNoZWNrJTIwb3V0JTIwdGhlJTIwZG9jcyUwQXBUb3J1cygxJTJDJTIwJTJGJTJGcGFyYW1ldHJpYyUyMHN1cmZhY2VzJTIwKGUuZyUyMHBUb3J1cyUyQyUyMHBTcGhlcmUlMkMlMjBwU3RlaW5lciklMjBhcmUlMjBzb3VyY2UlMjB0ZXh0dXJlcyUwQSUyMCUyMCUyMCUyMCUyMCUyMCUyMCU1Qi4wMiUyQyUyMDIlMkMlMjAuMiU1RCUyQyUyMCUyRiUyRmluJTIwSHlkcmElMkMlMjBhcnJheXMlMjBjeWNsZSUyMGJldHdlZW4lMjB2YWx1ZXMlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlNUIuMyUyQyUyMDElMkMlMjAuMSUyQyUyMC4xJTVEKSUyMCUyRiUyRmhhdmluZyUyMG11bHRpcGxlJTIwYXJyYXlzJTIwb2YlMjBkaWZmZXJlbnQlMjBsZW5ndGhzJTIwZ2l2ZXMlMjB1cyUyMHBvbHlyaHl0aG1pYyUyMHZpc3VhbHMlMEElMjAlMEElMjAlMjAucENpcmNsZSglMjAlMkYlMkZwYXJhbWV0cmljJTIwY3VydmVzJTIwdGFrZSUyMHRleHR1cmVzJTIwYXMlMjBpbnB1dCUyMChpbiUyMHBhcnRpY3VsYXIlMjBpbXBsaWNpdCUyMGN1cnZlcyklMjBhbmQlMjBtb2R1bGF0ZSUyMHRoZSUyMGV4aXN0aW5nJTIwdGV4dHVyZSUwQSUyMCUyMCUyMCUyMCUyMCUyMGlTcGlyYWwoMiklMjAlMkYlMkZpbXBsaWNpdCUyMGN1cnZlcyUyMGFyZSUyMHNvdXJjZSUyMHRleHR1cmVzJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTBBJTA5KSUyMCUwQSUwOS5pcFNwaGVyZSglMjAlMkYlMkZpbnZlcnNlJTIwcGFyYW1ldHJpYyUyMHN1cmZhY2VzJTIwYWxzbyUyMG1vZHVsYXRlJTIwdGV4dHVyZXMlMkMlMjBidXQlMjBhcmUlMjBtZWFudCUyMHRvJTIwdGFrZSUyMHBhcmFtZXRyaWMlMjBzdXJmYWNlcyUyMGFzJTIwaW5wdXQlMEElMjAlMjAlMDklMDlwTW9iaXVzU3RyaXAoJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTVCLjElMkMlMjAyJTJDJTIwLjMlMkMlMjAxJTVEJTJDJTIwJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTVCLjElMkMlMjAuNSU1RCUwQSUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCklMjAlMkYlMkZmb3IlMjBwYXJhbWV0cmljJTIwc3VyZmFjZXMlMjBhbmQlMjBpbXBsaWNpdCUyMGN1cnZlcyUyQyUyMDFzdCUyMHBhcmFtZXRlciUyMGlzJTIwZnJlcXVlbmN5JTJDJTIwb3RoZXJzJTIwYXJlJTIwcGFyYW1zJTIwb2YlMjB0aGUlMjB1bmRlcmx5aW5nJTIwZXF1YXRpb24lMEElMjAlMjAlMDklMDkuaHBUb3J1cyglMjAlMkYlMkZoeXBlcnBhcmFtZXRyaWMlMjBzdXJmYWNlcyUyMGFsc28lMjB0YWtlJTIwcGFyYW1ldHJpYyUyMHN1cmZhY2VzJTIwYXMlMjBpbnB1dCUyMGFuZCUyMG1vZHVsYXRlJTIwZXhpc3RpbmclMjB0ZXh0dXJlcyUyMCUwQSUyMCUyMCUyMCUyMCUyMCUyMCUwOSUwOXBTdGVpbmVyKC4xJTJDJTIwLjEpJTJDJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTA5JTA5LjUlMEElMjAlMjAlMjAlMjAlMDkpJTBBJTIwJTIwJTA5KSUwQSUwOS5pQ3ViZSgpJTIwJTJGJTJGaW1wbGljaXQlMjBzdXJmYWNlcyUyMG1hcCUyMGZyb20lMjBSR0IlMjB0byUyMGdyZXlzY2FsZSUwQSUwOSUwQSUyMCUyMCUyMCUyMC5vdXQoKQ%3D%3D"
+        ]
+    },
+    {
+        "name": "hydra-vertex",
+        "description": "3D vertex shader extension - geometry primitives, transforms, lighting, model loading (GLB/OBJ), skeletal animation, sprite sheets",
+        "www": "https://github.com/jff-fentonia/hydra-synth/tree/vertex-shader-extension/extensions/vertex",
+        "documentation": "https://github.com/jff-fentonia/hydra-synth/tree/vertex-shader-extension/extensions/vertex",
+        "author": "Jamie Faye Fenton",
+        "thumbnail": "hydra-vertex.svg",
+        "load": "await import(\"https://www.fentonia.com/hydra-extensions/vertex/index.js\").then(m => m.install(window.hydraSynth))",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=YXdhaXQlMjBpbXBvcnQoJ2h0dHBzJTNBJTJGJTJGd3d3LmZlbnRvbmlhLmNvbSUyRmh5ZHJhLWV4dGVuc2lvbnMlMkZ2ZXJ0ZXglMkZpbmRleC5qcycpLnRoZW4obSUyMCUzRCUzRSUyMG0uaW5zdGFsbCh3aW5kb3cuaHlkcmFTeW50aCkpJTBBJTBBb3NjKDEwJTJDJTIwMC4xJTJDJTIwMSkuZGlmZnVzZSgwJTJDJTIwMSUyQyUyMDApLm91dChvMCUyQyUyMHNwaGVyZSgpLnBlcnNwZWN0aXZlKDYwKS5yb3RhdGVZKCgpJTIwJTNEJTNFJTIwdGltZSkp",
+            "https://hydra.ojack.xyz/?code=YXdhaXQlMjBpbXBvcnQoJ2h0dHBzJTNBJTJGJTJGd3d3LmZlbnRvbmlhLmNvbSUyRmh5ZHJhLWV4dGVuc2lvbnMlMkZ2ZXJ0ZXglMkZpbmRleC5qcycpLnRoZW4obSUyMCUzRCUzRSUyMG0uaW5zdGFsbCh3aW5kb3cuaHlkcmFTeW50aCkpJTBBJTBBb3NjKDEwKS5kaWZmdXNlKDAlMkMlMjAxJTJDJTIwMCkub3V0KG8wJTJDJTIwY3ViZSgwLjEpLmdyaWQoMyUyQyUyMDMlMkMlMjAzJTJDJTIwMC4zKS5wZXJzcGVjdGl2ZSg2MCkucm90YXRlWSgoKSUyMCUzRCUzRSUyMHRpbWUpKQ%3D%3D"
+        ]
+    },
+    {
+        "name": "hydra-datamosh",
+        "description": "Apply datamosh effects to sources and outputs using WebCodecs",
+        "www": "https://github.com/emptyflash/hydra-datamosh",
+        "documentation": "https://github.com/emptyflash/hydra-datamosh/blob/main/README.md",
+        "author": "emptyflash",
+        "thumbnail": "moshed_data.png",
+        "load": "const { datamosh } = await import(\"https://emptyfla.sh/hydra-datamosh/datamosh.js\")",
+        "examples": [
+            "https://hydra.ojack.xyz/?code=Y29uc3QlMjAlN0IlMjBkYXRhbW9zaCUyMCU3RCUyMCUzRCUyMGF3YWl0JTIwaW1wb3J0KCUyMmh0dHBzJTNBJTJGJTJGZW1wdHlmbGEuc2glMkZoeWRyYS1kYXRhbW9zaCUyRmRhdGFtb3NoLmpzJTIyKSUwQWF3YWl0JTIwczAuaW5pdFZpZGVvKCdodHRwcyUzQSUyRiUyRmNvbnRlbnQuandwbGF0Zm9ybS5jb20lMkZ2aWRlb3MlMkZONFgxTmtJUi0xaG9uNEJzdS5tcDQnKSUwQWNvbnN0JTIwbmV3U291cmNlJTIwJTNEJTIwYXdhaXQlMjBkYXRhbW9zaChzMCklMEFzcmMobmV3U291cmNlKS5vdXQoKQ%3D%3D",
+            "https://hydra.ojack.xyz/?code=Y29uc3QlMjAlN0IlMjBkYXRhbW9zaCUyMCU3RCUyMCUzRCUyMGF3YWl0JTIwaW1wb3J0KCUyMmh0dHBzJTNBJTJGJTJGZW1wdHlmbGEuc2glMkZoeWRyYS1kYXRhbW9zaCUyRmRhdGFtb3NoLmpzJTIyKSUwQWNvbnN0JTIwbmV3U291cmNlJTIwJTNEJTIwYXdhaXQlMjBkYXRhbW9zaCgoaCklMjAlM0QlM0UlMjBoLm9zYygpLm91dCgpKSUwQXNyYyhuZXdTb3VyY2UpLm91dCgp"
+        ]
+    }
+]

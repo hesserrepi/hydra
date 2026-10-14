@@ -3,7 +3,8 @@
 // const CATEGORIES = ['extensions', 'external libraries', 'examples']
 import { collections, extensions } from '../extensions/registry.js'
 
-const BASE_URL = "https://raw.githubusercontent.com/hydra-synth/hydra-extensions/main/"
+// copy of https://github.com/hydra-synth/hydra-extensions, see scripts/vendor-extensions.sh
+const BASE_URL = new URL('hydra-extensions/', document.baseURI).href
 
 // extensions that ship with the editor, one category per collection
 const bundledCategories = collections.map((collection) => ({

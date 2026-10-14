@@ -4,6 +4,12 @@
 - bundled [hyper-hydra](https://github.com/geikha/hyper-hydra) and [extra-shaders-for-hydra](https://gitlab.com/metagrowing/extra-shaders-for-hydra) extensions, which load automatically the first time a sketch uses one of their functions
 - `hyper-hydra` and `extra shaders` tabs in the extensions window
 - `loadScript` calls to these extensions' usual URLs use the bundled copies
+- the editor works offline: hydra-synth, p5, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
+- bundled example gif and image for the hydra-gif and hydra-src examples
+
+## Changed
+- hydra-synth is now the version installed by npm (1.4.0) instead of the latest one on jsdelivr
+- the favicon is a local svg
 
 # [1.5.3] - 2023 - 02 - 19
 - fixed error reporting
