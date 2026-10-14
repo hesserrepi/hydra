@@ -1,0 +1,81 @@
+{
+  "name": "hydra-live",
+  "displayName": "Hydra live coding",
+  "description": "Write hydra sketches in VS Code: run lines, blocks or files in the local hydra editor, with autocomplete for hydra, hyper-hydra and extra shaders.",
+  "version": "0.1.0",
+  "publisher": "hesserrepi",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hesserrepi/hydra"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": ["Programming Languages", "Snippets", "Other"],
+  "keywords": ["hydra", "live coding", "glsl", "visuals"],
+  "main": "./extension.js",
+  "activationEvents": ["onLanguage:javascript"],
+  "contributes": {
+    "commands": [
+      { "command": "hydra.runLine", "title": "Run line or selection", "category": "Hydra" },
+      { "command": "hydra.runBlock", "title": "Run block", "category": "Hydra" },
+      { "command": "hydra.runFile", "title": "Run file", "category": "Hydra" },
+      { "command": "hydra.hush", "title": "Hush (stop all)", "category": "Hydra" },
+      { "command": "hydra.openBrowser", "title": "Open hydra window", "category": "Hydra" },
+      { "command": "hydra.startServer", "title": "Start the local hydra server", "category": "Hydra" },
+      { "command": "hydra.setupFolder", "title": "Set up autocomplete in this folder", "category": "Hydra" },
+      { "command": "hydra.insertExample", "title": "Insert extension example", "category": "Hydra" },
+      { "command": "hydra.newSketch", "title": "New sketch", "category": "Hydra" },
+      { "command": "hydra.toggleRunOnSave", "title": "Toggle run on save", "category": "Hydra" }
+    ],
+    "keybindings": [
+      { "command": "hydra.runLine", "key": "ctrl+enter", "when": "editorTextFocus && hydra.isSketch" },
+      { "command": "hydra.runBlock", "key": "alt+enter", "when": "editorTextFocus && hydra.isSketch" },
+      { "command": "hydra.runFile", "key": "ctrl+shift+enter", "when": "editorTextFocus && hydra.isSketch" },
+      { "command": "hydra.hush", "key": "ctrl+shift+h", "when": "editorTextFocus && hydra.isSketch" }
+    ],
+    "menus": {
+      "editor/title/run": [
+        { "command": "hydra.runFile", "when": "hydra.isSketch", "group": "navigation" }
+      ],
+      "commandPalette": [
+        { "command": "hydra.runLine", "when": "editorLangId == javascript" },
+        { "command": "hydra.runBlock", "when": "editorLangId == javascript" },
+        { "command": "hydra.runFile", "when": "editorLangId == javascript" },
+        { "command": "hydra.insertExample", "when": "editorLangId == javascript" }
+      ]
+    },
+    "configuration": {
+      "title": "Hydra",
+      "properties": {
+        "hydra.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:5173",
+          "description": "Address of the local hydra editor (npm run dev or npm run live)."
+        },
+        "hydra.repoPath": {
+          "type": "string",
+          "default": "",
+          "description": "Folder of the hydra editor repository, used by 'Start the local hydra server'. Found automatically when it is open in the workspace."
+        },
+        "hydra.sketchFiles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["**/sketches/**/*.js", "**/*.hydra.js"],
+          "description": "Glob patterns of JavaScript files treated as hydra sketches (keybindings and run on save apply to these)."
+        },
+        "hydra.runOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run the whole sketch every time it is saved."
+        },
+        "hydra.flash": {
+          "type": "boolean",
+          "default": true,
+          "description": "Briefly highlight the code that was run."
+        }
+      }
+    }
+  }
+}
