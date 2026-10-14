@@ -189,7 +189,7 @@ sharpenOnY(o1,2,4)
     thumbnail: true,
     description: 'Load animated .gif files into a source with s0.initGif(url).',
     provides: { members: { source: ['initGif'] } },
-    examples: [`s0.initGif('https://i.giphy.com/media/kZqbBT64ECtjy/giphy.gif')
+    examples: [`s0.initGif('images/example.gif')
 
 src(s0)
   .out()`]
@@ -269,7 +269,7 @@ update = () => {
       globals: ['srcAbs', 'srcRel', 'srcMask', 'srcAbsMask', 'srcRelMask'],
       methods: ['rotateRel', 'correctScaleRel', 'noWrap']
     },
-    examples: [`s0.initImage('https://upload.wikimedia.org/wikipedia/commons/2/25/Hydra-Foto.jpg')
+    examples: [`s0.initImage('images/hydra-landing.png')
 
 src(o0)
   .scale(1.01)
@@ -433,6 +433,18 @@ render()`]
 // URLs people already use in sketches, mapped to the bundled copies:
 // cdn.jsdelivr.net/gh/geikha/hyper-hydra[@latest|@main]/hydra-x[.min].js
 // metagrowing.org/extra-shaders-for-hydra/lib-x.js (and all.js for every lib)
+// libraries the bundled extensions load from a CDN, served from public/vendor/
+// instead (copied from node_modules by scripts/copy-runtime.mjs)
+const localCopies = {
+  'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js': 'vendor/highlight.js/highlight.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/glsl.min.js': 'vendor/highlight.js/languages/glsl.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify.js': 'vendor/js-beautify/beautify.js'
+}
+
+export function localCopyForURL(url) {
+  return localCopies[url] ? new URL(localCopies[url], document.baseURI).href : null
+}
+
 export function extensionsForURL(url) {
   let parsed
   try {

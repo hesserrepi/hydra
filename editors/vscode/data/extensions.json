@@ -423,7 +423,7 @@
       "documentation": "https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-gif.md",
       "description": "Load animated .gif files into a source with s0.initGif(url).",
       "examples": [
-        "s0.initGif('https://i.giphy.com/media/kZqbBT64ECtjy/giphy.gif')\n\nsrc(s0)\n  .out()"
+        "s0.initGif('images/example.gif')\n\nsrc(s0)\n  .out()"
       ],
       "autoload": true,
       "provides": {
@@ -588,7 +588,7 @@
       "documentation": "https://github.com/geikha/hyper-hydra#hydra-src",
       "description": "srcAbs and srcRel show sources at their original size or aspect ratio.",
       "examples": [
-        "s0.initImage('https://upload.wikimedia.org/wikipedia/commons/2/25/Hydra-Foto.jpg')\n\nsrc(o0)\n  .scale(1.01)\n  .colorama(-.02).brightness(-.2)\n  .blend(o0,.8)\n  .layer(srcAbs(s0).luma(.4,.1))\n  .out()"
+        "s0.initImage('images/hydra-landing.png')\n\nsrc(o0)\n  .scale(1.01)\n  .colorama(-.02).brightness(-.2)\n  .blend(o0,.8)\n  .layer(srcAbs(s0).luma(.4,.1))\n  .out()"
       ],
       "autoload": true,
       "provides": {
