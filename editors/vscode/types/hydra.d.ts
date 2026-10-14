@@ -2364,13 +2364,39 @@ declare var window: any
 declare var document: any
 declare var console: any
 declare var navigator: any
-declare var P5: any
 declare function fetch(input: any, init?: any): Promise<any>
 declare function setTimeout(handler: (...args: any[]) => void, timeout?: number, ...args: any[]): number
 declare function setInterval(handler: (...args: any[]) => void, timeout?: number, ...args: any[]): number
 declare function clearTimeout(id?: number): void
 declare function clearInterval(id?: number): void
 declare function requestAnimationFrame(callback: (time: number) => void): number
+
+// p5.js. Its full types come from @types/p5 when it can be found (npm install in
+// this repository); elsewhere p5 calls are untyped but still allowed.
+declare const _P5Library: typeof import('p5')
+/**
+ * p5.js in instance mode, drawn on a canvas behind hydra: p5 = new P5().
+ * Every p5 call starts with p5. (p5.rect(...), p5.mouseX); redefine p5.draw to animate.
+ * Use it in hydra with s0.init({ src: p5.canvas }). Running new P5() again replaces
+ * the previous canvas unless keep is true.
+ * @see https://p5js.org/reference/
+ */
+declare class P5 extends _P5Library {
+  constructor(options?: { width?: number; height?: number; mode?: 'P2D' | 'WEBGL'; keep?: boolean })
+  /** The p5 canvas, to use as a hydra source: s0.init({ src: p5.canvas }) */
+  canvas: any
+  width: number
+  height: number
+  mode: 'P2D' | 'WEBGL'
+  /** Show the p5 canvas behind hydra. */
+  show(): void
+  /** Hide the p5 canvas (it still works as a source). */
+  hide(): void
+  /** Clear the canvas to transparent. */
+  clear(): void
+}
+/** Conventionally the P5 instance: p5 = new P5() */
+declare var p5: P5
 
 /**
  * noise: source

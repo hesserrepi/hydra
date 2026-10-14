@@ -15,6 +15,44 @@
       "license": "AGPL-3.0"
     }
   ],
+  "sketches": [
+    {
+      "topic": "p5",
+      "name": "p5-as-source",
+      "description": "p5 as a hydra source: p5 draws, hydra transforms.",
+      "code": "// p5 as a hydra source: p5 draws, hydra transforms.\n// new P5() makes a p5 canvas in instance mode, so every p5 call starts with `p5.`\n// Running the sketch again replaces the previous canvas.\np5 = new P5()\np5.hide() // hydra shows it through s0, not directly\ns0.init({ src: p5.canvas })\n\n// p5.draw runs every frame and can be redefined while live coding\np5.draw = () => {\n  p5.background(0)\n  p5.noStroke()\n  p5.fill(255)\n  p5.circle(p5.mouseX, p5.mouseY, 160)\n  p5.rect(p5.width / 2 - 20, 0, 40, p5.height)\n}\n\nsrc(s0)\n  .kaleid(4)\n  .modulate(osc(6, 0.1), 0.1)\n  .colorama(0.3)\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "p5-text-mask",
+      "description": "p5 text as a mask over hydra colors, with feedback trails.",
+      "code": "// p5 text as a mask over hydra colors, with feedback trails.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\np5.draw = () => {\n  p5.background(0)\n  p5.fill(255)\n  p5.textAlign(p5.CENTER, p5.CENTER)\n  p5.textStyle(p5.BOLD)\n  p5.textSize(p5.height / 4)\n  p5.text('HYDRA', p5.width / 2, p5.height / 2 + Math.sin(p5.frameCount / 20) * 60)\n}\n\n// the previous frame, slightly zoomed and darkened, under the masked text\nsrc(o0)\n  .scale(1.015)\n  .hue(0.01)\n  .color(0.96, 0.96, 0.96)\n  .layer(osc(30, 0.05, 1.4).mask(src(s0)))\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "p5-particles-feedback",
+      "description": "p5 particles fed into a hydra feedback loop.",
+      "code": "// p5 particles fed into a hydra feedback loop.\n// Uses screen() from hyper-hydra's blend modes, which loads automatically.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nconst dots = Array.from({ length: 120 }, () => ({\n  x: p5.random(p5.width),\n  y: p5.random(p5.height),\n  angle: p5.random(p5.TWO_PI)\n}))\n\np5.draw = () => {\n  p5.clear() // transparent, so only the dots reach hydra\n  p5.noStroke()\n  dots.forEach((d, i) => {\n    d.angle += (p5.noise(d.x * 0.002, d.y * 0.002, p5.frameCount * 0.005) - 0.5) * 0.3\n    d.x = (d.x + Math.cos(d.angle) * 3 + p5.width) % p5.width\n    d.y = (d.y + Math.sin(d.angle) * 3 + p5.height) % p5.height\n    p5.fill(255, 150 + 100 * Math.sin(i))\n    p5.circle(d.x, d.y, 6)\n  })\n}\n\nsrc(o0)\n  .scale(0.995)\n  .rotate(0.002)\n  .hue(0.004)\n  .color(0.97, 0.97, 0.97)\n  .screen(src(s0).colorama(0.2))\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "p5-webgl",
+      "description": "p5 in 3D (WEBGL mode) layered over a hydra trail.",
+      "code": "// p5 in 3D (WEBGL mode) layered over a hydra trail.\np5 = new P5({ mode: 'WEBGL' })\np5.hide()\ns0.init({ src: p5.canvas })\n\np5.draw = () => {\n  p5.clear()\n  p5.normalMaterial()\n  p5.rotateX(p5.frameCount * 0.01)\n  p5.rotateY(p5.frameCount * 0.013)\n  p5.torus(p5.height / 5, p5.height / 14, 48, 24)\n}\n\nsrc(o0)\n  .scale(1.01)\n  .rotate(0.003)\n  .color(0.95, 0.95, 0.95)\n  .layer(src(s0))\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "p5-audio",
+      "description": "The microphone drives both p5 and hydra (allow microphone access in the browser).",
+      "code": "// The microphone drives both p5 and hydra (allow microphone access in the browser).\na.setBins(4)\n\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\np5.draw = () => {\n  p5.background(0, 40) // translucent background leaves trails\n  p5.noFill()\n  p5.stroke(255)\n  p5.strokeWeight(6)\n  p5.circle(p5.width / 2, p5.height / 2, 100 + a.fft[0] * 600)\n  p5.line(0, p5.height / 2, p5.width, p5.height / 2 + (a.fft[3] - 0.5) * 400)\n}\n\nsrc(s0)\n  .modulateScale(noise(3, 0.2), () => a.fft[1] * 0.5)\n  .kaleid(6)\n  .color(1, 0.5, () => 0.3 + a.fft[2])\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "p5-as-controller",
+      "description": "p5 as a controller: its mouse and keyboard state drive hydra parameters.",
+      "code": "// p5 as a controller: its mouse and keyboard state drive hydra parameters.\n// Nothing is drawn with p5 here; it only reads input.\np5 = new P5()\np5.hide()\n\nshapeSides = 3 // global, so the blocks below can be re-run on their own\np5.keyPressed = () => {\n  if (p5.key >= '1' && p5.key <= '9') shapeSides = Number(p5.key) + 2\n}\n\nshape(() => shapeSides, 0.3, 0.01)\n  .repeat(3, 3)\n  .rotate(() => p5.mouseX / p5.width * Math.PI * 2)\n  .modulate(noise(2, 0.1), () => p5.mouseY / p5.height * 0.5)\n  .color(() => p5.mouseIsPressed ? 1 : 0.2, 0.6, 1)\n  .out()\n"
+    }
+  ],
   "extensions": [
     {
       "id": "hyper-hydra/arithmetics",

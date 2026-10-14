@@ -159,6 +159,8 @@ pb.list()
 
 ## Using p5.js with hydra
 
+p5.js (1.x) is bundled with the editor, so it works offline. Running `new P5()` again (for example when a sketch file is saved in live mode) replaces the previous p5 canvas; pass `{ keep: true }` to keep both. Example sketches combining the two are in [`sketches/examples/p5`](sketches/examples/p5): p5 as a source, text as a mask, particles in a feedback loop, 3D with `WEBGL`, audio-reactive, and p5 as a mouse/keyboard controller. In VS Code they are also under `Hydra: Insert example`, and `p5.` autocompletes with p5's own types.
+
 ```javascript
 // Initialize a new p5 instance It is only necessary to call this once
 p5 = new P5() // {width: window.innerWidth, height:window.innerHeight, mode: 'P2D'}

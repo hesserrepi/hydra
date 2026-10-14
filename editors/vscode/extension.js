@@ -255,14 +255,20 @@ function activate(context) {
 
   register('hydra.insertExample', withEditor(async (editor) => {
     const data = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'data', 'extensions.json'), 'utf8'))
-    const items = data.extensions
+    const sketches = (data.sketches || []).map((sketch) => ({
+      label: sketch.name,
+      description: sketch.topic,
+      detail: sketch.description,
+      example: sketch.code.trimEnd()
+    }))
+    const items = sketches.concat(data.extensions
       .filter((ext) => ext.examples?.length)
       .flatMap((ext) => ext.examples.map((example, i) => ({
         label: ext.examples.length > 1 ? `${ext.name} (${i + 1})` : ext.name,
         description: data.collections.find((c) => c.id === ext.collection)?.name,
         detail: ext.description,
         example
-      })))
+      }))))
     const picked = await vscode.window.showQuickPick(items, { matchOnDescription: true, matchOnDetail: true, placeHolder: 'Insert an example' })
     if (picked) editor.insertSnippet(new vscode.SnippetString().appendText(picked.example + '\n'))
   }))

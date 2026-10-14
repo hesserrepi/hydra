@@ -8,6 +8,9 @@
 - VS Code extension in `editors/vscode`: run line / block / file with the web editor's keys, autocomplete for hydra, hyper-hydra and extra shaders, errors shown in the code
 - dev server endpoint `POST /__hydra/eval` (local requests only) used by the VS Code extension
 - `npm run types` generates `editors/vscode/types/hydra.d.ts`
+- p5.js is bundled (1.11) instead of loaded from a CDN; `new P5()` replaces the previous p5 canvas unless `{ keep: true }`
+- p5 + hydra example sketches in `sketches/examples/p5`, also offered by the VS Code extension's `Insert example`
+- p5 autocomplete through `@types/p5`
 
 # [1.5.3] - 2023 - 02 - 19
 - fixed error reporting
