@@ -13,6 +13,8 @@
 - p5 autocomplete through `@types/p5`
 - `picture shaders` collection in `public/extensions/picture-shaders/` for shaders made from reference pictures, with its own extensions tab
 - `moebius()`, `moebiusColor()` and `.engrave()` picture shaders, after Escher's Möbius Strip I
+- `lissajous()` and `lissajousTable()` picture shaders, after a table of Lissajous figures
+- `chladni()` and `chladniTable()` picture shaders, after Chladni's sound figures
 - `ink()`: click and drag on the canvas to push the colours around like ink on water, in `push`, `fluid` or `comb` (marbling) mode; loads automatically and has autocomplete
 - the editor works offline: hydra-synth, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
 - bundled example gif and image for the hydra-gif and hydra-src examples
