@@ -2760,6 +2760,45 @@ declare function moebius(size?: HydraParam, width?: HydraParam, lines?: HydraPar
  */
 declare function moebiusColor(size?: HydraParam, width?: HydraParam, lines?: HydraParam, twist?: HydraParam, flow?: HydraParam, fold?: HydraParam, eyes?: HydraParam): HydraSource
 /**
+ * lissajous: source (picture shaders/lissajous, loaded automatically)
+ * @param a default 3
+ * @param b default 2
+ * @param phase default 0
+ * @param thick default 0.006
+ * @param speed default 0.1
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/picture-shaders/lib-lissajous.js
+ */
+declare function lissajous(a?: HydraParam, b?: HydraParam, phase?: HydraParam, thick?: HydraParam, speed?: HydraParam): HydraSource
+/**
+ * lissajousTable: source (picture shaders/lissajous, loaded automatically)
+ * @param cols default 5
+ * @param rows default 4
+ * @param thick default 0.012
+ * @param speed default 0.05
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/picture-shaders/lib-lissajous.js
+ */
+declare function lissajousTable(cols?: HydraParam, rows?: HydraParam, thick?: HydraParam, speed?: HydraParam): HydraSource
+/**
+ * chladni: source (picture shaders/chladni, loaded automatically)
+ * @param n default 2
+ * @param m default 5
+ * @param sym default 1
+ * @param thick default 0.004
+ * @param speed default 0.2
+ * @param grain default 0
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/picture-shaders/lib-chladni.js
+ */
+declare function chladni(n?: HydraParam, m?: HydraParam, sym?: HydraParam, thick?: HydraParam, speed?: HydraParam, grain?: HydraParam): HydraSource
+/**
+ * chladniTable: source (picture shaders/chladni, loaded automatically)
+ * @param cols default 4
+ * @param rows default 3
+ * @param seed default 0
+ * @param speed default 0
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/picture-shaders/lib-chladni.js
+ */
+declare function chladniTable(cols?: HydraParam, rows?: HydraParam, seed?: HydraParam, speed?: HydraParam): HydraSource
+/**
  * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
  * From hyper-hydra/arithmetics, loaded automatically.
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md

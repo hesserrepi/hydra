@@ -58,6 +58,8 @@ the file in `(() => { ... })()` so reloading it doesn't redeclare anything
 | file | picture | functions |
 | --- | --- | --- |
 | `lib-moebius.js` | M.C. Escher, *Möbius Strip I* (1961) | `moebius()`, `moebiusColor()`, `.engrave()` |
+| `lib-lissajous.js` | a printed table of Lissajous figures (ratios 1:1 to 5:6 against phase) | `lissajous()`, `lissajousTable()` |
+| `lib-chladni.js` | E. F. F. Chladni, sound figures, *Entdeckungen über die Theorie des Klanges* (1787), Tab. IX–X | `chladni()`, `chladniTable()` |
 
 A picture shader usually keeps the structure in grey (so it composes with
 `.color()`, `.diff()`, `.modulate()`) and offers the picture's palette as an
