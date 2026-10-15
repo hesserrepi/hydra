@@ -7,17 +7,20 @@ import { collections, extensions } from '../extensions/registry.js'
 const BASE_URL = new URL('hydra-extensions/', document.baseURI).href
 
 // extensions that ship with the editor, one category per collection
+// (bare file names are thumbnails in the hydra-extensions repo, paths are local)
+const thumbnailURL = (thumbnail) => thumbnail.includes('/') ? thumbnail : BASE_URL + 'thumbnails/' + thumbnail
+
 const bundledCategories = collections.map((collection) => ({
     name: collection.name,
     slug: collection.id,
     about: 'extensions.about-bundled',
     entries: extensions.filter((ext) => ext.collection === collection.id).map((ext) => ({
         ...ext,
-        thumbnail: ext.thumbnail ? BASE_URL + 'thumbnails/' + ext.thumbnail : null,
+        thumbnail: ext.thumbnail ? thumbnailURL(ext.thumbnail) : null,
         load: `await loadScript("${ext.url}")`
     })),
     hasLoaded: true
-}))
+})).filter((category) => category.entries.length > 0)
 
 export default async function store(state, emitter) {
     // old / deprecated

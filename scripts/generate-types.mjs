@@ -11,14 +11,19 @@ import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const read = (p) => fs.readFileSync(path.join(root, p), 'utf8')
-const importSource = (p) => import('data:text/javascript,' + encodeURIComponent(read(p)))
+// as a data: URL so Node doesn't need "type": "module"; relative imports are inlined the same way
+const dataURL = (p) => 'data:text/javascript;base64,' + Buffer.from(read(p).replace(
+  /(\bfrom\s+['"])(\.\.?\/[^'"]+)(['"])/g,
+  (m, before, rel, after) => before + dataURL(path.join(path.dirname(p), rel)) + after
+)).toString('base64')
+const importSource = (p) => import(dataURL(p))
 
 const glslFunctions = (await importSource('node_modules/hydra-synth/src/glsl/glsl-functions.js')).default()
 const { extensions, collections } = await importSource('src/extensions/registry.js')
 
-// extra shaders are plain setFunction() calls: run them against a stub to read their definitions
+// extra shaders and picture shaders are plain setFunction() calls: run them against a stub to read their definitions
 const shaderDefs = new Map() // name -> { def, ext }
-for (const ext of extensions.filter((e) => e.collection === 'extra-shaders')) {
+for (const ext of extensions.filter((e) => e.collection === 'extra-shaders' || e.collection === 'picture-shaders')) {
   const defs = []
   vm.runInNewContext(read(`public/extensions/${ext.file}`), { setFunction: (def) => defs.push(def), window: {}, console })
   defs.forEach((def) => { if (!shaderDefs.has(def.name)) shaderDefs.set(def.name, { def, ext }) })

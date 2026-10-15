@@ -11,6 +11,8 @@
 - p5.js is bundled (1.11) instead of loaded from a CDN; `new P5()` replaces the previous p5 canvas unless `{ keep: true }`
 - p5 + hydra example sketches in `sketches/examples/p5`, also offered by the VS Code extension's `Insert example`
 - p5 autocomplete through `@types/p5`
+- `picture shaders` collection in `public/extensions/picture-shaders/` for shaders made from reference pictures, with its own extensions tab
+- `moebius()`, `moebiusColor()` and `.engrave()` picture shaders, after Escher's Möbius Strip I
 - the editor works offline: hydra-synth, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
 - bundled example gif and image for the hydra-gif and hydra-src examples
 
