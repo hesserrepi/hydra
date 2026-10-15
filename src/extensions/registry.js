@@ -13,6 +13,7 @@
 //
 // When two extensions provide the same name, the one listed first wins.
 
+import { pictureShaders, PICTURE_SHADERS_CDN } from './picture-shaders.js'
 import { effects, EFFECTS_CDN } from './effects.js'
 
 const HYPER_HYDRA_CDN = 'https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/'
@@ -34,6 +35,13 @@ export const collections = [
     name: 'extra shaders',
     author: 'Thomas Jourdan',
     homepage: 'https://gitlab.com/metagrowing/extra-shaders-for-hydra',
+    license: 'AGPL-3.0'
+  },
+  {
+    id: 'picture-shaders',
+    name: 'picture shaders',
+    author: 'hesserrepi',
+    homepage: 'https://github.com/hesserrepi/hydra/tree/main/public/extensions/picture-shaders',
     license: 'AGPL-3.0'
   },
   {
@@ -438,12 +446,15 @@ render()`]
   .out()`]
   }),
 
+  ...pictureShaders,
   ...effects
 ]
 
 // URLs people already use in sketches, mapped to the bundled copies:
 // cdn.jsdelivr.net/gh/geikha/hyper-hydra[@latest|@main]/hydra-x[.min].js
 // metagrowing.org/extra-shaders-for-hydra/lib-x.js (and all.js for every lib)
+// the fork's own picture shaders on jsDelivr (see ./picture-shaders.js)
+// the fork's own effects on jsDelivr (see ./effects.js)
 // libraries the bundled extensions load from a CDN, served from public/vendor/
 // instead (copied from node_modules by scripts/copy-runtime.mjs)
 const localCopies = {
@@ -456,8 +467,6 @@ export function localCopyForURL(url) {
   return localCopies[url] ? new URL(localCopies[url], document.baseURI).href : null
 }
 
-// extensionsForURL maps the extension URLs listed above, and the fork's own
-// effects on jsDelivr (see ./effects.js), to the bundled copies
 export function extensionsForURL(url) {
   let parsed
   try {
@@ -469,6 +478,10 @@ export function extensionsForURL(url) {
   let match = hostname === 'cdn.jsdelivr.net' &&
     pathname.match(/^\/gh\/(?:geikha|ritchse)\/hyper-hydra(?:@(?:latest|main))?\/hydra-([a-z0-9]+)(?:\.min)?\.js$/)
   if (match) return extensions.filter((ext) => ext.id === `hyper-hydra/${match[1]}`)
+
+  if (parsed.href.startsWith(PICTURE_SHADERS_CDN)) {
+    return extensions.filter((ext) => ext.url === parsed.href)
+  }
 
   if (parsed.href.startsWith(EFFECTS_CDN)) {
     return extensions.filter((ext) => ext.url === parsed.href)

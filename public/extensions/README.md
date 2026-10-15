@@ -9,6 +9,9 @@ commit and its `LICENSE` is the upstream license.
 | `hyper-hydra/` | https://github.com/geikha/hyper-hydra | geikha | GPL-3.0 |
 | `extra-shaders/` | https://gitlab.com/metagrowing/extra-shaders-for-hydra | Thomas Jourdan | AGPL-3.0 |
 
+`picture-shaders/` is not vendored: it holds shaders written for this editor from
+reference pictures, see its README.
+
 `effects/` is not vendored: it holds interactive effects written for this editor,
 such as `hydra-ink.js` (drag to push the colours around like ink on water).
 
