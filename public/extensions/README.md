@@ -12,6 +12,9 @@ commit and its `LICENSE` is the upstream license.
 `picture-shaders/` is not vendored: it holds shaders written for this editor from
 reference pictures, see its README.
 
+`effects/` is not vendored: it holds interactive effects written for this editor,
+such as `hydra-ink.js` (drag to push the colours around like ink on water).
+
 Do not edit the vendored files here; fix things upstream and re-run
 `npm run vendor-extensions`. Which function names load which file is defined in
 `src/extensions/registry.js`.
