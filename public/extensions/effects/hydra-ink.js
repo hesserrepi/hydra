@@ -318,9 +318,11 @@ void main() {
   const pointer = { x: 0, y: 0, down: false }
   const settings = { button: 0, key: null }
   const ignore = 'button, a, input, select, textarea, summary, [role="button"]'
+  // hydra's outputs keep row 0 at the top of the screen (its final blit flips
+  // y), so texture coordinates follow the page: no y flip here
   const toCanvas = (e) => {
     const rect = H.canvas.getBoundingClientRect()
-    return [(e.clientX - rect.left) / rect.width, 1 - (e.clientY - rect.top) / rect.height]
+    return [(e.clientX - rect.left) / rect.width, (e.clientY - rect.top) / rect.height]
   }
   const keyHeld = (e) => !settings.key || e[`${settings.key}Key`]
   const onDown = (e) => {
