@@ -3,7 +3,8 @@
 // (1:1, 1:2, 1:3, 2:3, 3:4, 3:5, 4:5, 5:6), one column per phase shift, each a
 // pale trace on a dark square like an oscilloscope photograph.
 //
-// lissajous(a, b, phase, thick, speed)    one figure x = sin(a t + phase), y = sin(b t), white on black
+// lissajous(a, b, phase, thick, speed)    one figure x = sin(a t + phase), y = sin(b t), white on black;
+//                                         fractional a / b morph between the neighbouring closed figures
 // lissajousTable(cols, rows, thick, speed) the table, in the print's colours
 //
 // Modelled on extra-shaders' lib-pattern lissa() (a parametric curve drawn with
@@ -12,13 +13,23 @@
   const TAU = '6.283185307179586'
 
   // distance dmin from q to the curve (sin(a t + d), sin(b t)), t in [0, TAU),
-  // walked as N straight segments
+  // walked as N straight segments.
+  // The curve only closes for whole a and b, so a fractional frequency is drawn
+  // as a blend of the figures at the whole numbers either side of it: a = 2.3 is
+  // 0.7 * sin(2t) + 0.3 * sin(3t). Every in-between shape is then a closed loop,
+  // and a and b can glide between figures (arrays with .smooth(), functions)
+  // without the trace breaking open.
   const trace = (N) => `
+  float a0 = floor(a);
+  float fa = a - a0;
+  float b0 = floor(b);
+  float fb = b - b0;
   float dmin = 10.0;
   vec2 prev = vec2(sin(d), 0.0);
   for (int i = 1; i <= ${N}; i++) {
     float t = float(i) / ${N}.0 * ${TAU};
-    vec2 cur = vec2(sin(a * t + d), sin(b * t));
+    vec2 cur = vec2(mix(sin(a0 * t + d), sin((a0 + 1.0) * t + d), fa),
+                    mix(sin(b0 * t), sin((b0 + 1.0) * t), fb));
     vec2 ab = cur - prev;
     vec2 ap = q - prev;
     float h = clamp(dot(ap, ab) / max(dot(ab, ab), 1e-8), 0.0, 1.0);
