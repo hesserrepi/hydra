@@ -15,6 +15,10 @@ reference pictures, see its README.
 `effects/` is not vendored: it holds interactive effects written for this editor,
 such as `hydra-ink.js` (drag to push the colours around like ink on water).
 
+`p5-forms/` is not vendored either: p5.js drawing functions written for this editor,
+such as `radiolaria.js` (growing Haeckel radiolarians), used in hydra through
+`s0.init({ src: p5.canvas })`.
+
 Do not edit the vendored files here; fix things upstream and re-run
 `npm run vendor-extensions`. Which function names load which file is defined in
 `src/extensions/registry.js`.

@@ -195,6 +195,146 @@ for (const ext of extensions.filter((e) => e.collection === 'effects')) {
   }
 }
 
+// p5 forms written for this editor: signatures by hand
+const p5FormTypes = {
+  radiolaria: `type RadiolariaForm = 'ring' | 'cage' | 'lattice' | 'bush' | 'star' | 'basket'
+type RadiolariaPaletteName = 'haeckel' | 'cyanotype' | 'gilded' | 'ink' | 'neon'
+interface RadiolariaPalette {
+  bg?: string; bone?: string; shade?: string; hatch?: string; outline?: string; glow?: string
+  /** light, middle and dark colour of the red capsule */
+  core?: [string, string, string]
+  nucleus?: string; cone?: string; symbiont?: string; symbiontDark?: string
+}
+/** A number, or a function of the specimen's age in seconds, read every frame. */
+type RadiolariaValue<T = number> = T | ((t: number) => T)
+/** Options of radiolaria(). See public/extensions/p5-forms/radiolaria.js for what each one does. */
+interface RadiolariaOptions {
+  form?: RadiolariaValue<RadiolariaForm>
+  /** centre, as a fraction of the canvas (0.5) */
+  x?: RadiolariaValue
+  y?: RadiolariaValue
+  /** radius, as a fraction of the shorter side of the canvas (0.42) */
+  size?: RadiolariaValue
+  rotation?: RadiolariaValue
+  seed?: RadiolariaValue
+  /** grow once, grow and regrow as new variations, or show fully grown */
+  life?: RadiolariaValue<'grow' | 'cycle' | 'still'>
+  /** seconds to grow up (12) */
+  grow?: RadiolariaValue
+  /** seconds of one life when life is 'cycle' (40) */
+  cycle?: RadiolariaValue
+  /** seconds before growing starts */
+  delay?: RadiolariaValue
+  /** 0-1, overrides life */
+  growth?: RadiolariaValue
+  speed?: RadiolariaValue
+  sway?: RadiolariaValue
+  /** 3D forms: radians per second */
+  spin?: RadiolariaValue
+  /** 3D forms: tilt towards the viewer, radians */
+  tilt?: RadiolariaValue
+  thorns?: RadiolariaValue
+  thornLength?: RadiolariaValue
+  /** levels of side branches */
+  branching?: RadiolariaValue
+  children?: RadiolariaValue
+  spread?: RadiolariaValue
+  ratio?: RadiolariaValue
+  curl?: RadiolariaValue
+  /** size of the red capsule, 0 for none */
+  core?: RadiolariaValue
+  symbionts?: RadiolariaValue
+  palette?: RadiolariaValue<RadiolariaPaletteName | RadiolariaPalette>
+  glow?: RadiolariaValue
+  shading?: RadiolariaValue
+  hatch?: RadiolariaValue
+  outline?: RadiolariaValue
+  /** opacity of the far side of 3D forms */
+  depth?: RadiolariaValue
+  /** ring, cage */
+  rings?: RadiolariaValue
+  /** ring, cage, lattice, basket */
+  spines?: RadiolariaValue
+  spineLength?: RadiolariaValue
+  /** cage: horizontal ring */
+  girdle?: RadiolariaValue
+  /** cage: 1 apical horn, 2 also a basal one */
+  horn?: RadiolariaValue
+  /** lattice, basket */
+  pores?: RadiolariaValue
+  /** lattice: girdling bands, 0-3 */
+  bands?: RadiolariaValue
+  /** bush */
+  arms?: RadiolariaValue
+  armLength?: RadiolariaValue
+  droop?: RadiolariaValue
+  /** star */
+  blades?: RadiolariaValue
+  bladeLength?: RadiolariaValue
+  bladeWidth?: RadiolariaValue
+  teeth?: RadiolariaValue
+  /** basket */
+  columns?: RadiolariaValue
+}
+interface RadiolariaSpecimen {
+  /** Draw on the p5 canvas; call it from p5.draw. */
+  draw(): RadiolariaSpecimen
+  set(options: RadiolariaOptions): RadiolariaSpecimen
+  /** Start growing again from nothing. */
+  grow(): RadiolariaSpecimen
+  /** A new variation (random seed when left out), grown again. */
+  reseed(seed?: number): RadiolariaSpecimen
+  options: RadiolariaOptions
+  /** current growth, 0-1 */
+  growth: number
+}
+interface RadiolariaPlateOptions extends RadiolariaOptions {
+  /** form names or option objects, default all six */
+  forms?: (RadiolariaForm | RadiolariaOptions)[]
+  cols?: number
+  rows?: number
+  /** false: transparent, for layering in hydra */
+  background?: boolean
+  /** false: don't set p5.draw */
+  draw?: boolean
+  /** seconds between specimens starting to grow (1.5) */
+  stagger?: number
+  grain?: number
+  vignette?: number
+}
+interface RadiolariaPlate {
+  specimens: RadiolariaSpecimen[]
+  draw(): void
+  set(options: RadiolariaOptions): RadiolariaPlate
+  grow(): RadiolariaPlate
+  reseed(): RadiolariaPlate
+}`
+}
+const p5FormSignatures = {
+  radiolaria: `declare const radiolaria: {
+  /** A growing radiolarian drawn on a p5 canvas: radiolaria(p5, { form: 'bush' }), then r.draw() in p5.draw. */
+  (p5: P5, options?: RadiolariaOptions): RadiolariaSpecimen
+  (options?: RadiolariaOptions): RadiolariaSpecimen
+  /** Several specimens laid out like a plate; sets p5.draw unless draw is false. */
+  plate(p5: P5, options?: RadiolariaPlateOptions): RadiolariaPlate
+  /** Paint the dark plate background. */
+  backdrop(p5: P5, options?: { palette?: RadiolariaPaletteName | RadiolariaPalette; grain?: number; vignette?: number }): void
+  forms: RadiolariaForm[]
+  palettes: Record<RadiolariaPaletteName, RadiolariaPalette>
+  /** Every option with its default for a form. */
+  defaults(form: RadiolariaForm): RadiolariaOptions
+}`
+}
+for (const ext of extensions.filter((e) => e.collection === 'p5-forms')) {
+  const short = ext.id.split('/')[1]
+  if (p5FormTypes[short]) globalsOut.push(p5FormTypes[short])
+  for (const name of ext.provides.globals || []) {
+    if (seenGlobals.has(name)) continue
+    seenGlobals.add(name)
+    globalsOut.push(doc(extDoc(ext)).replace(/^ {2}/gm, '') + (p5FormSignatures[name] || `declare const ${name}: any`))
+  }
+}
+
 const dts = `// Generated by scripts/generate-types.mjs (npm run types) - do not edit.
 // Autocomplete for hydra (hydra-synth ${JSON.parse(read('node_modules/hydra-synth/package.json')).version}),
 // hyper-hydra and extra shaders. Extensions are loaded automatically by the editor
@@ -357,7 +497,7 @@ ${arrayStaticsOut.join('\n')}
 // example sketches under sketches/examples/<topic>/, for the 'Insert example' command
 const examplesDir = path.join(root, 'sketches/examples')
 const sketchExamples = fs.existsSync(examplesDir) ? fs.readdirSync(examplesDir).flatMap((topic) =>
-  fs.readdirSync(path.join(examplesDir, topic)).filter((f) => f.endsWith('.js')).sort().map((file) => {
+  fs.readdirSync(path.join(examplesDir, topic)).filter((f) => f.endsWith('.js')).sort((a, b) => parseInt(a) - parseInt(b) || a.localeCompare(b)).map((file) => {
     const code = fs.readFileSync(path.join(examplesDir, topic, file), 'utf8')
     return { topic, name: file.replace(/^\d+-/, '').replace(/\.js$/, ''), description: code.match(/^\/\/ (.*)/)?.[1] || '', code }
   })) : []
