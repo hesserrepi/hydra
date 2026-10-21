@@ -3936,6 +3936,173 @@ declare const radiolaria: {
   /** Every option with its default for a form. */
   defaults(form: RadiolariaForm): RadiolariaOptions
 }
+type SnowflakeHabit = 'bentley' | 'plate' | 'sectored' | 'broad' | 'stellar' | 'dendrite' | 'fern' | 'feather' | 'needle' | 'thick'
+type SnowflakePaletteName = 'bentley' | 'frost' | 'cyanotype' | 'gilded' | 'ink' | 'neon'
+interface SnowflakePalette {
+  bg?: string
+  /** colours from thin, shaded ice through ice to bright ridges and rims */
+  deep?: string; ice?: string; bright?: string
+  glow?: string
+}
+/** A value, or a function of the crystal's age in seconds, read every frame. */
+type SnowflakeValue<T = number> = T | ((t: number) => T)
+/** The weather around a growing crystal (Gravner-Griffeath model). Every habit sets these. */
+interface SnowflakeWeather {
+  /** water vapour around the crystal (~0.35-0.8): more grows branches, less grows plates */
+  rho?: SnowflakeValue
+  /** how hard it is for tips to grow (~1-2) */
+  beta?: SnowflakeValue
+  /** how easily concave spots fill in (~0.15-0.4) */
+  alpha?: SnowflakeValue
+  /** ... while the vapour there is below this (~0.03-0.12) */
+  theta?: SnowflakeValue
+  /** share of vapour that freezes at once (~0.001-0.05) */
+  kappa?: SnowflakeValue
+  /** quasi-liquid layer melting back to vapour (~0.015-0.14) */
+  mu?: SnowflakeValue
+  /** ice melting back to vapour (~0.0001) */
+  gamma?: SnowflakeValue
+  /** random fluctuation of the vapour; the crystal stays symmetric */
+  noise?: SnowflakeValue
+}
+/** One stage of a crystal's life: a habit (or weather values), from the fraction "at" of the radius on. */
+type SnowflakePhase = SnowflakeHabit | ({ habit?: SnowflakeHabit; at?: number } & { [K in keyof SnowflakeWeather]?: number })
+/** Options of snowflake(). See public/extensions/p5-forms/snowflake.js for what each one does. */
+interface SnowflakeOptions extends SnowflakeWeather {
+  /** the weather it grows in; 'bentley' (default) is a random life story from the seed */
+  habit?: SnowflakeValue<SnowflakeHabit>
+  /** habits in the order the crystal meets them, e.g. ['plate', { habit: 'fern', at: 0.4 }]; overrides habit */
+  climate?: SnowflakePhase[] | ((t: number) => SnowflakePhase[])
+  /** centre, as a fraction of the canvas (0.5) */
+  x?: SnowflakeValue
+  y?: SnowflakeValue
+  /** radius, as a fraction of the shorter side of the canvas (0.42) */
+  size?: SnowflakeValue
+  rotation?: SnowflakeValue
+  /** turning speed, radians per second */
+  spin?: SnowflakeValue
+  seed?: SnowflakeValue
+  /** grow once, grow and regrow as new crystals, or show fully grown */
+  life?: SnowflakeValue<'grow' | 'cycle' | 'still'>
+  /** seconds to grow up (14) */
+  grow?: SnowflakeValue
+  /** seconds of one life when life is 'cycle' (40) */
+  cycle?: SnowflakeValue
+  /** seconds before growing starts */
+  delay?: SnowflakeValue
+  /** 0-1, overrides life */
+  growth?: SnowflakeValue
+  speed?: SnowflakeValue
+  /** 6, or 3 for a trigonal crystal */
+  fold?: SnowflakeValue<3 | 6>
+  /** fold 3: how unequal the two sets of faces grow, 0-1 (0.6) */
+  trigonal?: SnowflakeValue
+  /** 0-1, a second crystal turned 30 degrees on top: twelve branches */
+  twin?: SnowflakeValue
+  /** lattice cells from centre to tip (120); more is finer but slower */
+  resolution?: SnowflakeValue
+  /** milliseconds of simulation per frame, shared by every crystal (8) */
+  budget?: SnowflakeValue
+  palette?: SnowflakeValue<SnowflakePaletteName | SnowflakePalette>
+  /** raking light on the relief (1) */
+  relief?: SnowflakeValue
+  /** direction the light comes from, radians (-2.2: top left) */
+  light?: SnowflakeValue
+  /** bright rim along the edges (1) */
+  rim?: SnowflakeValue
+  /** engraved lines left by the growth front (0.6) */
+  rings?: SnowflakeValue
+  ringCount?: SnowflakeValue
+  /** how much thickness shows as brightness (1) */
+  contrast?: SnowflakeValue
+  /** halo around the crystal, 0 for none (1) */
+  glow?: SnowflakeValue
+  opacity?: SnowflakeValue
+}
+interface SnowflakeFlake {
+  /** Draw on the p5 canvas; call it from p5.draw. */
+  draw(): SnowflakeFlake
+  set(options: SnowflakeOptions): SnowflakeFlake
+  /** Start growing again from nothing (the crystal is kept). */
+  grow(): SnowflakeFlake
+  /** A new crystal (random seed when left out), grown again. */
+  reseed(seed?: number): SnowflakeFlake
+  options: SnowflakeOptions
+  /** current growth, 0-1 */
+  growth: number
+}
+interface SnowflakePlateOptions extends SnowflakeOptions {
+  /** habit names or option objects, default nine */
+  habits?: (SnowflakeHabit | SnowflakeOptions)[]
+  cols?: number
+  rows?: number
+  /** false: transparent, for layering in hydra */
+  background?: boolean
+  /** false: don't set p5.draw */
+  draw?: boolean
+  /** seconds between crystals starting to grow (1.2) */
+  stagger?: number
+  grain?: number
+  vignette?: number
+}
+interface SnowflakePlate {
+  flakes: SnowflakeFlake[]
+  draw(): void
+  set(options: SnowflakeOptions): SnowflakePlate
+  grow(): SnowflakePlate
+  reseed(): SnowflakePlate
+}
+interface SnowfallOptions {
+  /** number of falling crystals (60) */
+  count?: SnowflakeValue
+  /** distinct crystals, grown once and reused (6) */
+  kinds?: SnowflakeValue
+  habits?: (SnowflakeHabit | SnowflakeOptions)[]
+  /** radius, as a fraction of the shorter side (0.05) */
+  size?: SnowflakeValue
+  /** how much size, brightness and speed vary with distance, 0-1 (1) */
+  depth?: SnowflakeValue
+  speed?: SnowflakeValue
+  /** sideways drift, negative to the left (0.2) */
+  wind?: SnowflakeValue
+  sway?: SnowflakeValue
+  seed?: SnowflakeValue
+  /** lattice cells from centre to tip of each kind (60) */
+  resolution?: SnowflakeValue
+  palette?: SnowflakeValue<SnowflakePaletteName | SnowflakePalette>
+  glow?: SnowflakeValue
+  /** false: transparent, for layering in hydra */
+  background?: SnowflakeValue<boolean>
+  /** false: don't set p5.draw */
+  draw?: boolean
+}
+interface Snowfall {
+  draw(): void
+  set(options: SnowfallOptions): Snowfall
+  reseed(seed?: number): Snowfall
+}
+/**
+ * Snow crystals that grow like real ones, after Wilson Bentley's photomicrographs: a vapour-diffusion simulation on a hexagonal lattice grows plates, sectored plates, stellar and fern-like dendrites, with engraved relief. The weather can change while it grows; also a whole page and snowfall.
+ * From p5 forms/snowflake, loaded automatically.
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/p5-forms/snowflake.js
+ */
+declare const snowflake: {
+  /** A snow crystal growing on a p5 canvas: snowflake(p5, { habit: 'fern' }), then f.draw() in p5.draw. */
+  (p5: P5, options?: SnowflakeOptions): SnowflakeFlake
+  (options?: SnowflakeOptions): SnowflakeFlake
+  /** Several crystals laid out like a page of Bentley's photographs; sets p5.draw unless draw is false. */
+  plate(p5: P5, options?: SnowflakePlateOptions): SnowflakePlate
+  /** Small grown crystals falling, tumbling and drifting; sets p5.draw unless draw is false. */
+  snowfall(p5: P5, options?: SnowfallOptions): Snowfall
+  /** Paint the black velvet background. */
+  backdrop(p5: P5, options?: { palette?: SnowflakePaletteName | SnowflakePalette; grain?: number; vignette?: number }): void
+  habits: SnowflakeHabit[]
+  /** the weather of every habit */
+  weather: Record<Exclude<SnowflakeHabit, 'bentley'>, SnowflakeWeather>
+  palettes: Record<SnowflakePaletteName, SnowflakePalette>
+  /** Every option with its default for a habit. */
+  defaults(habit?: SnowflakeHabit): SnowflakeOptions
+}
 
 interface Array<T> {
   /** Speed at which the array is cycled through. */
