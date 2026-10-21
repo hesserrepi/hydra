@@ -102,6 +102,36 @@
       "name": "radiolaria-audio",
       "description": "Audio-reactive lattice: the bass pushes the spines out, the mids make it swell and the highs make it glow.",
       "code": "// Audio-reactive lattice: the bass pushes the spines out, the mids make it swell and the highs make it glow.\n// The browser asks for microphone access the first time.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\na.setBins(4)\na.setSmooth(0.85)\n\nsphere = radiolaria(p5, {\n  form: 'lattice',\n  life: 'still',\n  spines: 40,\n  spineLength: () => 0.3 + a.fft[0] * 1.5,\n  size: () => 0.36 + a.fft[1] * 0.08,\n  glow: () => 0.5 + a.fft[2] * 2,\n  spin: 0.25,\n  palette: 'neon'\n})\n\np5.draw = () => {\n  radiolaria.backdrop(p5, { palette: 'neon', grain: 0.4 })\n  sphere.draw()\n}\n\nsrc(s0)\n  .blend(src(o0).scale(1.02), 0.5)\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "snowflake-plate",
+      "description": "A page of growing snow crystals after Wilson Bentley's photomicrographs, drawn by p5 and lit by hydra.",
+      "code": "// A page of growing snow crystals after Wilson Bentley's photomicrographs, drawn by p5 and lit by hydra.\n// snowflake() loads automatically; its options are documented in\n// public/extensions/p5-forms/snowflake.js. Run again to regrow.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\npage = snowflake.plate(p5, {\n  // nine crystals, each grown through its own weather; an entry can also be a\n  // habit name: 'plate', 'sectored', 'broad', 'stellar', 'dendrite', 'fern', ...\n  seed: 2,\n  grow: 12, // seconds to grow up\n  stagger: 1.5 // seconds between one crystal and the next starting to grow\n})\n\n// a cold sheen: the page over a softly blurred, bluish copy of itself\nsrc(s0)\n  .add(src(s0).scale(1.01).blend(o0, 0.6).color(0.8, 0.9, 1).brightness(-0.2), 0.4)\n  .out()\n\n// try: page.reseed(), page.set({ palette: 'frost' }), page.set({ life: 'cycle', cycle: 30 })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "snowflake-weather",
+      "description": "One snow crystal living through changing weather: it grows, sublimes from the edges and grows again, never twice the same.",
+      "code": "// One snow crystal living through changing weather: it grows, sublimes from the edges and grows again, never twice the same.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nflake = snowflake(p5, {\n  // 'bentley' writes a new life story from the seed every cycle: a plate or a star\n  // that changes habit two or three times on its way down\n  habit: 'bentley',\n  life: 'cycle', // 'grow' once, 'cycle' forever, or 'still' (fully grown)\n  grow: 16,\n  cycle: 30,\n  size: 0.45,\n  spin: 0.03,\n  rings: 0.8, // engraved lines left by the growth front\n  resolution: 140 // finer crystal, a little slower to compute\n})\n\n// or tell its story yourself: habits in the order the crystal meets them,\n// at: where the next one starts, as a fraction of the radius\n// flake.set({ climate: ['plate', { habit: 'fern', at: 0.3 }, { habit: 'stellar', at: 0.75 }] })\n\np5.draw = () => {\n  snowflake.backdrop(p5)\n  flake.draw()\n}\n\nsrc(s0)\n  .modulate(noise(1.2, 0.04), 0.004)\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "snowflake-frost",
+      "description": "The weather as a function of time: vapour pulses while the crystal grows, and every arm records it. Hydra spreads it into frost.",
+      "code": "// The weather as a function of time: vapour pulses while the crystal grows, and every arm records it. Hydra spreads it into frost.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nswing = (t, period, lo, hi) => lo + (hi - lo) * (0.5 + 0.5 * Math.sin(t * 2 * Math.PI / period))\n\nflake = snowflake(p5, {\n  habit: 'stellar',\n  life: 'cycle',\n  grow: 20,\n  cycle: 34,\n  // water vapour around the crystal, in its own seconds: more vapour grows\n  // branches, less grows plates. Read while it grows, so each pulse shows up as a band.\n  rho: (t) => swing(t, 5, 0.36, 0.6),\n  beta: (t) => swing(t, 9, 1.1, 1.6),\n  palette: 'frost',\n  glow: 1.5\n})\n\np5.draw = () => {\n  p5.clear() // transparent, so only the crystal reaches hydra\n  flake.draw()\n}\n\n// a slowly expanding, turning, fading echo under the crystal: rime spreading outwards\nsrc(o0)\n  .scale(1.006)\n  .rotate(0.0015)\n  .modulate(noise(3, 0.05), 0.002)\n  .color(0.8, 0.88, 0.96)\n  .layer(src(s0))\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "snowfall",
+      "description": "Snowfall: small grown crystals falling, tumbling and drifting over a hydra sky.",
+      "code": "// Snowfall: small grown crystals falling, tumbling and drifting over a hydra sky.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nsnow = snowflake.snowfall(p5, {\n  count: 70,\n  kinds: 8, // distinct crystals, grown once and reused\n  size: 0.045, // of the shorter side\n  depth: 1, // far flakes are smaller, dimmer and slower\n  wind: (t) => 0.3 * Math.sin(t * 0.1), // any option can be a function of time\n  background: false // transparent, so hydra paints the sky\n})\n\nsky = gradient(0.02)\n  .r()\n  .color(0.06, 0.1, 0.22)\n  .add(noise(1.5, 0.03).color(0.03, 0.05, 0.1))\n\nsky\n  .layer(src(s0))\n  .out()\n\n// try: snow.set({ palette: 'gilded', count: 120 }), snow.reseed()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "snowflake-audio",
+      "description": "Audio-reactive growth: loud passages bring more vapour and the crystal branches out, quiet ones let it fill in.",
+      "code": "// Audio-reactive growth: loud passages bring more vapour and the crystal branches out, quiet ones let it fill in.\n// The browser asks for microphone access the first time.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\na.setBins(4)\na.setSmooth(0.9)\n\nflake = snowflake(p5, {\n  habit: 'stellar',\n  life: 'cycle',\n  grow: 18,\n  cycle: 26,\n  rho: () => 0.38 + a.fft[0] * 0.35,\n  glow: () => 0.6 + a.fft[2] * 2,\n  palette: 'neon',\n  twin: 0.6 // a second crystal turned 30 degrees: twelve branches\n})\n\np5.draw = () => {\n  snowflake.backdrop(p5, { palette: 'neon', grain: 0.4 })\n  flake.draw()\n}\n\nsrc(s0)\n  .blend(src(o0).scale(1.015), 0.5)\n  .out()\n"
     }
   ],
   "extensions": [
@@ -1640,6 +1670,25 @@
       "provides": {
         "globals": [
           "radiolaria"
+        ]
+      }
+    },
+    {
+      "id": "p5-forms/snowflake",
+      "collection": "p5-forms",
+      "name": "snowflake",
+      "author": "hesserrepi",
+      "documentation": "https://github.com/hesserrepi/hydra/blob/main/public/extensions/p5-forms/snowflake.js",
+      "description": "Snow crystals that grow like real ones, after Wilson Bentley's photomicrographs: a vapour-diffusion simulation on a hexagonal lattice grows plates, sectored plates, stellar and fern-like dendrites, with engraved relief. The weather can change while it grows; also a whole page and snowfall.",
+      "examples": [
+        "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\nsnowflake.plate(p5)\nsrc(s0).out()",
+        "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\nf = snowflake(p5, { habit: 'bentley', life: 'cycle', size: 0.45 })\np5.draw = () => { snowflake.backdrop(p5); f.draw() }\nsrc(s0).modulate(noise(1.2, 0.04), 0.004).out()",
+        "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\nsnowflake.snowfall(p5, { background: false })\ngradient(0.02).r().color(0.06, 0.1, 0.22).layer(src(s0)).out()"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "snowflake"
         ]
       }
     }

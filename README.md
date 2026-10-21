@@ -182,6 +182,30 @@ src(s0).out()
 
 Specimens grow from nothing (`life: 'grow'`), live through endless variations (`'cycle'`) or appear fully grown (`'still'`); their spines sway and the 3D forms turn. Every option can be a function of time, such as `{ arms: (t) => 6 + 4 * Math.sin(t / 5) }` or `{ spineLength: () => 0.5 + a.fft[0] }`. The skeleton follows the option as it changes. All options are listed at the top of [`public/extensions/p5-forms/radiolaria.js`](public/extensions/p5-forms/radiolaria.js), and examples 7 to 11 in `sketches/examples/p5` show a plate, a single life cycle, feedback trails, evolving shapes and an audio-reactive lattice. If a big canvas gets slow, `glow: 0` is the cheapest thing to turn off.
 
+### Growing snowflakes
+
+`snowflake()` grows snow crystals on a p5 canvas, after Wilson Bentley's photomicrographs: hexagonal plates with engraved ridges, sectored plates, broad, stellar and fern-like dendrites, three-fold and twelve-branched crystals. Each one is grown by a small simulation of water vapour freezing onto a hexagonal lattice (Gravner and Griffeath's snowflake model), computed a little every frame, so the weather it grows in decides its shape. It loads automatically the first time a sketch uses it.
+
+```javascript
+p5 = new P5()
+p5.hide()
+s0.init({ src: p5.canvas })
+
+// a page of nine crystals, each grown through its own weather
+snowflake.plate(p5)
+
+// or one crystal with its own life story: a plate that meets damp air and grows ferns
+f = snowflake(p5, { climate: ['plate', { habit: 'fern', at: 0.3 }], life: 'cycle' })
+p5.draw = () => { snowflake.backdrop(p5); f.draw() }
+
+// or snow falling over a hydra sky
+snowflake.snowfall(p5, { background: false })
+
+src(s0).out()
+```
+
+The habits are `plate`, `sectored`, `broad`, `stellar`, `dendrite`, `fern`, `feather`, `needle`, `thick`, and `bentley` (the default), which writes a random life story from the seed. The weather values themselves (`rho` for the vapour, `beta`, `alpha` and so on) are read every frame, so a function such as `{ rho: (t) => 0.4 + 0.2 * Math.sin(t) }` or `{ rho: () => 0.36 + a.fft[0] * 0.35 }` changes the weather while the crystal grows, and every arm records it. The other options work like `radiolaria()`'s: `life`, `grow`, `cycle`, `palette` and so on. All of them are listed at the top of [`public/extensions/p5-forms/snowflake.js`](public/extensions/p5-forms/snowflake.js). Examples 12 to 16 in `sketches/examples/p5` show a page, an endless life cycle, pulsing weather in a feedback loop, snowfall and audio-reactive growth. A crystal takes a few seconds to compute; a lower `resolution` makes it faster and coarser.
+
 ```javascript
 // Initialize a new p5 instance It is only necessary to call this once
 p5 = new P5() // {width: window.innerWidth, height:window.innerHeight, mode: 'P2D'}
