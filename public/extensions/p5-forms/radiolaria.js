@@ -1052,27 +1052,43 @@
     return new Specimen(resolveP5(p), options)
   }
 
+  // painted once into an offscreen canvas, then copied every frame
+  const backdrops = new WeakMap() // p5 instance -> { key, canvas }
   radiolaria.backdrop = (p, { palette = 'haeckel', grain = 1, vignette = 1 } = {}) => {
     p = resolveP5(p)
-    const pal = getPalette(palette)
     const ctx = p.drawingContext
-    const w = p.width
-    const h = p.height
+    const w = ctx.canvas.width
+    const h = ctx.canvas.height
+    const key = [JSON.stringify(palette), grain, vignette, w, h].join('|')
+    let cached = backdrops.get(p)
+    if (!cached || cached.key !== key) {
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      const c = canvas.getContext('2d')
+      const pal = getPalette(palette)
+      c.fillStyle = pal.bg
+      c.fillRect(0, 0, w, h)
+      if (vignette > 0) {
+        const g = c.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.15, w / 2, h / 2, Math.max(w, h) * 0.75)
+        g.addColorStop(0, `rgba(255, 255, 255, ${0.05 * vignette})`)
+        g.addColorStop(1, `rgba(0, 0, 0, ${0.5 * vignette})`)
+        c.fillStyle = g
+        c.fillRect(0, 0, w, h)
+      }
+      if (grain > 0) {
+        c.globalAlpha = Math.min(1, grain)
+        c.fillStyle = grainPattern(c)
+        c.fillRect(0, 0, w, h)
+      }
+      cached = { key, canvas }
+      backdrops.set(p, cached)
+    }
     ctx.save()
-    ctx.fillStyle = pal.bg
-    ctx.fillRect(0, 0, w, h)
-    if (vignette > 0) {
-      const g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.15, w / 2, h / 2, Math.max(w, h) * 0.75)
-      g.addColorStop(0, `rgba(255, 255, 255, ${0.05 * vignette})`)
-      g.addColorStop(1, `rgba(0, 0, 0, ${0.5 * vignette})`)
-      ctx.fillStyle = g
-      ctx.fillRect(0, 0, w, h)
-    }
-    if (grain > 0) {
-      ctx.globalAlpha = Math.min(1, grain)
-      ctx.fillStyle = grainPattern(ctx)
-      ctx.fillRect(0, 0, w, h)
-    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.globalAlpha = 1
+    ctx.globalCompositeOperation = 'copy'
+    ctx.drawImage(cached.canvas, 0, 0)
     ctx.restore()
   }
 

@@ -1,4 +1,4 @@
-// A turning cage on a transparent canvas, folded and trailed by hydra feedback.
+// A turning cage leaving ghostly trails in a hydra feedback loop.
 p5 = new P5()
 p5.hide()
 s0.init({ src: p5.canvas })
@@ -16,13 +16,15 @@ cage = radiolaria(p5, {
 })
 
 p5.draw = () => {
-  p5.clear() // transparent, so hydra only gets the skeleton
+  p5.background(0)
   cage.draw()
 }
 
-src(o0)
-  .scale(1.008)
-  .rotate(0.003)
-  .color(0.96, 0.97, 1)
-  .layer(src(s0).kaleid(6).luma(0.1))
+// the cage plus a slowly zooming, cooling copy of the last frame
+src(s0)
+  .add(src(o0)
+    .scale(1.006)
+    .rotate(0.001)
+    .modulate(noise(2, 0.05), 0.003)
+    .color(0.8, 0.88, 0.97), 0.85)
   .out()

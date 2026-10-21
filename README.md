@@ -161,6 +161,27 @@ pb.list()
 
 p5.js (1.x) is bundled with the editor, so it works offline. Running `new P5()` again (for example when a sketch file is saved in live mode) replaces the previous p5 canvas; pass `{ keep: true }` to keep both. Example sketches combining the two are in [`sketches/examples/p5`](sketches/examples/p5): p5 as a source, text as a mask, particles in a feedback loop, 3D with `WEBGL`, audio-reactive, and p5 as a mouse/keyboard controller. In VS Code they are also under `Hydra: Insert example`, and `p5.` autocompletes with p5's own types.
 
+### Growing radiolarians
+
+`radiolaria()` draws growing radiolarian skeletons on a p5 canvas, after the Stephoidea plate of Ernst Haeckel's *Kunstformen der Natur*: spiny rings, lattice spheres, cages, thorny branching arms, and yellow symbionts around a red capsule. It loads automatically the first time a sketch uses it.
+
+```javascript
+p5 = new P5()
+p5.hide()
+s0.init({ src: p5.canvas })
+
+// a whole plate of the six forms: ring, cage, lattice, bush, star, basket
+radiolaria.plate(p5)
+
+// or one specimen, drawn from your own p5.draw
+r = radiolaria(p5, { form: 'cage', rings: 4, life: 'cycle', palette: 'cyanotype' })
+p5.draw = () => { radiolaria.backdrop(p5, { palette: 'cyanotype' }); r.draw() }
+
+src(s0).out()
+```
+
+Specimens grow from nothing (`life: 'grow'`), live through endless variations (`'cycle'`) or appear fully grown (`'still'`); their spines sway and the 3D forms turn. Every option can be a function of time, such as `{ arms: (t) => 6 + 4 * Math.sin(t / 5) }` or `{ spineLength: () => 0.5 + a.fft[0] }`. The skeleton follows the option as it changes. All options are listed at the top of [`public/extensions/p5-forms/radiolaria.js`](public/extensions/p5-forms/radiolaria.js), and examples 7 to 11 in `sketches/examples/p5` show a plate, a single life cycle, feedback trails, evolving shapes and an audio-reactive lattice. If a big canvas gets slow, `glow: 0` is the cheapest thing to turn off.
+
 ```javascript
 // Initialize a new p5 instance It is only necessary to call this once
 p5 = new P5() // {width: window.innerWidth, height:window.innerHeight, mode: 'P2D'}

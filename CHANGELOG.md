@@ -15,6 +15,7 @@
 - `moebius()`, `moebiusColor()` and `.engrave()` picture shaders, after Escher's Möbius Strip I
 - `lissajous()` and `lissajousTable()` picture shaders, after a table of Lissajous figures
 - `chladni()` and `chladniTable()` picture shaders, after Chladni's sound figures
+- `radiolaria()`: growing radiolarian skeletons after Haeckel's Stephoidea plate, drawn with p5 (forms ring, cage, lattice, bush, star and basket), with `radiolaria.plate()` and five p5 + hydra examples; loads automatically and has autocomplete
 - `ink()`: click and drag on the canvas to push the colours around like ink on water, in `push`, `fluid` or `comb` (marbling) mode; loads automatically and has autocomplete
 - the editor works offline: hydra-synth, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
 - bundled example gif and image for the hydra-gif and hydra-src examples

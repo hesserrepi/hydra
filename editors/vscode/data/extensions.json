@@ -87,9 +87,9 @@
     },
     {
       "topic": "p5",
-      "name": "radiolaria-kaleid",
-      "description": "A turning cage on a transparent canvas, folded and trailed by hydra feedback.",
-      "code": "// A turning cage on a transparent canvas, folded and trailed by hydra feedback.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ncage = radiolaria(p5, {\n  form: 'cage',\n  life: 'still',\n  rings: 4,\n  spines: 7,\n  branching: 2,\n  spin: 0.4,\n  // tilt nods back and forth: any option can be a function of time (seconds)\n  tilt: (t) => 0.35 + 0.3 * Math.sin(t * 0.3),\n  glow: 0.6\n})\n\np5.draw = () => {\n  p5.clear() // transparent, so hydra only gets the skeleton\n  cage.draw()\n}\n\nsrc(o0)\n  .scale(1.008)\n  .rotate(0.003)\n  .color(0.96, 0.97, 1)\n  .layer(src(s0).kaleid(6).luma(0.1))\n  .out()\n"
+      "name": "radiolaria-trails",
+      "description": "A turning cage leaving ghostly trails in a hydra feedback loop.",
+      "code": "// A turning cage leaving ghostly trails in a hydra feedback loop.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ncage = radiolaria(p5, {\n  form: 'cage',\n  life: 'still',\n  rings: 4,\n  spines: 7,\n  branching: 2,\n  spin: 0.4,\n  // tilt nods back and forth: any option can be a function of time (seconds)\n  tilt: (t) => 0.35 + 0.3 * Math.sin(t * 0.3),\n  glow: 0.6\n})\n\np5.draw = () => {\n  p5.background(0)\n  cage.draw()\n}\n\n// the cage plus a slowly zooming, cooling copy of the last frame\nsrc(s0)\n  .add(src(o0)\n    .scale(1.006)\n    .rotate(0.001)\n    .modulate(noise(2, 0.05), 0.003)\n    .color(0.8, 0.88, 0.97), 0.85)\n  .out()\n"
     },
     {
       "topic": "p5",
