@@ -27,6 +27,13 @@
       "author": "hesserrepi",
       "homepage": "https://github.com/hesserrepi/hydra/tree/main/public/extensions/effects",
       "license": "AGPL-3.0"
+    },
+    {
+      "id": "p5-forms",
+      "name": "p5 forms",
+      "author": "hesserrepi",
+      "homepage": "https://github.com/hesserrepi/hydra/tree/main/public/extensions/p5-forms",
+      "license": "AGPL-3.0"
     }
   ],
   "sketches": [
@@ -65,6 +72,36 @@
       "name": "p5-as-controller",
       "description": "p5 as a controller: its mouse and keyboard state drive hydra parameters.",
       "code": "// p5 as a controller: its mouse and keyboard state drive hydra parameters.\n// Nothing is drawn with p5 here; it only reads input.\np5 = new P5()\np5.hide()\n\nshapeSides = 3 // global, so the blocks below can be re-run on their own\np5.keyPressed = () => {\n  if (p5.key >= '1' && p5.key <= '9') shapeSides = Number(p5.key) + 2\n}\n\nshape(() => shapeSides, 0.3, 0.01)\n  .repeat(3, 3)\n  .rotate(() => p5.mouseX / p5.width * Math.PI * 2)\n  .modulate(noise(2, 0.1), () => p5.mouseY / p5.height * 0.5)\n  .color(() => p5.mouseIsPressed ? 1 : 0.2, 0.6, 1)\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "radiolaria-plate",
+      "description": "A plate of growing radiolarians after Haeckel, drawn by p5 and softly bloomed by hydra.",
+      "code": "// A plate of growing radiolarians after Haeckel, drawn by p5 and softly bloomed by hydra.\n// radiolaria() loads automatically; its options are documented in\n// public/extensions/p5-forms/radiolaria.js. Run again to regrow.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nplate = radiolaria.plate(p5, {\n  // the six forms, in reading order; an entry can also be an options object\n  forms: ['bush', 'lattice', 'ring', 'cage', 'star', 'basket'],\n  seed: 3,\n  grow: 14, // seconds to grow up\n  stagger: 2 // seconds between one specimen and the next starting to grow\n})\n\n// a little bloom: the plate over a blurred, brightened copy of itself\nsrc(s0)\n  .add(src(s0).scale(1.01).blend(o0, 0.6).brightness(-0.15), 0.35)\n  .out()\n\n// try: plate.reseed(), plate.set({ palette: 'cyanotype' }), plate.set({ life: 'cycle', cycle: 30 })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "radiolaria-specimen",
+      "description": "One radiolarian living through its cycles: it grows, sways, dissolves and regrows as a new variation.",
+      "code": "// One radiolarian living through its cycles: it grows, sways, dissolves and regrows as a new variation.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nr = radiolaria(p5, {\n  form: 'bush',\n  size: 0.46,\n  life: 'cycle', // 'grow' once, 'cycle' forever, or 'still' (fully grown)\n  grow: 15,\n  cycle: 45,\n  arms: 11,\n  branching: 3, // levels of side branches\n  thorns: 5,\n  droop: 0.8, // longer arms hanging down\n  symbionts: 60\n})\n\np5.draw = () => {\n  radiolaria.backdrop(p5)\n  r.draw()\n}\n\n// hydra adds a slow watery wobble\nsrc(s0)\n  .modulate(noise(1.5, 0.05), 0.008)\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "radiolaria-kaleid",
+      "description": "A turning cage on a transparent canvas, folded and trailed by hydra feedback.",
+      "code": "// A turning cage on a transparent canvas, folded and trailed by hydra feedback.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ncage = radiolaria(p5, {\n  form: 'cage',\n  life: 'still',\n  rings: 4,\n  spines: 7,\n  branching: 2,\n  spin: 0.4,\n  // tilt nods back and forth: any option can be a function of time (seconds)\n  tilt: (t) => 0.35 + 0.3 * Math.sin(t * 0.3),\n  glow: 0.6\n})\n\np5.draw = () => {\n  p5.clear() // transparent, so hydra only gets the skeleton\n  cage.draw()\n}\n\nsrc(o0)\n  .scale(1.008)\n  .rotate(0.003)\n  .color(0.96, 0.97, 1)\n  .layer(src(s0).kaleid(6).luma(0.1))\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "radiolaria-evolve",
+      "description": "Evolving forms: options given as functions of time make the skeleton change shape as it lives.",
+      "code": "// Evolving forms: options given as functions of time make the skeleton change shape as it lives.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nswing = (t, period, lo, hi) => lo + (hi - lo) * (0.5 + 0.5 * Math.sin(t * 2 * Math.PI / period))\n\nleft = radiolaria(p5, {\n  form: 'ring',\n  x: 0.28,\n  size: 0.3,\n  life: 'still',\n  rings: (t) => Math.round(swing(t, 40, 1, 4)), // rings are added and taken away\n  spines: (t) => Math.round(swing(t, 25, 8, 20)),\n  spineLength: (t) => swing(t, 13, 0.6, 1.4),\n  curl: (t) => swing(t, 17, -0.4, 1.2)\n})\n\nright = radiolaria(p5, {\n  form: 'star',\n  x: 0.72,\n  size: 0.3,\n  life: 'still',\n  blades: (t) => Math.round(swing(t, 30, 10, 26)),\n  bladeWidth: (t) => swing(t, 11, 0.5, 1.6),\n  teeth: (t) => Math.round(swing(t, 19, 0, 8)),\n  palette: 'gilded'\n})\n\np5.draw = () => {\n  radiolaria.backdrop(p5, { palette: 'gilded' })\n  left.draw()\n  right.draw()\n}\n\nsrc(s0).out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "radiolaria-audio",
+      "description": "Audio-reactive lattice: the bass pushes the spines out, the mids make it swell and the highs make it glow.",
+      "code": "// Audio-reactive lattice: the bass pushes the spines out, the mids make it swell and the highs make it glow.\n// The browser asks for microphone access the first time.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\na.setBins(4)\na.setSmooth(0.85)\n\nsphere = radiolaria(p5, {\n  form: 'lattice',\n  life: 'still',\n  spines: 40,\n  spineLength: () => 0.3 + a.fft[0] * 1.5,\n  size: () => 0.36 + a.fft[1] * 0.08,\n  glow: () => 0.5 + a.fft[2] * 2,\n  spin: 0.25,\n  palette: 'neon'\n})\n\np5.draw = () => {\n  radiolaria.backdrop(p5, { palette: 'neon', grain: 0.4 })\n  sphere.draw()\n}\n\nsrc(s0)\n  .blend(src(o0).scale(1.02), 0.5)\n  .out()\n"
     }
   ],
   "extensions": [
@@ -1585,6 +1622,24 @@
         ],
         "methods": [
           "ink"
+        ]
+      }
+    },
+    {
+      "id": "p5-forms/radiolaria",
+      "collection": "p5-forms",
+      "name": "radiolaria",
+      "author": "hesserrepi",
+      "documentation": "https://github.com/hesserrepi/hydra/blob/main/public/extensions/p5-forms/radiolaria.js",
+      "description": "Growing radiolarian skeletons after Haeckel's Stephoidea plate, drawn with p5: spiny rings, lattice spheres, cages, thorny arms, symbionts around a red capsule. Six forms, every option can change over time.",
+      "examples": [
+        "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\nradiolaria.plate(p5)\nsrc(s0).out()",
+        "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\nr = radiolaria(p5, { form: 'bush', life: 'cycle', size: 0.45 })\np5.draw = () => { radiolaria.backdrop(p5); r.draw() }\nsrc(s0).modulate(noise(2, 0.1), 0.01).out()"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "radiolaria"
         ]
       }
     }
