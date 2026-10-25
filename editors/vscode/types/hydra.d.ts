@@ -508,6 +508,51 @@ interface HydraSource {
    */
   engrave(lines?: HydraParam, angle?: HydraParam, soft?: HydraParam, keep?: HydraParam): HydraSource
   /**
+   * grain: color transform (effects/grain, loaded automatically)
+   * @param amount default 0.1
+   * @param fps default 30
+   * @param size default 1
+   * @param seed default 0
+   * @see extensions/effects/hydra-grain.js
+   */
+  grain(amount?: HydraParam, fps?: HydraParam, size?: HydraParam, seed?: HydraParam): HydraSource
+  /**
+   * chromaGrain: color transform (effects/grain, loaded automatically)
+   * @param amount default 0.1
+   * @param fps default 30
+   * @param size default 1
+   * @param seed default 0
+   * @see extensions/effects/hydra-grain.js
+   */
+  chromaGrain(amount?: HydraParam, fps?: HydraParam, size?: HydraParam, seed?: HydraParam): HydraSource
+  /**
+   * filmGrain: color transform (effects/grain, loaded automatically)
+   * @param amount default 0.12
+   * @param fps default 30
+   * @param size default 1
+   * @param seed default 0
+   * @see extensions/effects/hydra-grain.js
+   */
+  filmGrain(amount?: HydraParam, fps?: HydraParam, size?: HydraParam, seed?: HydraParam): HydraSource
+  /**
+   * textureTile: coordinate transform (effects/grain, loaded automatically)
+   * @param repeatX default 1
+   * @param repeatY default 1
+   * @param mirror default 0
+   * @param fps default 0
+   * @param shift default 0
+   * @param seed default 0
+   * @see extensions/effects/hydra-grain.js
+   */
+  textureTile(repeatX?: HydraParam, repeatY?: HydraParam, mirror?: HydraParam, fps?: HydraParam, shift?: HydraParam, seed?: HydraParam): HydraSource
+  /**
+   * textureBlend: blends in another texture (effects/grain, loaded automatically)
+   * @param mode default 4
+   * @param amount default 1
+   * @see extensions/effects/hydra-grain.js
+   */
+  textureBlend(texture: HydraTexture, mode?: HydraParam, amount?: HydraParam): HydraSource
+  /**
    * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
    * From hyper-hydra/arithmetics, loaded automatically.
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
@@ -2149,6 +2194,12 @@ interface HydraSource {
    * @see extensions/effects/hydra-ink.js
    */
   ink(mode?: InkMode | InkOptions, options?: InkOptions): HydraSource
+  /**
+   * Grain and paper textures after p5.grain, as shaders: monochromatic, chromatic and film grain, paper, canvas weave and film dust, and textureOverlay() to blend any texture or image over a source.
+   * From effects/grain, loaded automatically.
+   * @see extensions/effects/hydra-grain.js
+   */
+  textureOverlay(texture: HydraTexture, mode?: TextureMode | string | TextureOverlayOptions): HydraSource
 }
 
 /** An output buffer: o0, o1, o2, o3. */
@@ -2798,6 +2849,33 @@ declare function chladni(n?: HydraParam, m?: HydraParam, sym?: HydraParam, thick
  * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/picture-shaders/lib-chladni.js
  */
 declare function chladniTable(cols?: HydraParam, rows?: HydraParam, seed?: HydraParam, speed?: HydraParam): HydraSource
+/**
+ * paper: source (effects/grain, loaded automatically)
+ * @param scale default 1
+ * @param fibers default 0.35
+ * @param roughness default 0.5
+ * @param tone default 0.94
+ * @see extensions/effects/hydra-grain.js
+ */
+declare function paper(scale?: HydraParam, fibers?: HydraParam, roughness?: HydraParam, tone?: HydraParam): HydraSource
+/**
+ * weave: source (effects/grain, loaded automatically)
+ * @param threads default 120
+ * @param irregular default 0.5
+ * @param depth default 0.5
+ * @param tone default 0.95
+ * @see extensions/effects/hydra-grain.js
+ */
+declare function weave(threads?: HydraParam, irregular?: HydraParam, depth?: HydraParam, tone?: HydraParam): HydraSource
+/**
+ * dust: source (effects/grain, loaded automatically)
+ * @param amount default 0.3
+ * @param fps default 12
+ * @param scratches default 0.5
+ * @param seed default 0
+ * @see extensions/effects/hydra-grain.js
+ */
+declare function dust(amount?: HydraParam, fps?: HydraParam, scratches?: HydraParam, seed?: HydraParam): HydraSource
 /**
  * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
  * From hyper-hydra/arithmetics, loaded automatically.
@@ -3805,6 +3883,18 @@ declare const ink: {
   (source: HydraTexture, mode?: InkMode | InkOptions, options?: InkOptions): HydraSource
   /** Undo every deformation, or only the layer with this id. */
   reset(id?: string): void
+}
+type TextureMode = 'blend' | 'darkest' | 'lightest' | 'difference' | 'multiply' | 'exclusion' | 'screen' |
+  'replace' | 'overlay' | 'hardLight' | 'softLight' | 'dodge' | 'burn' | 'add'
+/** Options of textureOverlay(), after p5.grain's textureOverlay config. See public/extensions/effects/hydra-grain.js. */
+interface TextureOverlayOptions {
+  mode?: TextureMode | string
+  amount?: HydraParam
+  width?: number | (() => number)
+  height?: number | (() => number)
+  scale?: number | (() => number)
+  reflect?: boolean
+  animate?: boolean | { fps?: HydraParam, amount?: HydraParam, atFrame?: number }
 }
 type RadiolariaForm = 'ring' | 'cage' | 'lattice' | 'bush' | 'star' | 'basket'
 type RadiolariaPaletteName = 'haeckel' | 'cyanotype' | 'gilded' | 'ink' | 'neon'

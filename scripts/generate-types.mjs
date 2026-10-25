@@ -21,9 +21,9 @@ const importSource = (p) => import(dataURL(p))
 const glslFunctions = (await importSource('node_modules/hydra-synth/src/glsl/glsl-functions.js')).default()
 const { extensions, collections } = await importSource('src/extensions/registry.js')
 
-// extra shaders and picture shaders are plain setFunction() calls: run them against a stub to read their definitions
+// extra shaders, picture shaders and the grain effect are plain setFunction() calls: run them against a stub to read their definitions
 const shaderDefs = new Map() // name -> { def, ext }
-for (const ext of extensions.filter((e) => e.collection === 'extra-shaders' || e.collection === 'picture-shaders')) {
+for (const ext of extensions.filter((e) => e.collection === 'extra-shaders' || e.collection === 'picture-shaders' || e.id === 'effects/grain')) {
   const defs = []
   vm.runInNewContext(read(`public/extensions/${ext.file}`), { setFunction: (def) => defs.push(def), window: {}, console })
   defs.forEach((def) => { if (!shaderDefs.has(def.name)) shaderDefs.set(def.name, { def, ext }) })
@@ -170,12 +170,27 @@ interface InkOptions {
   button?: 0 | 1 | 2
   key?: 'shift' | 'alt' | 'ctrl' | 'meta'
   id?: string
+}`,
+  grain: `type TextureMode = 'blend' | 'darkest' | 'lightest' | 'difference' | 'multiply' | 'exclusion' | 'screen' |
+  'replace' | 'overlay' | 'hardLight' | 'softLight' | 'dodge' | 'burn' | 'add'
+/** Options of textureOverlay(), after p5.grain's textureOverlay config. See public/extensions/effects/hydra-grain.js. */
+interface TextureOverlayOptions {
+  mode?: TextureMode | string
+  amount?: HydraParam
+  width?: number | (() => number)
+  height?: number | (() => number)
+  scale?: number | (() => number)
+  reflect?: boolean
+  animate?: boolean | { fps?: HydraParam, amount?: HydraParam, atFrame?: number }
 }`
 }
 const effectSignatures = {
   ink: {
     global: `declare const ink: {\n  (source: HydraTexture, mode?: InkMode | InkOptions, options?: InkOptions): HydraSource\n  /** Undo every deformation, or only the layer with this id. */\n  reset(id?: string): void\n}`,
     method: `  ink(mode?: InkMode | InkOptions, options?: InkOptions): HydraSource`
+  },
+  textureOverlay: {
+    method: `  textureOverlay(texture: HydraTexture, mode?: TextureMode | string | TextureOverlayOptions): HydraSource`
   }
 }
 for (const ext of extensions.filter((e) => e.collection === 'effects')) {

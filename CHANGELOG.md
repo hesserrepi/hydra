@@ -18,6 +18,7 @@
 - `radiolaria()`: growing radiolarian skeletons after Haeckel's Stephoidea plate, drawn with p5 (forms ring, cage, lattice, bush, star and basket), with `radiolaria.plate()` and five p5 + hydra examples; loads automatically and has autocomplete
 - `snowflake()`: snow crystals grown by a vapour-diffusion simulation after Wilson Bentley's photomicrographs (habits plate, sectored, broad, stellar, dendrite, fern, feather, needle, thick, or a random life story), with weather that can change while they grow, `snowflake.plate()`, `snowflake.snowfall()` and five p5 + hydra examples; loads automatically and has autocomplete
 - `ink()`: click and drag on the canvas to push the colours around like ink on water, in `push`, `fluid` or `comb` (marbling) mode; loads automatically and has autocomplete
+- grain and textures after [p5.grain](https://github.com/meezwhite/p5.grain), as hydra shaders that need no p5: `.grain()`, `.chromaGrain()` and `.filmGrain()` on any source, `paper()`, `weave()` and `dust()` textures, and `.textureOverlay(texture, mode)` to tile an image or blend any source over a picture with p5's blend modes; four examples in `sketches/examples/grain`; loads automatically and has autocomplete
 - the editor works offline: hydra-synth, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
 - bundled example gif and image for the hydra-gif and hydra-src examples
 

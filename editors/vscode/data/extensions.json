@@ -38,6 +38,30 @@
   ],
   "sketches": [
     {
+      "topic": "grain",
+      "name": "grain-basics",
+      "description": "Grain on any hydra source, after p5.grain, without p5.",
+      "code": "// Grain on any hydra source, after p5.grain, without p5.\n// grain() is applyMonochromaticGrain, chromaGrain() is applyChromaticGrain.\n// The amount is 0..1, or p5.grain's 0..255 scale when above 1: grain(42).\n// All grain functions load automatically; see public/extensions/effects/hydra-grain.js.\nosc(8, 0.05, 1.2)\n  .kaleid(5)\n  .grain(0.12) // amount, fps (new grain per second, 0 = still), size in pixels, seed\n  .out(o0)\n\nnoise(3, 0.1)\n  .color(1, 0.6, 0.3)\n  .chromaGrain(42, 0) // p5.grain's applyChromaticGrain(42), standing still\n  .out(o1)\n\ngradient(0.3)\n  .filmGrain(0.15, 24, 1.5) // softer grain that shows most in the mid tones\n  .out(o2)\n\nshape(5, 0.4, 0.02)\n  .color(0.9, 0.4, 0.3)\n  .textureOverlay(paper())\n  .grain(() => 0.05 + 0.05 * Math.sin(time))\n  .out(o3)\n\nrender()\n"
+    },
+    {
+      "topic": "grain",
+      "name": "paper-and-canvas",
+      "description": "Procedural textures to lay over a picture: paper(), weave() (canvas, linen) and dust().",
+      "code": "// Procedural textures to lay over a picture: paper(), weave() (canvas, linen) and dust().\n// They are greyscale around white, so the default 'multiply' mode darkens the\n// picture only where the texture has detail.\nosc(4, 0.03, 0.9)\n  .kaleid(3)\n  .color(0.9, 0.6, 0.4)\n  .textureOverlay(paper(1, 0.5, 0.8)) // scale, fibers, roughness, tone\n  .textureOverlay(weave(140, 0.6, 0.6), { mode: 'softLight', amount: 0.7 })\n  .textureOverlay(dust(0.3, 12, 0.4))\n  .filmGrain(0.08)\n  .out()\n"
+    },
+    {
+      "topic": "grain",
+      "name": "image-texture",
+      "description": "textureOverlay() with your own texture image, like p5.grain's textureOverlay():",
+      "code": "// textureOverlay() with your own texture image, like p5.grain's textureOverlay():\n// the image is tiled at its own size. Put the file in public/ (or use any URL)\n// and change the name below. Without an image this shows the shape untextured.\ns0.initImage('my-texture.jpg')\n\nshape(4, 0.6, 0.01)\n  .color(0.2, 0.35, 0.8)\n  .textureOverlay(s0, {\n    mode: 'multiply',   // or p5's names: MULTIPLY, 'soft-light', DODGE, ...\n    reflect: true,      // mirror every other tile so the edges meet\n    animate: { fps: 12 } // jump to a random place 12 times a second (p5.grain: { atFrame: 5 })\n  })\n  .grain(0.06)\n  .out()\n"
+    },
+    {
+      "topic": "grain",
+      "name": "grain-feedback",
+      "description": "Grain inside feedback builds up like a mezzotint; keep the amount small.",
+      "code": "// Grain inside feedback builds up like a mezzotint; keep the amount small.\n// Grain that stands still (fps 0) turns into a fixed texture, moving grain into a shimmer.\nsrc(o0)\n  .scale(1.005)\n  .rotate(0.002)\n  .blend(osc(20, 0.05, 1.3).mask(shape(3, 0.3, 0.2)), 0.08)\n  .grain(0.02, 30)\n  .textureOverlay(paper(2), { amount: 0.05 })\n  .out()\n"
+    },
+    {
       "topic": "p5",
       "name": "p5-as-source",
       "description": "p5 as a hydra source: p5 draws, hydra transforms.",
@@ -1652,6 +1676,35 @@
         ],
         "methods": [
           "ink"
+        ]
+      }
+    },
+    {
+      "id": "effects/grain",
+      "collection": "effects",
+      "name": "hydra-grain",
+      "author": "hesserrepi",
+      "documentation": "extensions/effects/hydra-grain.js",
+      "description": "Grain and paper textures after p5.grain, as shaders: monochromatic, chromatic and film grain, paper, canvas weave and film dust, and textureOverlay() to blend any texture or image over a source.",
+      "examples": [
+        "osc(8, 0.05, 1.2)\n  .kaleid(5)\n  .grain(0.12)\n  .out()",
+        "gradient(0.5)\n  .color(1, 0.7, 0.4)\n  .textureOverlay(paper(), 'multiply')\n  .filmGrain(0.1, 24, 1.5)\n  .out()",
+        "shape(4, 0.5, 0.01)\n  .color(0.2, 0.3, 0.8)\n  .textureOverlay(weave(), { mode: 'softLight' })\n  .textureOverlay(dust(0.4))\n  .chromaGrain(0.05)\n  .out()"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "paper",
+          "weave",
+          "dust"
+        ],
+        "methods": [
+          "grain",
+          "chromaGrain",
+          "filmGrain",
+          "textureOverlay",
+          "textureBlend",
+          "textureTile"
         ]
       }
     },
