@@ -1,0 +1,21 @@
+{
+  "name": "silent-pulse",
+  "description": "No microphone needed: a test level pulses every 1.2 seconds, so the lifecycle, the spacing and the overflow can be watched without any sound.",
+  "swarm": {
+    "level": "pulse",
+    "period": 1.2,
+    "threshold": 0.6,
+    "rearm": 0.45,
+    "cooldown": 0.25,
+    "max": 10,
+    "grow": 1.5,
+    "hold": 4,
+    "dissolve": 2,
+    "size": [0.06, 0.14],
+    "punch": 1,
+    "spacing": 0.15,
+    "palette": "neon",
+    "glow": 0.5,
+    "debug": true
+  }
+}

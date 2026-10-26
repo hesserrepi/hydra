@@ -1,0 +1,46 @@
+{
+  "collection": "radiolaria-swarm",
+  "description": "Parameter sets for radiolaria.swarm, loaded with radiolaria.swarm(p5, { preset: '<name>' }) or swarm.load('<name>').",
+  "presets": [
+    {
+      "name": "default",
+      "description": "The starting point: a bass peak grows one medium specimen, which holds for four seconds and dissolves. Up to ten at a time."
+    },
+    {
+      "name": "bass-kick",
+      "description": "One specimen per kick drum: snappy, small, gone again in two seconds, so the canvas follows the beat."
+    },
+    {
+      "name": "gentle",
+      "description": "Few, large and slow: a loud passage opens one specimen over four seconds and keeps it for twelve, like a slide being drawn."
+    },
+    {
+      "name": "storm",
+      "description": "A low threshold and almost no cooldown: the canvas fills with small specimens and the oldest are pushed out while they are still alive."
+    },
+    {
+      "name": "highs-sparkle",
+      "description": "Watches the top bin, so hi-hats and consonants put small bright skeletons near the edges."
+    },
+    {
+      "name": "mids-bloom",
+      "description": "Follows voices and leads in the mid bin, with thorny bushes and baskets that unfold slowly and overlap."
+    },
+    {
+      "name": "sparse-plate",
+      "description": "Only four at a time, well apart and held for a long time: the specimens read as a plate being filled in rather than as a reaction."
+    },
+    {
+      "name": "ink-drops",
+      "description": "Dark engraved rings and stars on paper, one per peak, with no glow, so it layers well under hydra feedback."
+    },
+    {
+      "name": "silent-pulse",
+      "description": "No microphone needed: a test level pulses every 1.2 seconds, so the lifecycle, the spacing and the overflow can be watched without any sound."
+    },
+    {
+      "name": "silent-mouse",
+      "description": "No microphone needed: the mouse's x position is the level, so a peak can be played by hand to find a threshold that feels right."
+    }
+  ]
+}

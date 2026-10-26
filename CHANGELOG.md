@@ -1,6 +1,7 @@
 # Changelog
 # [Unreleased]
 ## Added
+- `radiolaria.swarm()`: spawns a radiolarian at a random free position on each audio peak, with a lifecycle and JSON parameter presets (examples 17-18)
 - bundled [hyper-hydra](https://github.com/geikha/hyper-hydra) and [extra-shaders-for-hydra](https://gitlab.com/metagrowing/extra-shaders-for-hydra) extensions, which load automatically the first time a sketch uses one of their functions
 - `hyper-hydra` and `extra shaders` tabs in the extensions window
 - `loadScript` calls to these extensions' usual URLs use the bundled copies

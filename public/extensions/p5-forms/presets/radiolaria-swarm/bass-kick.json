@@ -1,0 +1,22 @@
+{
+  "name": "bass-kick",
+  "description": "One specimen per kick drum: snappy, small, gone again in two seconds, so the canvas follows the beat.",
+  "audio": { "bins": 4, "cutoff": 3, "scale": 8, "smooth": 0.6 },
+  "swarm": {
+    "bin": 0,
+    "threshold": 0.5,
+    "rearm": 0.3,
+    "cooldown": 0.12,
+    "max": 14,
+    "grow": 0.4,
+    "hold": 0.6,
+    "dissolve": 1,
+    "size": [0.05, 0.09],
+    "punch": 1.2,
+    "spacing": 0.12,
+    "forms": ["star", "ring", "cage"],
+    "palette": "neon",
+    "glow": 0.4,
+    "grain": 0.3
+  }
+}

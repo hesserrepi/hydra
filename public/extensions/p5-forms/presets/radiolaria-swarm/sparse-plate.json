@@ -1,0 +1,24 @@
+{
+  "name": "sparse-plate",
+  "description": "Only four at a time, well apart and held for a long time: the specimens read as a plate being filled in rather than as a reaction.",
+  "audio": { "bins": 4, "cutoff": 3, "scale": 12, "smooth": 0.9 },
+  "swarm": {
+    "bin": 0,
+    "threshold": 0.7,
+    "rearm": 0.4,
+    "cooldown": 3,
+    "max": 4,
+    "overflow": "skip",
+    "grow": 3,
+    "hold": 20,
+    "dissolve": 3,
+    "size": [0.14, 0.2],
+    "punch": 0.3,
+    "margin": 0.2,
+    "spacing": 0.45,
+    "tries": 24,
+    "palette": "haeckel",
+    "glow": 1,
+    "grain": 0.6
+  }
+}

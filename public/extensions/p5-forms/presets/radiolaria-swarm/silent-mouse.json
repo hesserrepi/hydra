@@ -1,0 +1,20 @@
+{
+  "name": "silent-mouse",
+  "description": "No microphone needed: the mouse's x position is the level, so a peak can be played by hand to find a threshold that feels right.",
+  "swarm": {
+    "level": "mouse",
+    "threshold": 0.6,
+    "rearm": 0.45,
+    "cooldown": 0.25,
+    "max": 10,
+    "grow": 1.5,
+    "hold": 4,
+    "dissolve": 2,
+    "size": [0.06, 0.14],
+    "punch": 1,
+    "spacing": 0.15,
+    "palette": "neon",
+    "glow": 0.5,
+    "debug": true
+  }
+}

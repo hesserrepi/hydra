@@ -1,0 +1,25 @@
+{
+  "name": "default",
+  "description": "The starting point: a bass peak grows one medium specimen, which holds for four seconds and dissolves. Up to ten at a time.",
+  "audio": { "bins": 4, "cutoff": 2, "scale": 10, "smooth": 0.85 },
+  "swarm": {
+    "bin": 0,
+    "threshold": 0.6,
+    "rearm": 0.45,
+    "cooldown": 0.25,
+    "max": 10,
+    "overflow": "retire",
+    "grow": 1.5,
+    "hold": 4,
+    "dissolve": 2,
+    "size": [0.06, 0.14],
+    "punch": 1,
+    "margin": 0.1,
+    "spacing": 0.15,
+    "tries": 10,
+    "palette": "neon",
+    "glow": 0.5,
+    "background": true,
+    "grain": 0.4
+  }
+}
