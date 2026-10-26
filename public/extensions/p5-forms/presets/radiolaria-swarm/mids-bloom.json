@@ -1,0 +1,22 @@
+{
+  "name": "mids-bloom",
+  "description": "Follows voices and leads in the mid bin, with thorny bushes and baskets that unfold slowly and overlap.",
+  "audio": { "bins": 4, "cutoff": 2, "scale": 10, "smooth": 0.8 },
+  "swarm": {
+    "bin": 2,
+    "threshold": 0.5,
+    "rearm": 0.32,
+    "cooldown": 0.6,
+    "max": 8,
+    "grow": 2.5,
+    "hold": 6,
+    "dissolve": 3,
+    "size": [0.1, 0.18],
+    "punch": 0.7,
+    "spacing": 0.22,
+    "forms": ["bush", "basket", "lattice"],
+    "palette": "gilded",
+    "glow": 0.7,
+    "grain": 0.45
+  }
+}

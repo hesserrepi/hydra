@@ -1,0 +1,22 @@
+{
+  "name": "ink-drops",
+  "description": "Dark engraved rings and stars on paper, one per peak, with no glow, so it layers well under hydra feedback.",
+  "audio": { "bins": 4, "cutoff": 2, "scale": 10, "smooth": 0.75 },
+  "swarm": {
+    "bin": 1,
+    "threshold": 0.55,
+    "rearm": 0.35,
+    "cooldown": 0.4,
+    "max": 9,
+    "grow": 1.2,
+    "hold": 5,
+    "dissolve": 2.5,
+    "size": [0.07, 0.15],
+    "punch": 0.9,
+    "spacing": 0.18,
+    "forms": ["ring", "star", "cage"],
+    "palette": "ink",
+    "glow": 0,
+    "grain": 0.5
+  }
+}

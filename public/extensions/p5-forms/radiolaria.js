@@ -75,6 +75,45 @@
 // layering in hydra), stagger (seconds between specimens starting to grow),
 // plus any specimen option for all of them. It returns { specimens, draw, set, grow, reseed }.
 //
+// radiolaria.swarm(p5, options) spawns a specimen at a random free position
+// every time an audio bin rises past a threshold, holds it, and then dissolves
+// it again, e.g. radiolaria.swarm(p5, { preset: 'default', draw: true }).
+// Parameters (defaults):
+//   bin         which a.fft bin to watch                         0
+//   threshold   spawn when the bin rises past this               0.6
+//   rearm       and only after it has fallen below this           0.45
+//   cooldown    seconds, shortest gap between two spawns          0.25
+//   level       'audio', or the test levels 'pulse', 'sine',
+//               'random', 'mouse', or a function of time         'audio'
+//   period      seconds, for the 'pulse' and 'sine' levels        1.5
+//   max         how many live at once                            10
+//   overflow    'retire' dissolves the oldest, 'skip' ignores     'retire'
+//   grow/hold/dissolve  seconds of one life                      1.5, 4, 2
+//   size        [min, max] radius, or one number                 [0.06, 0.14]
+//   punch       how much a louder peak enlarges it               1
+//   margin      keep this far from the edges                     0.1
+//   spacing     keep this far from the others, if it can         0.15
+//   tries       attempts at a free position before giving up     10
+//   forms       list of form names to pick from                  all six
+//   palette     a palette name or a list to pick from            'neon'
+//   rotate      random rotation                                  true
+//   glow        halo (0 = off, faster with many specimens)       0.5
+//   options     any other specimen options, used for every spawn
+//   seed        which sequence of positions and variations       1
+//   background, grain, vignette  the plate background            true, 0.4, 1
+//   debug       draw a level meter with the threshold on it      false
+//   draw        set p5.draw to this swarm's draw                 false
+//   audio       { bins, cutoff, scale, smooth } applied to `a`
+//   onSpawn     (specimen, loudness) => {}
+// It returns { draw, trigger, set, clear, load, ready, specimens, live,
+// spawned, level, preset, options }. trigger() spawns one by hand;
+// load('name') reads a JSON parameter set and applies it, and { preset: 'name' }
+// does the same at startup (swarm.ready resolves once it is in).
+// Parameter sets live in presets/radiolaria-swarm/*.json next to this file and
+// are listed in presets/radiolaria-swarm/index.json, which radiolaria.loadPresets()
+// returns; radiolaria.loadPreset(name) returns one of them, and a path or URL
+// ending in .json is loaded as given.
+//
 // radiolaria.backdrop(p5, { palette, grain, vignette }) paints the dark plate
 // background. radiolaria.forms lists the form names.
 
@@ -1132,6 +1171,284 @@
     }
     if (draw) p.draw = plate.draw
     return plate
+  }
+
+
+  // ---------------------------------------------------------------- swarm
+  // Spawns a specimen at a random free position whenever an audio bin rises
+  // past a threshold, lets it live for a while and then dissolves it again.
+  // All of its parameters are plain numbers, strings and arrays, so a whole
+  // setting can be kept in a JSON file and loaded with { preset: 'name' }.
+
+  const scriptDir = (() => {
+    try {
+      const src = document.currentScript && document.currentScript.src
+      return src ? src.replace(/[^/]*$/, '') : null
+    } catch (e) { return null }
+  })()
+  const PRESET_DIR = 'presets/radiolaria-swarm/'
+
+  radiolaria.presetURL = (name) => {
+    const n = String(name)
+    if (/^(https?:|\/|\.)/.test(n) || n.endsWith('.json')) return n
+    const base = scriptDir || 'https://cdn.jsdelivr.net/gh/hesserrepi/hydra@main/public/extensions/p5-forms/'
+    return `${base}${PRESET_DIR}${n}.json`
+  }
+  const fetchJSON = (url) => fetch(url).then((r) => {
+    if (!r.ok) throw new Error(`radiolaria: cannot load ${url} (${r.status})`)
+    return r.json()
+  })
+  radiolaria.loadPreset = (name) => fetchJSON(radiolaria.presetURL(name))
+  radiolaria.loadPresets = () => fetchJSON(radiolaria.presetURL('index'))
+
+  const swarmDefaults = {
+    // what counts as a peak
+    bin: 0, // which a.fft bin to watch
+    threshold: 0.6, // spawn when it rises past this
+    rearm: 0.45, // and only after it has fallen back below this
+    cooldown: 0.25, // seconds, the shortest gap between two spawns
+    level: undefined, // 'audio' (the bin), or 'pulse', 'sine', 'random', 'mouse'
+    period: 1.5, // seconds, for the test levels
+    // how many live at once
+    max: 10,
+    overflow: 'retire', // 'retire' dissolves the oldest, 'skip' ignores the peak
+    // one life, in seconds
+    grow: 1.5,
+    hold: 4,
+    dissolve: 2,
+    // how big and where
+    size: [0.06, 0.14], // picked at random, or one number
+    punch: 1, // how much a louder peak enlarges it
+    margin: 0.1, // keep this far from the edges
+    spacing: 0.15, // keep this far from the others, if it can
+    tries: 10, // attempts at a free position before giving up
+    // what is spawned
+    forms: undefined, // a list of form names, default all six
+    palette: 'neon', // a palette name or a list to pick from
+    rotate: true, // random rotation
+    glow: 0.5,
+    options: undefined, // any other specimen options, merged into every spawn
+    seed: 1,
+    // the canvas
+    background: true,
+    grain: 0.4,
+    vignette: 1,
+    debug: false, // draw a level meter with the threshold on it
+    draw: false, // set p5.draw to this swarm's draw
+    audio: undefined, // { bins, cutoff, scale, smooth } applied to hydra's `a`
+    onSpawn: undefined
+  }
+
+  const applyAudio = (audio) => {
+    const a = window.a
+    if (!audio || !a) return
+    if (audio.bins !== undefined && a.setBins) a.setBins(audio.bins)
+    if (audio.cutoff !== undefined && a.setCutoff) a.setCutoff(audio.cutoff)
+    if (audio.scale !== undefined && a.setScale) a.setScale(audio.scale)
+    if (audio.smooth !== undefined && a.setSmooth) a.setSmooth(audio.smooth)
+  }
+
+  radiolaria.swarm = (p, options) => {
+    if (!isP5(p) && options === undefined) { options = p; p = undefined }
+    p = resolveP5(p)
+    const { preset, ...given } = options || {}
+    const opts = { ...swarmDefaults, ...given }
+    applyAudio(opts.audio)
+
+    let members = []
+    let age = 0
+    let last
+    let armed = true
+    let lastSpawn = -1e9
+    let count = 0
+    let level = 0
+
+    // test levels, so a preset can be tried without a microphone
+    const fake = {
+      sine: (t, o) => o.threshold * (1.05 + 0.95 * Math.sin(t * TAU / Math.max(0.1, o.period))),
+      pulse: (t, o) => {
+        const phase = (t % Math.max(0.1, o.period)) / Math.max(0.1, o.period)
+        return o.threshold * 2 * Math.max(0, 1 - phase * 8)
+      },
+      random: (t, o) => o.threshold * (0.6 + 1.2 * (0.5 + 0.5 * wob(11, t * 3))),
+      mouse: () => (p.mouseX || 0) / Math.max(1, p.width)
+    }
+    const read = (o) => {
+      const l = o.level
+      if (typeof l === 'string' && l !== 'audio') {
+        const f = fake[l]
+        if (!f) throw new Error(`radiolaria.swarm: unknown level '${l}', use audio, ${Object.keys(fake).join(', ')}`)
+        return Math.max(0, f(age, o))
+      }
+      if (typeof l === 'function') return value(l, age) || 0
+      const a = window.a
+      const fft = a && a.fft
+      return (fft && fft[Math.max(0, Math.round(o.bin))]) || 0
+    }
+
+    const growthOf = (m) => () => {
+      const t = age - m.born
+      if (m.fadeFrom === null) return t < m.grow ? ease(t / m.grow) : 1
+      return m.fadeAt * (1 - ease((age - m.fadeFrom) / m.dissolve))
+    }
+    const currentG = (m) => {
+      const t = age - m.born
+      if (m.fadeFrom === null) return t < m.grow ? ease(t / m.grow) : 1
+      return m.fadeAt * (1 - ease((age - m.fadeFrom) / m.dissolve))
+    }
+    const retire = (m) => {
+      if (m.fadeFrom !== null) return
+      m.fadeAt = currentG(m)
+      m.fadeFrom = age
+    }
+
+    const place = (o, r) => {
+      const m = Math.min(p.width, p.height)
+      const lo = clamp01(o.margin)
+      const span = Math.max(0, 1 - lo * 2)
+      let best = null
+      let bestGap = -1
+      const tries = Math.max(1, Math.round(o.tries))
+      for (let i = 0; i < tries; i++) {
+        const x = lo + r() * span
+        const y = lo + r() * span
+        let gap = Infinity
+        for (const other of members) {
+          const dx = (x - other.spec.options.x) * p.width / m
+          const dy = (y - other.spec.options.y) * p.height / m
+          gap = Math.min(gap, Math.hypot(dx, dy))
+        }
+        if (gap > bestGap) { bestGap = gap; best = { x, y } }
+        if (gap >= o.spacing) break
+      }
+      return best
+    }
+
+    const spawn = (o, extra = {}) => {
+      const live = members.filter((m) => m.fadeFrom === null)
+      if (live.length >= Math.max(1, Math.round(o.max))) {
+        if (o.overflow === 'skip') return null
+        retire(live[0])
+      }
+      const r = rng(o.seed, 7717, count++)
+      const forms = o.forms && o.forms.length ? o.forms : radiolaria.forms
+      const pals = Array.isArray(o.palette) ? o.palette : [o.palette]
+      const sizes = Array.isArray(o.size) ? o.size : [o.size, o.size]
+      const loud = extra.loudness === undefined ? 0 : extra.loudness
+      const punch = 1 + o.punch * clamp01(loud)
+      const m = {
+        born: age,
+        grow: Math.max(0.01, o.grow),
+        dissolve: Math.max(0.01, o.dissolve),
+        hold: Math.max(0, o.hold),
+        fadeFrom: null,
+        fadeAt: 1,
+        spec: null
+      }
+      const pos = place(o, r) || { x: 0.5, y: 0.5 }
+      m.spec = new Specimen(p, {
+        form: forms[Math.floor(r() * forms.length) % forms.length],
+        palette: pals[Math.floor(r() * pals.length) % pals.length],
+        seed: Math.floor(r() * 1e6),
+        rotation: o.rotate ? r() * TAU : 0,
+        glow: o.glow,
+        ...pos,
+        size: (sizes[0] + r() * Math.max(0, sizes[1] - sizes[0])) * punch,
+        ...(o.options || {}),
+        ...(extra.options || {}),
+        growth: growthOf(m)
+      })
+      members.push(m)
+      if (typeof o.onSpawn === 'function') o.onSpawn(m.spec, loud)
+      return m
+    }
+
+    const meter = (o) => {
+      const ctx = p.drawingContext
+      const w = Math.min(220, p.width * 0.35)
+      const h = 10
+      const x = 12
+      const y = p.height - h - 12
+      const at = (v) => x + w * clamp01(v / Math.max(0.001, o.threshold * 2))
+      ctx.save()
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+      ctx.fillRect(x, y, w, h)
+      ctx.fillStyle = armed ? 'rgba(120, 240, 200, 0.9)' : 'rgba(240, 160, 120, 0.9)'
+      ctx.fillRect(x, y, at(level) - x, h)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'
+      ctx.lineWidth = 1
+      ctx.beginPath(); ctx.moveTo(at(o.threshold), y - 3); ctx.lineTo(at(o.threshold), y + h + 3); ctx.stroke()
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)'
+      ctx.beginPath(); ctx.moveTo(at(o.rearm), y - 1); ctx.lineTo(at(o.rearm), y + h + 1); ctx.stroke()
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
+      ctx.font = '11px monospace'
+      ctx.fillText(`${level.toFixed(2)}  live ${members.filter((q) => q.fadeFrom === null).length}  spawned ${count}`, x, y - 6)
+      ctx.restore()
+    }
+
+    const swarm = {
+      get specimens () { return members.map((m) => m.spec) },
+      get live () { return members.filter((m) => m.fadeFrom === null).length },
+      get spawned () { return count },
+      get level () { return level },
+      options: opts,
+      draw () {
+        const now = p.millis() / 1000
+        const dt = last === undefined ? 0 : Math.min(0.25, Math.max(0, now - last))
+        last = now
+        age += dt
+        const o = {}
+        for (const k in opts) o[k] = (k === 'forms' || k === 'palette' || k === 'size' || k === 'options' || k === 'level' || k === 'onSpawn' || k === 'audio') ? opts[k] : value(opts[k], age)
+        level = read(o)
+        const rearm = Math.min(o.rearm, o.threshold)
+        if (armed && level >= o.threshold && age - lastSpawn >= o.cooldown) {
+          armed = false
+          lastSpawn = age
+          spawn(o, { loudness: (level - o.threshold) / Math.max(1e-6, o.threshold) })
+        } else if (!armed && level <= rearm) armed = true
+
+        // retire the ones whose hold is over, drop the ones that have dissolved
+        for (const m of members) {
+          if (m.fadeFrom === null && age - m.born >= m.grow + m.hold) retire(m)
+        }
+        members = members.filter((m) => m.fadeFrom === null || age - m.fadeFrom < m.dissolve)
+
+        if (o.background) radiolaria.backdrop(p, { palette: Array.isArray(o.palette) ? o.palette[0] : o.palette, grain: o.grain, vignette: o.vignette })
+        else p.clear()
+        members.forEach((m) => m.spec.draw())
+        if (o.debug) meter(o)
+      },
+      trigger (extra = {}) {
+        const o = {}
+        for (const k in opts) o[k] = (k === 'forms' || k === 'palette' || k === 'size' || k === 'options' || k === 'level' || k === 'onSpawn' || k === 'audio') ? opts[k] : value(opts[k], age)
+        const m = spawn(o, extra)
+        return m && m.spec
+      },
+      set (o = {}) {
+        if (o.audio) applyAudio(o.audio)
+        Object.assign(opts, o)
+        return swarm
+      },
+      clear (fade = true) {
+        if (fade) members.forEach(retire)
+        else members = []
+        return swarm
+      },
+      load (name) {
+        return radiolaria.loadPreset(name).then((json) => {
+          const params = { ...(json && json.swarm ? json.swarm : json) }
+          if (json && json.audio && params.audio === undefined) params.audio = json.audio
+          swarm.set(params)
+          swarm.preset = (json && json.name) || String(name)
+          return swarm
+        })
+      },
+      preset: undefined,
+      ready: Promise.resolve(null)
+    }
+    if (preset) swarm.ready = swarm.load(preset)
+    if (opts.draw) p.draw = swarm.draw
+    return swarm
   }
 
   radiolaria.forms = Object.keys(forms)

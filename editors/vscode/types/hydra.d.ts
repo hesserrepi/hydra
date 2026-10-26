@@ -3918,6 +3918,85 @@ interface RadiolariaPlate {
   grow(): RadiolariaPlate
   reseed(): RadiolariaPlate
 }
+/** Options of radiolaria.swarm(). A preset JSON file holds exactly these. */
+interface RadiolariaSwarmOptions {
+  /** which a.fft bin to watch (0) */
+  bin?: RadiolariaValue
+  /** spawn when the bin rises past this (0.6) */
+  threshold?: RadiolariaValue
+  /** and only after it has fallen below this (0.45) */
+  rearm?: RadiolariaValue
+  /** seconds, shortest gap between two spawns (0.25) */
+  cooldown?: RadiolariaValue
+  /** 'audio', a test level, or a function of time */
+  level?: 'audio' | 'pulse' | 'sine' | 'random' | 'mouse' | ((t: number) => number)
+  /** seconds, for the 'pulse' and 'sine' levels (1.5) */
+  period?: RadiolariaValue
+  /** how many live at once (10) */
+  max?: RadiolariaValue
+  /** 'retire' dissolves the oldest, 'skip' ignores the peak */
+  overflow?: 'retire' | 'skip'
+  /** seconds of one life (1.5, 4, 2) */
+  grow?: RadiolariaValue
+  hold?: RadiolariaValue
+  dissolve?: RadiolariaValue
+  /** [min, max] radius, or one number ([0.06, 0.14]) */
+  size?: RadiolariaValue | [number, number]
+  /** how much a louder peak enlarges it (1) */
+  punch?: RadiolariaValue
+  /** keep this far from the edges (0.1) */
+  margin?: RadiolariaValue
+  /** keep this far from the others, if it can (0.15) */
+  spacing?: RadiolariaValue
+  /** attempts at a free position before giving up (10) */
+  tries?: RadiolariaValue
+  /** form names to pick from, default all six */
+  forms?: RadiolariaForm[]
+  /** a palette name or a list to pick from ('neon') */
+  palette?: RadiolariaPaletteName | RadiolariaPalette | RadiolariaPaletteName[]
+  rotate?: boolean
+  glow?: RadiolariaValue
+  /** any other specimen options, used for every spawn */
+  options?: RadiolariaOptions
+  seed?: RadiolariaValue
+  background?: boolean
+  grain?: RadiolariaValue
+  vignette?: RadiolariaValue
+  /** draw a level meter with the threshold on it */
+  debug?: boolean
+  /** set p5.draw to this swarm's draw */
+  draw?: boolean
+  /** applied to hydra's audio object a */
+  audio?: { bins?: number; cutoff?: number; scale?: number; smooth?: number }
+  onSpawn?: (specimen: RadiolariaSpecimen, loudness: number) => void
+}
+interface RadiolariaSwarm {
+  /** Draw every live specimen; call it from p5.draw. */
+  draw(): void
+  /** Spawn one by hand, whatever the level is doing. */
+  trigger(extra?: { loudness?: number; options?: RadiolariaOptions }): RadiolariaSpecimen | null
+  set(options: RadiolariaSwarmOptions): RadiolariaSwarm
+  /** Dissolve every specimen, or remove them at once with clear(false). */
+  clear(fade?: boolean): RadiolariaSwarm
+  /** Load a JSON parameter set by name, path or URL, and apply it. */
+  load(preset: string): Promise<RadiolariaSwarm>
+  /** Resolves once a { preset } given at startup is in. */
+  ready: Promise<unknown>
+  specimens: RadiolariaSpecimen[]
+  /** how many are not dissolving */
+  live: number
+  spawned: number
+  /** the level read this frame */
+  level: number
+  /** name of the parameter set that was loaded */
+  preset?: string
+  options: RadiolariaSwarmOptions
+}
+interface RadiolariaPresetIndex {
+  collection: string
+  description: string
+  presets: { name: string; description: string }[]
+}
 /**
  * Growing radiolarian skeletons after Haeckel's Stephoidea plate, drawn with p5: spiny rings, lattice spheres, cages, thorny arms, symbionts around a red capsule. Six forms, every option can change over time.
  * From p5 forms/radiolaria, loaded automatically.
@@ -3929,6 +4008,15 @@ declare const radiolaria: {
   (options?: RadiolariaOptions): RadiolariaSpecimen
   /** Several specimens laid out like a plate; sets p5.draw unless draw is false. */
   plate(p5: P5, options?: RadiolariaPlateOptions): RadiolariaPlate
+  /** Spawns a specimen at a random free position on every audio peak. */
+  swarm(p5: P5, options?: RadiolariaSwarmOptions & { preset?: string }): RadiolariaSwarm
+  swarm(options?: RadiolariaSwarmOptions & { preset?: string }): RadiolariaSwarm
+  /** Read one JSON parameter set from presets/radiolaria-swarm/ (by name, path or URL). */
+  loadPreset(name: string): Promise<{ name?: string; description?: string; swarm?: RadiolariaSwarmOptions } & RadiolariaSwarmOptions>
+  /** Read presets/radiolaria-swarm/index.json, which lists the parameter sets. */
+  loadPresets(): Promise<RadiolariaPresetIndex>
+  /** Where a parameter set is loaded from. */
+  presetURL(name: string): string
   /** Paint the dark plate background. */
   backdrop(p5: P5, options?: { palette?: RadiolariaPaletteName | RadiolariaPalette; grain?: number; vignette?: number }): void
   forms: RadiolariaForm[]
