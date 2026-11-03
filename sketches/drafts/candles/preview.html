@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Candle drafts</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; padding: 16px; background: #121012; color: #e8e2d8; font: 14px/1.4 system-ui, sans-serif; }
+    header { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-bottom: 16px; }
+    h1 { font-size: 18px; margin: 0; font-weight: 600; }
+    button, input { font: inherit; }
+    button { background: #2a2528; color: inherit; border: 1px solid #4a4245; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+    #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(480px, 100%), 1fr)); gap: 16px; }
+    .cell { margin: 0; }
+    .stage canvas { display: block; width: 100% !important; height: auto !important; border-radius: 4px; }
+    figcaption { padding: 6px 2px; color: #b8b0a6; }
+    figcaption b { color: #f0c27a; margin-right: 4px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Candle drafts</h1>
+    <label>Burn time <input id="burn" type="range" min="5" max="120" value="30"> <span id="burnLabel">30 s</span></label>
+    <button data-p="0">Relight</button>
+    <button data-p="0.5">Half</button>
+    <button data-p="0.92">Nearly out</button>
+    <button data-p="1.02">Blow out</button>
+  </header>
+  <div id="grid"></div>
+  <script type="module">
+    import p5 from 'p5'
+    import { mountCandles } from './harness.js'
+    const files = import.meta.glob('./[0-9]*.js', { query: '?raw', import: 'default', eager: true })
+    const drafts = mountCandles(p5, files, document.getElementById('grid'))
+    window.drafts = drafts
+    document.querySelectorAll('button[data-p]').forEach((b) => { b.onclick = () => drafts.setProgress(+b.dataset.p) })
+    const burn = document.getElementById('burn')
+    burn.oninput = () => { drafts.setBurn(+burn.value); document.getElementById('burnLabel').textContent = burn.value + ' s' }
+  </script>
+</body>
+</html>
