@@ -13,6 +13,7 @@
     button { background: #2a2528; color: inherit; border: 1px solid #4a4245; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
     #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(480px, 100%), 1fr)); gap: 16px; }
     .cell { margin: 0; }
+    .stage { background: repeating-conic-gradient(#2a2528 0% 25%, #1c191b 0% 50%) 0 0 / 24px 24px; border-radius: 4px; }
     .stage canvas { display: block; width: 100% !important; height: auto !important; border-radius: 4px; }
     figcaption { padding: 6px 2px; color: #b8b0a6; }
     figcaption b { color: #f0c27a; margin-right: 4px; }
@@ -26,6 +27,7 @@
     <button data-p="0.5">Half</button>
     <button data-p="0.92">Nearly out</button>
     <button data-p="1.02">Blow out</button>
+    <label><input id="backdrop" type="checkbox" checked> Draft backdrops (off = transparent, as over hydra)</label>
   </header>
   <div id="grid"></div>
   <script type="module">
@@ -36,6 +38,7 @@
     window.drafts = drafts
     document.querySelectorAll('button[data-p]').forEach((b) => { b.onclick = () => drafts.setProgress(+b.dataset.p) })
     const burn = document.getElementById('burn')
+    document.getElementById('backdrop').onchange = (e) => drafts.setBackdrop(e.target.checked)
     burn.oninput = () => { drafts.setBurn(+burn.value); document.getElementById('burnLabel').textContent = burn.value + ' s' }
   </script>
 </body>

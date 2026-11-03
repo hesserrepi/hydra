@@ -7,6 +7,7 @@ s0.init({ src: p5.canvas })
 
 candleBurn = 120 // seconds from full height to a stub
 candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
+candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
@@ -114,18 +115,43 @@ nvCandle = (x, base, side, c) => {
 
 p5.draw = () => {
   const c = candleClock()
-  p5.background(nvDeep)
+  if (candleBackground) p5.background(nvDeep)
+  else p5.clear()
   // a panel with gold rule lines and corner arcs
   const m = Math.min(p5.width, p5.height) * 0.04
-  p5.noStroke(); p5.fill(nvTeal)
-  p5.rect(m, m, p5.width - m * 2, p5.height - m * 2, m * 2)
-  p5.noFill(); p5.stroke(nvGold); p5.strokeWeight(Math.max(1, m * 0.12))
-  p5.rect(m, m, p5.width - m * 2, p5.height - m * 2, m * 2)
-  p5.rect(m * 1.5, m * 1.5, p5.width - m * 3, p5.height - m * 3, m * 1.6)
+  if (candleBackground) {
+    p5.noStroke(); p5.fill(nvTeal)
+    p5.rect(m, m, p5.width - m * 2, p5.height - m * 2, m * 2)
+    p5.noFill(); p5.stroke(nvGold); p5.strokeWeight(Math.max(1, m * 0.12))
+    p5.rect(m, m, p5.width - m * 2, p5.height - m * 2, m * 2)
+    p5.rect(m * 1.5, m * 1.5, p5.width - m * 3, p5.height - m * 3, m * 1.6)
+  }
   const base = p5.height * 0.7
   nvCandle(p5.width * 0.11, base, 0, c)
   nvCandle(p5.width * 0.89, base, 1, c)
 }
 
-src(s0).out()
-// try: src(s0).modulate(noise(1, 0.05), 0.003).out() for a gentle breath
+// hydra background (Hesse's), drawn into o1 so the candles stay crisp on top of the feedback
+o1.setLinear()
+a.show()
+
+_factor = 1
+a_factor = [0.5, 0.87, 0.2, 0.75, 0.55, 0.92, -0.3, 0.5].smooth().fast(0.1)
+osc(16, -0.1, 1)
+  .glow(src(o1).invert().modulateRotate(o1), a_factor)
+  .modulate(voronoi(64, 1, 2))
+  .blend(o1)
+  .out(o1)
+
+// p5's canvas arrives with straight (not premultiplied) alpha, but hyper-hydra's layer()
+// expects premultiplied colour, which turns soft glows into white discs. This blends it right.
+setFunction({
+  name: 'layerP5',
+  type: 'combine',
+  inputs: [],
+  glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));'
+})
+src(o1).layerP5(src(s0)).out(o0)
+render(o0)
+// to let the candles melt into the feedback instead, use o0 in place of o1 above,
+// end that chain with .layerP5(src(s0)).out() and drop the last two lines

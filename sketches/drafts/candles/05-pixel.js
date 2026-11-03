@@ -7,6 +7,7 @@ s0.init({ src: p5.canvas })
 
 candleBurn = 120 // seconds from full height to a stub
 candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
+candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
@@ -95,15 +96,41 @@ p5.draw = () => {
   const g = pixBuf
   const c = candleClock()
   g.noStroke()
-  g.background(pixPal.bg)
-  g.fill(pixPal.bg2)
-  for (let y = Math.floor(gh * 0.8); y < gh; y++) g.rect(0, y, gw, 1) // floor
+  g.clear()
+  if (candleBackground) {
+    g.background(pixPal.bg)
+    g.fill(pixPal.bg2)
+    g.rect(0, Math.floor(gh * 0.8), gw, gh) // floor
+  }
   const base = Math.floor(gh * 0.8)
   pixCandle(g, Math.round(gw * 0.09), base, 0, c)
   pixCandle(g, Math.round(gw * 0.91), base, 1, c)
+  p5.clear()
   p5.noSmooth()
   p5.image(g, 0, 0, gw * scale, gh * scale)
 }
 
-src(s0).out()
-// try: src(s0).pixelate(200, 120).out() or add .scrollY(0, 0.01) for a CRT roll
+// hydra background (Hesse's), drawn into o1 so the candles stay crisp on top of the feedback
+o1.setLinear()
+a.show()
+
+_factor = 1
+a_factor = [0.5, 0.87, 0.2, 0.75, 0.55, 0.92, -0.3, 0.5].smooth().fast(0.1)
+osc(16, -0.1, 1)
+  .glow(src(o1).invert().modulateRotate(o1), a_factor)
+  .modulate(voronoi(64, 1, 2))
+  .blend(o1)
+  .out(o1)
+
+// p5's canvas arrives with straight (not premultiplied) alpha, but hyper-hydra's layer()
+// expects premultiplied colour, which turns soft glows into white discs. This blends it right.
+setFunction({
+  name: 'layerP5',
+  type: 'combine',
+  inputs: [],
+  glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));'
+})
+src(o1).layerP5(src(s0)).out(o0)
+render(o0)
+// to let the candles melt into the feedback instead, use o0 in place of o1 above,
+// end that chain with .layerP5(src(s0)).out() and drop the last two lines

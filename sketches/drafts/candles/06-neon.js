@@ -7,6 +7,7 @@ s0.init({ src: p5.canvas })
 
 candleBurn = 120 // seconds from full height to a stub
 candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
+candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
@@ -78,11 +79,12 @@ neonCandle = (x, base, side, c) => {
 
 p5.draw = () => {
   const c = candleClock()
-  p5.background(10, 6, 22)
+  if (candleBackground) p5.background(10, 6, 22)
+  else p5.clear()
   const horizon = p5.height * 0.86
   // floor grid
   p5.strokeWeight(1)
-  p5.stroke(120, 40, 200, 90)
+  p5.stroke(120, 40, 200, candleBackground ? 90 : 0)
   for (let i = -12; i <= 12; i++) p5.line(p5.width / 2 + i * p5.width * 0.02, horizon, p5.width / 2 + i * p5.width * 0.2, p5.height)
   for (let k = 0; k < 6; k++) {
     const y = horizon + (p5.height - horizon) * ((k + (c.t * 0.3) % 1) / 6) ** 2
@@ -90,6 +92,7 @@ p5.draw = () => {
   }
   neonCandle(p5.width * 0.09, horizon, 0, c)
   neonCandle(p5.width * 0.91, horizon, 1, c)
+  if (!candleBackground) return
   // reflection: copy the scene above the horizon, flipped and faded
   const rh = p5.height - horizon
   p5.push()
@@ -99,5 +102,27 @@ p5.draw = () => {
   p5.pop()
 }
 
-src(s0).out()
-// try: src(s0).modulate(osc(40, 0.1), 0.002).out() for a scanline wobble
+// hydra background (Hesse's), drawn into o1 so the candles stay crisp on top of the feedback
+o1.setLinear()
+a.show()
+
+_factor = 1
+a_factor = [0.5, 0.87, 0.2, 0.75, 0.55, 0.92, -0.3, 0.5].smooth().fast(0.1)
+osc(16, -0.1, 1)
+  .glow(src(o1).invert().modulateRotate(o1), a_factor)
+  .modulate(voronoi(64, 1, 2))
+  .blend(o1)
+  .out(o1)
+
+// p5's canvas arrives with straight (not premultiplied) alpha, but hyper-hydra's layer()
+// expects premultiplied colour, which turns soft glows into white discs. This blends it right.
+setFunction({
+  name: 'layerP5',
+  type: 'combine',
+  inputs: [],
+  glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));'
+})
+src(o1).layerP5(src(s0)).out(o0)
+render(o0)
+// to let the candles melt into the feedback instead, use o0 in place of o1 above,
+// end that chain with .layerP5(src(s0)).out() and drop the last two lines
