@@ -4,42 +4,136 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Candle drafts</title>
-  <style>
-    :root { color-scheme: dark; }
-    body { margin: 0; padding: 16px; background: #121012; color: #e8e2d8; font: 14px/1.4 system-ui, sans-serif; }
-    header { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-bottom: 16px; }
-    h1 { font-size: 18px; margin: 0; font-weight: 600; }
-    button, input { font: inherit; }
-    button { background: #2a2528; color: inherit; border: 1px solid #4a4245; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
-    #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(480px, 100%), 1fr)); gap: 16px; }
-    .cell { margin: 0; }
-    .stage { background: repeating-conic-gradient(#2a2528 0% 25%, #1c191b 0% 50%) 0 0 / 24px 24px; border-radius: 4px; }
-    .stage canvas { display: block; width: 100% !important; height: auto !important; border-radius: 4px; }
-    figcaption { padding: 6px 2px; color: #b8b0a6; }
-    figcaption b { color: #f0c27a; margin-right: 4px; }
-  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Karla:wght@400;600&family=IBM+Plex+Mono&display=swap">
 </head>
 <body>
+<style>
+  /* Layout: one lit stage on top, the transport under it like a projector's controls,
+     then the ten drafts as a strip and the open draft's notes. Single dark look on purpose. */
+  :root {
+    --bg: #131012;
+    --panel: #1d181b;
+    --line: #3a3036;
+    --fg: #ede5d9;
+    --muted: #a99c92;
+    --flame: #f0a04b;
+    --flame-soft: rgba(240, 160, 75, 0.14);
+    --ash: #6f6668;
+    --display: 'IM Fell English', 'Iowan Old Style', Georgia, serif;
+    --body: 'Karla', 'Segoe UI', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--body); }
+  .lab {
+    max-width: 1080px; margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 20px 40px;
+    display: grid; gap: 18px;
+  }
+  header { display: grid; gap: 4px; }
+  h1 { font: italic 400 clamp(28px, 4vw, 40px)/1.05 var(--display); margin: 0; letter-spacing: 0.01em; text-wrap: balance; }
+  header p { margin: 0; color: var(--muted); max-width: 70ch; }
+  .stage { position: relative; background: #000; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+  .stage canvas { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; }
+  #err { position: absolute; inset: auto 0 0 0; margin: 0; padding: 10px 14px; background: rgba(19, 16, 18, 0.88); color: var(--flame); font: 13px/1.4 var(--mono); }
+  .transport { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+  .transport .group { display: flex; flex-wrap: wrap; gap: 6px; }
+  button {
+    font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--line);
+    border-radius: 3px; padding: 6px 12px; cursor: pointer;
+  }
+  button:hover { border-color: var(--muted); }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
+  label { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+  input[type=range] { accent-color: var(--flame); width: min(220px, 50vw); }
+  #burnLabel, #wax { font: 13px var(--mono); font-variant-numeric: tabular-nums; color: var(--fg); }
+  #state { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  #state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--ash); }
+  #state[data-lit='true']::before { background: var(--flame); box-shadow: 0 0 10px var(--flame); }
+  .drafts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+  .drafts button { display: flex; align-items: baseline; gap: 8px; text-align: left; padding: 8px 10px; }
+  .drafts .num { font: 12px var(--mono); color: var(--muted); min-width: 2ch; }
+  .drafts .nm { font: italic 17px/1.15 var(--display); }
+  .drafts button[aria-pressed='true'] { border-color: var(--flame); background: var(--flame-soft); }
+  .drafts button[aria-pressed='true'] .num { color: var(--flame); }
+  .notes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 18px 28px; border-top: 1px solid var(--line); padding-top: 18px; }
+  .notes > div { min-width: 0; display: grid; gap: 8px; align-content: start; }
+  .eyebrow { font: 12px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  #name { font: italic 400 30px/1.1 var(--display); margin: 0; text-wrap: balance; }
+  .notes p { margin: 0; max-width: 62ch; }
+  #plug { color: var(--muted); }
+  .codehead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+  #copyNote { color: var(--flame); font-size: 13px; min-height: 1.4em; }
+  pre { margin: 0; overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 3px; padding: 12px 14px; font: 12.5px/1.55 var(--mono); color: var(--fg); max-height: 420px; }
+  .keys { color: var(--muted); font-size: 13px; }
+  kbd { font: 12px var(--mono); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; }
+  @media (max-width: 720px) { .notes { grid-template-columns: minmax(0, 1fr); } #state { margin-left: 0; } }
+</style>
+<main class="lab">
   <header>
     <h1>Candle drafts</h1>
-    <label>Burn time <input id="burn" type="range" min="5" max="120" value="30"> <span id="burnLabel">30 s</span></label>
-    <button data-p="0">Relight</button>
-    <button data-p="0.5">Half</button>
-    <button data-p="0.92">Nearly out</button>
-    <button data-p="1.02">Blow out</button>
-    <label><input id="backdrop" type="checkbox" checked> Draft backdrops (off = transparent, as over hydra)</label>
+    <p>Round 4: ten candles that work through hydra. p5 paints maps (light, heat, masks, wisps); hydra uses them to light, bend, burn, melt and smoke your background. Everything below runs on real hydra with your glow and voronoi feedback in o1.</p>
   </header>
-  <div id="grid"></div>
-  <script type="module">
-    import p5 from 'p5'
-    import { mountCandles } from './harness.js'
-    const files = import.meta.glob('./[0-9]*.js', { query: '?raw', import: 'default', eager: true })
-    const drafts = mountCandles(p5, files, document.getElementById('grid'))
-    window.drafts = drafts
-    document.querySelectorAll('button[data-p]').forEach((b) => { b.onclick = () => drafts.setProgress(+b.dataset.p) })
-    const burn = document.getElementById('burn')
-    document.getElementById('backdrop').onchange = (e) => drafts.setBackdrop(e.target.checked)
-    burn.oninput = () => { drafts.setBurn(+burn.value); document.getElementById('burnLabel').textContent = burn.value + ' s' }
-  </script>
+  <section class="stage" aria-label="Hydra output">
+    <canvas id="stage" width="960" height="540"></canvas>
+    <p id="err" hidden></p>
+  </section>
+  <div class="transport">
+    <div class="group" role="group" aria-label="Jump the candles">
+      <button type="button" data-p="0">Relight</button>
+      <button type="button" data-p="0.5">Half</button>
+      <button type="button" data-p="0.92">Nearly out</button>
+      <button type="button" data-p="1.001">Blow out</button>
+    </div>
+    <label for="burn">Burn time <input id="burn" type="range" min="10" max="240" value="60"> <span id="burnLabel">60 s</span></label>
+    <span id="state" data-lit="true"><span id="wax">…</span></span>
+  </div>
+  <nav class="drafts" id="drafts" aria-label="Drafts"></nav>
+  <section class="notes">
+    <div>
+      <p class="eyebrow" id="num"></p>
+      <h2 id="name"></h2>
+      <p id="about"></p>
+      <p class="eyebrow">How it plugs into hydra</p>
+      <p id="plug"></p>
+      <p class="keys">Keys <kbd>1</kbd> to <kbd>0</kbd> switch drafts. The sound flame uses its stand-in here, since this page has no microphone; in the editor it follows <code>a.fft</code>.</p>
+    </div>
+    <div>
+      <div class="codehead">
+        <p class="eyebrow">The hydra part (change it in the editor)</p>
+        <button type="button" id="copy">Copy whole sketch</button>
+      </div>
+      <p id="copyNote" aria-live="polite"></p>
+      <pre id="code"></pre>
+    </div>
+  </section>
+</main>
+
+<!-- the same hydra-synth the editor uses, plus hyper-hydra's blend (glow) and outputs (setLinear) -->
+<script src="/vendor/hydra-synth.js"></script>
+<script type="module">
+  import p5 from 'p5'
+  import { candleLab } from './lab.js'
+  const files = import.meta.glob('./[0-9]*.js', { query: '?raw', import: 'default', eager: true })
+  const drafts = Object.entries(files).map(([path, code]) => ({ file: path.slice(2), code }))
+  const loadScript = (src) => new Promise((resolve, reject) => {
+    const s = document.createElement('script')
+    s.src = src
+    s.onload = resolve
+    s.onerror = () => reject(new Error('could not load ' + src))
+    document.body.appendChild(s)
+  })
+  candleLab({
+    p5,
+    Hydra: window.Hydra,
+    drafts,
+    loadExtensions: async () => {
+      await loadScript('/extensions/hyper-hydra/hydra-blend.js')
+      await loadScript('/extensions/hyper-hydra/hydra-outputs.js')
+    }
+  })
+</script>
 </body>
 </html>

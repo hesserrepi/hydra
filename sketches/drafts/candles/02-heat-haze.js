@@ -1,25 +1,28 @@
-// Candle draft 8/10: etching. An old engraving: baroque candlesticks
-// turned on a lathe, the wax modelled entirely with hatching that follows the
-// round of the candle, and a flame left as bare paper with fine rays.
+// Candle draft 2/10: heat haze. Engraved candlesticks whose flames bend
+// the picture: a column of shimmering heat rises from each flame and warps and
+// warms whatever hydra is showing above it, then settles when the flame dies.
+//
+// How it plugs into hydra: p5 paints rising blobs of heat (s1, red and green carry the push in
+// x and y). hydra modulates o1 with it, so the distortion is real hydra modulation.
 p5 = new P5()
 p5.hide()
 s0.init({ src: p5.canvas })
 
 candleBurn = 120 // seconds from full height to a stub
-candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
-candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
-candleHalo = true // thin contrasting edge under the lines so they read over hydra (false = bare lines)
+candleOut = 6 // draft only: seconds it stays out before it relights
+candleHalo = true // thin contrasting edge under pencil lines so they read over hydra
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
   const cycle = t % (candleBurn + candleOut)
-  return { t, left: Math.max(0, 1 - cycle / candleBurn), lit: cycle < candleBurn, outFor: cycle - candleBurn }
+  return { t, cycle, left: Math.max(0, 1 - cycle / candleBurn), lit: cycle < candleBurn, outFor: cycle - candleBurn }
 }
 
 // --- hand-drawn line kit (the same in every draft) ---
 // Lines are drawn as many short segments that wander off the ideal path,
 // change pressure, skip where the pencil lifts and pick up paper tooth.
 hdSeed = 0 // set a few times a second in p5.draw so the lines "boil" gently
+hdG = p5 // what the kit draws into: p5 itself or one of the p5.Graphics maps
 hdHash = (n) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v) }
 
 hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230, halo = null, haloAlpha = 110 } = {}) => {
@@ -50,16 +53,16 @@ hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, 
     }
     dist += len
   }
-  p5.strokeCap(p5.ROUND)
+  hdG.strokeCap(p5.ROUND)
   // a thin contrasting edge under the line (not a glow), so it reads over a busy hydra picture
-  if (halo && candleHalo && !candleBackground) {
-    p5.stroke(halo[0], halo[1], halo[2], haloAlpha)
-    segs.forEach((g) => { p5.strokeWeight(g[4] + 2.4 * k); p5.line(g[0], g[1], g[2], g[3]) })
+  if (halo && candleHalo) {
+    hdG.stroke(halo[0], halo[1], halo[2], haloAlpha)
+    segs.forEach((g) => { hdG.strokeWeight(g[4] + 2.4 * k); hdG.line(g[0], g[1], g[2], g[3]) })
   }
   segs.forEach((g) => {
-    p5.stroke(col[0], col[1], col[2], g[5])
-    p5.strokeWeight(g[4])
-    p5.line(g[0], g[1], g[2], g[3])
+    hdG.stroke(col[0], col[1], col[2], g[5])
+    hdG.strokeWeight(g[4])
+    hdG.line(g[0], g[1], g[2], g[3])
   })
 }
 
@@ -90,20 +93,20 @@ hdTear = (x, y, w, fh, lean, open = 0.2, n = 30) => {
 }
 // a flat patch of colour whose edge wanders (one call per layer of pigment)
 hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
-  p5.noStroke()
+  hdG.noStroke()
   for (let l = 0; l < layers; l++) {
-    p5.fill(col[0], col[1], col[2], alpha)
-    p5.beginShape()
+    hdG.fill(col[0], col[1], col[2], alpha)
+    hdG.beginShape()
     pts.forEach(([x, y], i) => {
       const n1 = p5.noise(seed + l * 3.1 + i * 0.31, hdSeed * 0.2) - 0.5
       const n2 = p5.noise(seed + 40 + l * 3.1 + i * 0.31, hdSeed * 0.2) - 0.5
-      p5.vertex(x + n1 * wob * 2, y + n2 * wob * 2)
+      hdG.vertex(x + n1 * wob * 2, y + n2 * wob * 2)
     })
-    p5.endShape(p5.CLOSE)
+    hdG.endShape(p5.CLOSE)
   }
 }
 hdGlow = (x, y, r, rgb, a) => {
-  const ctx = p5.drawingContext
+  const ctx = hdG.drawingContext
   const g = ctx.createRadialGradient(x, y, 0, x, y, r)
   g.addColorStop(0, `rgba(${rgb},${a})`)
   g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
@@ -148,8 +151,55 @@ hdSmoke = (x, y, w, c, col, weight, seed) => {
   for (let i = 0; i < 26; i++) pts.push([x + Math.sin(i * 0.45 - c.t * 2.5) * w * 0.25 * (i / 10), y - i * w * 0.14 - f * w])
   hdStroke(pts, { col, weight, alpha: 220 * (1 - f), jitter: 1, grain: 0.5, gaps: 0.2, seed })
 }
+// a candle in fine pencil: solid wax, outlines drawn twice, drips, saucer, wick,
+// an open flame with a warm wash and smoke when it goes out. Returns its geometry.
+hdCandle = (x, base, side, c, { ink = [58, 56, 54], paper = [246, 241, 230], fill = 248, flame = true, flameWash = [255, 190, 90], saucer = true, width = 0.075, height = 0.55, smoke = true } = {}) => {
+  const geo = hdGeo(x, base, side, c, width, height)
+  const { w, h, top, fy, fh, lean, seed } = geo
+  const o = { col: ink, weight: 1.3, jitter: 1.4, grain: 0.55, gaps: 0.1, halo: paper }
+  if (saucer) hdWash(hdArc(x, base, w * 1.2, w * 0.22, 0, p5.TWO_PI, 20), paper.map((v) => v - 12), fill, seed + 40, w * 0.03)
+  if (fill > 0) hdWash(hdRect(x - w / 2, top, w, h), paper, fill, seed + 41, w * 0.03)
+  for (const pass of [0, 1]) {
+    hdStroke(hdSeg(x - w / 2, top, x - w / 2, base), { ...o, seed: seed + 1 + pass * 7, jitter: 1.4 + pass, halo: pass ? null : paper })
+    hdStroke(hdSeg(x + w / 2, top, x + w / 2, base), { ...o, seed: seed + 2 + pass * 7, jitter: 1.4 + pass, alpha: pass ? 140 : 230, halo: pass ? null : paper })
+  }
+  const dir = side ? -1 : 1
+  for (let y = top + w * 0.4; y < base - w * 0.2; y += w * 0.16) hdStroke([[x + dir * w * 0.46, y], [x + dir * w * 0.3, y + w * 0.12]], { ...o, weight: 0.7, alpha: 150, halo: null, seed: seed + y })
+  hdStroke(hdArc(x, top, w / 2, w * 0.13, 0.3, p5.TWO_PI + 0.1), { ...o, seed: seed + 3 })
+  for (let i = 0; i < 2; i++) {
+    const dx = x + (i ? 0.22 : -0.3) * w
+    const dl = Math.min(h * 0.6, w * (0.4 + 0.8 * p5.noise(seed + i)))
+    hdStroke([[dx - w * 0.05, top + w * 0.1], [dx - w * 0.05, top + dl], [dx, top + dl + w * 0.06], [dx + w * 0.05, top + dl], [dx + w * 0.05, top + w * 0.14]], { ...o, weight: 0.9, halo: null, seed: seed + 10 + i })
+  }
+  if (saucer) {
+    hdStroke(hdArc(x, base, w * 1.2, w * 0.22, -0.2, p5.PI + 0.3), { ...o, seed: seed + 4 })
+    hdStroke(hdArc(x, base, w * 1.2, w * 0.22, p5.PI + 0.6, p5.TWO_PI - 0.4), { ...o, seed: seed + 5, alpha: 130, halo: null })
+  }
+  hdStroke([[x, top], [x + w * 0.03, fy + w * 0.1], [x + lean * 0.1, fy]], { ...o, weight: 1.8, seed: seed + 6 })
+  if (flame && c.lit) {
+    hdWash(hdTear(x, fy, w * 0.42, fh, lean), flameWash, 150, seed + 7, w * 0.08)
+    hdStroke(hdTear(x, fy, w * 0.42, fh, lean, 0.3), { ...o, seed: seed + 8 })
+    hdStroke(hdTear(x, fy - w * 0.05, w * 0.2, fh * 0.55, lean * 0.5, 0.6), { ...o, weight: 0.9, halo: null, seed: seed + 9 })
+  }
+  if (smoke) hdSmoke(x, fy, w, c, ink, 1, seed + 30)
+  return geo
+}
+// a low-resolution p5.Graphics used as an extra hydra source (maps don't need detail)
+hdMap = (div) => {
+  const g = p5.createGraphics(Math.ceil(p5.width / div), Math.ceil(p5.height / div))
+  g.pixelDensity(1)
+  return g
+}
+// draw into a map using full-screen coordinates
+hdInto = (g, fn) => {
+  hdG = g
+  g.push()
+  g.scale(g.width / p5.width)
+  fn(g)
+  g.pop()
+  hdG = p5
+}
 // --- end of kit ---
-
 // the candlestick's turned profile: radius (in candle widths) from the cup (u = 0) down to the foot (u = 1)
 etchProfile = [[0, 1.0], [0.06, 0.45], [0.12, 0.3], [0.2, 0.28], [0.3, 0.55], [0.36, 0.3], [0.5, 0.22], [0.62, 0.26], [0.7, 0.45], [0.76, 0.3], [0.86, 0.5], [0.95, 1.25], [1, 1.25]]
 etchR = (u) => {
@@ -219,17 +269,51 @@ etchCandle = (x, base, side, c) => {
   hdSmoke(x, fy, w, c, ink, 0.8, seed + 30)
 }
 
+heatMap = hdMap(4)
+s1.init({ src: heatMap.elt })
+
+heatPaint = (c, spots) => hdInto(heatMap, (g) => {
+  const ctx = g.drawingContext
+  g.background(0)
+  ctx.globalCompositeOperation = 'lighter'
+  const s = Math.min(p5.width, p5.height)
+  for (const { x, y, side } of spots) {
+    const k = c.lit ? 1 : Math.max(0, 1 - c.outFor / 3) // the haze settles after the flame dies
+    if (k <= 0) continue
+    for (let i = 0; i < 16; i++) {
+      const u = (c.t * 0.3 + i / 16) % 1 // each blob rises, then starts again at the flame
+      const by = y - u * p5.height * 0.8
+      const bx = x + (p5.noise(i * 3.1, c.t * 0.4 + side * 7) - 0.5) * s * 0.3 * (0.3 + u)
+      const r = s * (0.05 + 0.2 * u)
+      const fade = k * Math.sin(Math.PI * u)
+      const rr = Math.round(255 * fade * p5.noise(i, c.t * 1.3))
+      const gg = Math.round(255 * fade * p5.noise(i + 40, c.t * 1.1))
+      const grad = ctx.createRadialGradient(bx, by, 0, bx, by, r)
+      grad.addColorStop(0, `rgba(${rr},${gg},0,0.55)`)
+      grad.addColorStop(1, 'rgba(0,0,0,0)')
+      ctx.fillStyle = grad
+      ctx.fillRect(bx - r, by - r, r * 2, r * 2)
+    }
+  }
+  ctx.globalCompositeOperation = 'source-over'
+})
+
 p5.draw = () => {
   const c = candleClock()
   hdSeed = Math.floor(c.t * 3)
-  if (candleBackground) p5.background(238, 230, 212)
-  else p5.clear()
+  p5.clear()
   const base = p5.height * 0.66
-  etchCandle(p5.width * 0.09, base, 0, c)
-  etchCandle(p5.width * 0.91, base, 1, c)
+  const spots = [0, 1].map((side) => {
+    const x = p5.width * (side ? 0.91 : 0.09)
+    etchCandle(x, base, side, c)
+    const { fy, fh, lean } = hdGeo(x, base, side, c, 0.08, 0.45)
+    return { x: x + lean * 0.3, y: fy - fh * 0.6, side }
+  })
+  heatPaint(c, spots)
 }
 
-// hydra background (Hesse's), drawn into o1 so the candles stay on top of the feedback
+// --- hydra ---
+// Hesse's background, drawn into o1; the candles work on top of it
 o1.setLinear()
 a.show()
 
@@ -241,16 +325,20 @@ osc(16, -0.1, 1)
   .blend(o1)
   .out(o1)
 
-// p5's canvas arrives with straight (not premultiplied) alpha, but hyper-hydra's layer()
-// expects premultiplied colour, which turns soft glows into white discs. This blends it right.
+// layerP5: lay a texture with straight (not premultiplied) alpha over the picture, like p5's canvas.
+// keyBy: give a texture the alpha of a channel mix of a map, e.g. keyBy(src(s1), 1, 0, 0) uses its red.
+setFunction({ name: 'layerP5', type: 'combine', inputs: [], glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));' })
 setFunction({
-  name: 'layerP5',
+  name: 'keyBy',
   type: 'combine',
-  inputs: [],
-  glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));'
+  inputs: [{ name: 'r', type: 'float', default: 1 }, { name: 'g', type: 'float', default: 0 }, { name: 'b', type: 'float', default: 0 }],
+  glsl: 'return vec4(_c0.rgb, clamp(_c1.r * r + _c1.g * g + _c1.b * b, 0.0, 1.0));'
 })
-// hydra gets a hand in the drawing too: a slow wobble, as if the paper breathes
-candleLayer = src(s0).modulate(noise(2.5, 0.08), 0.005)
-src(o1).layerP5(candleLayer).out(o0)
+
+src(o1)
+  .modulate(src(s1), 0.1) // the heat bends the picture above each flame
+  .add(src(s1).r().color(0.55, 0.2, 0.03), 0.5) // and warms it
+  .layerP5(src(s0))
+  .out(o0)
+// try: .modulate(src(s1), 0.2) for a fiercer haze, or .modulateRotate(src(s1), 0.3)
 render(o0)
-// try: candleLayer = src(s0).modulate(o1, 0.02) so the background pushes the lines around

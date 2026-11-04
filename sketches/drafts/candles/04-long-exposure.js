@@ -1,25 +1,29 @@
-// Candle draft 6/10: moths. A vanitas in sepia ink: moths drawn with a
-// fine line circle each flame, wings beating, drawn closer and closer. When the
-// candle goes out they scatter into the dark.
+// Candle draft 4/10: long exposure. Moths circle the flames like insects round a
+// lamp in a long-exposure photograph: each moth leaves a fading trail of light
+// that loops around the candle and drifts off when the flame goes out.
+//
+// How it plugs into hydra: p5 draws the moths twice: as ink on the candles (s0) and as light
+// (s1). hydra runs s1 through a feedback loop in o2 that fades slowly, which
+// turns the moths into light trails, and adds those to the picture.
 p5 = new P5()
 p5.hide()
 s0.init({ src: p5.canvas })
 
 candleBurn = 120 // seconds from full height to a stub
-candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
-candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
-candleHalo = true // thin contrasting edge under the lines so they read over hydra (false = bare lines)
+candleOut = 6 // draft only: seconds it stays out before it relights
+candleHalo = true // thin contrasting edge under pencil lines so they read over hydra
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
   const cycle = t % (candleBurn + candleOut)
-  return { t, left: Math.max(0, 1 - cycle / candleBurn), lit: cycle < candleBurn, outFor: cycle - candleBurn }
+  return { t, cycle, left: Math.max(0, 1 - cycle / candleBurn), lit: cycle < candleBurn, outFor: cycle - candleBurn }
 }
 
 // --- hand-drawn line kit (the same in every draft) ---
 // Lines are drawn as many short segments that wander off the ideal path,
 // change pressure, skip where the pencil lifts and pick up paper tooth.
 hdSeed = 0 // set a few times a second in p5.draw so the lines "boil" gently
+hdG = p5 // what the kit draws into: p5 itself or one of the p5.Graphics maps
 hdHash = (n) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v) }
 
 hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230, halo = null, haloAlpha = 110 } = {}) => {
@@ -50,16 +54,16 @@ hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, 
     }
     dist += len
   }
-  p5.strokeCap(p5.ROUND)
+  hdG.strokeCap(p5.ROUND)
   // a thin contrasting edge under the line (not a glow), so it reads over a busy hydra picture
-  if (halo && candleHalo && !candleBackground) {
-    p5.stroke(halo[0], halo[1], halo[2], haloAlpha)
-    segs.forEach((g) => { p5.strokeWeight(g[4] + 2.4 * k); p5.line(g[0], g[1], g[2], g[3]) })
+  if (halo && candleHalo) {
+    hdG.stroke(halo[0], halo[1], halo[2], haloAlpha)
+    segs.forEach((g) => { hdG.strokeWeight(g[4] + 2.4 * k); hdG.line(g[0], g[1], g[2], g[3]) })
   }
   segs.forEach((g) => {
-    p5.stroke(col[0], col[1], col[2], g[5])
-    p5.strokeWeight(g[4])
-    p5.line(g[0], g[1], g[2], g[3])
+    hdG.stroke(col[0], col[1], col[2], g[5])
+    hdG.strokeWeight(g[4])
+    hdG.line(g[0], g[1], g[2], g[3])
   })
 }
 
@@ -90,20 +94,20 @@ hdTear = (x, y, w, fh, lean, open = 0.2, n = 30) => {
 }
 // a flat patch of colour whose edge wanders (one call per layer of pigment)
 hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
-  p5.noStroke()
+  hdG.noStroke()
   for (let l = 0; l < layers; l++) {
-    p5.fill(col[0], col[1], col[2], alpha)
-    p5.beginShape()
+    hdG.fill(col[0], col[1], col[2], alpha)
+    hdG.beginShape()
     pts.forEach(([x, y], i) => {
       const n1 = p5.noise(seed + l * 3.1 + i * 0.31, hdSeed * 0.2) - 0.5
       const n2 = p5.noise(seed + 40 + l * 3.1 + i * 0.31, hdSeed * 0.2) - 0.5
-      p5.vertex(x + n1 * wob * 2, y + n2 * wob * 2)
+      hdG.vertex(x + n1 * wob * 2, y + n2 * wob * 2)
     })
-    p5.endShape(p5.CLOSE)
+    hdG.endShape(p5.CLOSE)
   }
 }
 hdGlow = (x, y, r, rgb, a) => {
-  const ctx = p5.drawingContext
+  const ctx = hdG.drawingContext
   const g = ctx.createRadialGradient(x, y, 0, x, y, r)
   g.addColorStop(0, `rgba(${rgb},${a})`)
   g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
@@ -148,8 +152,55 @@ hdSmoke = (x, y, w, c, col, weight, seed) => {
   for (let i = 0; i < 26; i++) pts.push([x + Math.sin(i * 0.45 - c.t * 2.5) * w * 0.25 * (i / 10), y - i * w * 0.14 - f * w])
   hdStroke(pts, { col, weight, alpha: 220 * (1 - f), jitter: 1, grain: 0.5, gaps: 0.2, seed })
 }
+// a candle in fine pencil: solid wax, outlines drawn twice, drips, saucer, wick,
+// an open flame with a warm wash and smoke when it goes out. Returns its geometry.
+hdCandle = (x, base, side, c, { ink = [58, 56, 54], paper = [246, 241, 230], fill = 248, flame = true, flameWash = [255, 190, 90], saucer = true, width = 0.075, height = 0.55, smoke = true } = {}) => {
+  const geo = hdGeo(x, base, side, c, width, height)
+  const { w, h, top, fy, fh, lean, seed } = geo
+  const o = { col: ink, weight: 1.3, jitter: 1.4, grain: 0.55, gaps: 0.1, halo: paper }
+  if (saucer) hdWash(hdArc(x, base, w * 1.2, w * 0.22, 0, p5.TWO_PI, 20), paper.map((v) => v - 12), fill, seed + 40, w * 0.03)
+  if (fill > 0) hdWash(hdRect(x - w / 2, top, w, h), paper, fill, seed + 41, w * 0.03)
+  for (const pass of [0, 1]) {
+    hdStroke(hdSeg(x - w / 2, top, x - w / 2, base), { ...o, seed: seed + 1 + pass * 7, jitter: 1.4 + pass, halo: pass ? null : paper })
+    hdStroke(hdSeg(x + w / 2, top, x + w / 2, base), { ...o, seed: seed + 2 + pass * 7, jitter: 1.4 + pass, alpha: pass ? 140 : 230, halo: pass ? null : paper })
+  }
+  const dir = side ? -1 : 1
+  for (let y = top + w * 0.4; y < base - w * 0.2; y += w * 0.16) hdStroke([[x + dir * w * 0.46, y], [x + dir * w * 0.3, y + w * 0.12]], { ...o, weight: 0.7, alpha: 150, halo: null, seed: seed + y })
+  hdStroke(hdArc(x, top, w / 2, w * 0.13, 0.3, p5.TWO_PI + 0.1), { ...o, seed: seed + 3 })
+  for (let i = 0; i < 2; i++) {
+    const dx = x + (i ? 0.22 : -0.3) * w
+    const dl = Math.min(h * 0.6, w * (0.4 + 0.8 * p5.noise(seed + i)))
+    hdStroke([[dx - w * 0.05, top + w * 0.1], [dx - w * 0.05, top + dl], [dx, top + dl + w * 0.06], [dx + w * 0.05, top + dl], [dx + w * 0.05, top + w * 0.14]], { ...o, weight: 0.9, halo: null, seed: seed + 10 + i })
+  }
+  if (saucer) {
+    hdStroke(hdArc(x, base, w * 1.2, w * 0.22, -0.2, p5.PI + 0.3), { ...o, seed: seed + 4 })
+    hdStroke(hdArc(x, base, w * 1.2, w * 0.22, p5.PI + 0.6, p5.TWO_PI - 0.4), { ...o, seed: seed + 5, alpha: 130, halo: null })
+  }
+  hdStroke([[x, top], [x + w * 0.03, fy + w * 0.1], [x + lean * 0.1, fy]], { ...o, weight: 1.8, seed: seed + 6 })
+  if (flame && c.lit) {
+    hdWash(hdTear(x, fy, w * 0.42, fh, lean), flameWash, 150, seed + 7, w * 0.08)
+    hdStroke(hdTear(x, fy, w * 0.42, fh, lean, 0.3), { ...o, seed: seed + 8 })
+    hdStroke(hdTear(x, fy - w * 0.05, w * 0.2, fh * 0.55, lean * 0.5, 0.6), { ...o, weight: 0.9, halo: null, seed: seed + 9 })
+  }
+  if (smoke) hdSmoke(x, fy, w, c, ink, 1, seed + 30)
+  return geo
+}
+// a low-resolution p5.Graphics used as an extra hydra source (maps don't need detail)
+hdMap = (div) => {
+  const g = p5.createGraphics(Math.ceil(p5.width / div), Math.ceil(p5.height / div))
+  g.pixelDensity(1)
+  return g
+}
+// draw into a map using full-screen coordinates
+hdInto = (g, fn) => {
+  hdG = g
+  g.push()
+  g.scale(g.width / p5.width)
+  fn(g)
+  g.pop()
+  hdG = p5
+}
 // --- end of kit ---
-
 // a moth seen from above at (mx, my), heading `ang`, wings opened by `flap` (0..1)
 mothDraw = (mx, my, ang, size, flap, alpha, o, seed) => {
   const open = 0.3 + 0.7 * flap
@@ -171,56 +222,64 @@ mothDraw = (mx, my, ang, size, flap, alpha, o, seed) => {
   hdStroke(hdRot([[mx - size * 0.3, my - size * 0.55], [mx, my - size * 0.2], [mx + size * 0.3, my - size * 0.55]], mx, my, ang), { ...o, weight: 0.6, alpha: 200 * alpha, halo: null, seed: seed + 6 })
 }
 
-mothCandle = (x, base, side, c) => {
-  const { w, h, top, fy, fh, lean, s, seed } = hdGeo(x, base, side, c, 0.075, 0.55)
-  const ink = [70, 50, 38]
-  const paper = [242, 234, 218]
-  const o = { col: ink, weight: 1.2, jitter: 1.2, grain: 0.45, gaps: 0.08, halo: paper }
-  const cy = fy - fh * 0.5
-  if (c.lit) hdGlow(x, cy, fh * 1.6, '255,206,130', 0.35)
-  // candle, saucer, drips
-  hdWash(hdArc(x, base, w * 1.25, w * 0.24, 0, p5.TWO_PI, 20), [226, 214, 192], 210, seed + 1, w * 0.03)
-  hdWash(hdRect(x - w / 2, top, w, h), paper, 248, seed + 2, w * 0.03)
-  hdStroke(hdSeg(x - w / 2, top, x - w / 2, base), { ...o, seed: seed + 3 })
-  hdStroke(hdSeg(x + w / 2, top, x + w / 2, base), { ...o, seed: seed + 4 })
-  hdStroke(hdArc(x, top, w / 2, w * 0.13, 0.4, p5.TWO_PI + 0.1), { ...o, seed: seed + 5 })
-  hdStroke(hdArc(x, base, w * 1.25, w * 0.24, -0.2, p5.PI + 0.3), { ...o, seed: seed + 6 })
-  const dir = side ? -1 : 1
-  for (let y = top + w * 0.3; y < base - w * 0.15; y += w * 0.14) hdStroke([[x + dir * w * 0.47, y], [x + dir * w * 0.25, y + w * 0.1]], { ...o, weight: 0.6, alpha: 140, halo: null, seed: seed + y })
-  hdStroke([[x, top], [x + w * 0.03, fy]], { ...o, weight: 1.6, seed: seed + 7 })
-  if (c.lit) {
-    hdWash(hdTear(x, fy, w * 0.42, fh, lean), [252, 196, 100], 140, seed + 8, w * 0.06)
-    hdStroke(hdTear(x, fy, w * 0.42, fh, lean, 0.3), { ...o, seed: seed + 9 })
-  }
-  hdSmoke(x, fy, w, c, ink, 1, seed + 30)
-  // moths: each on its own loop round the flame; when the flame dies they fly off
+mothLight = hdMap(2)
+mothLast = [] // where each moth was last frame
+s1.init({ src: mothLight.elt })
+
+// where the moths are now: loops round the flame, scattering when it dies
+mothSwarm = (c, x, cy, fh, w, side, seed) => {
+  const out = []
   const scatter = c.lit ? 0 : c.outFor
-  for (let i = 0; i < 4; i++) {
-    const speed = (0.6 + 0.5 * hdHash(seed + i)) * (i % 2 ? 1 : -1)
-    const ph = hdHash(seed + i * 3) * p5.TWO_PI
-    const a1 = c.t * speed + ph
-    const rx = fh * (1.1 + 0.9 * hdHash(seed + i * 5)) * (1 + scatter * 0.9)
-    const ry = rx * 0.55
-    const mx = x + Math.cos(a1) * rx + Math.sin(c.t * 1.7 + i) * w * 0.2
-    const my = cy + Math.sin(a1) * ry + Math.sin(c.t * 2.3 + i * 2) * w * 0.25 - scatter * w * 0.6
-    const heading = a1 + (speed > 0 ? p5.PI : 0) + Math.sin(c.t * 3 + i) * 0.3
-    const flap = Math.abs(Math.sin(c.t * 13 + i * 2))
-    const alpha = c.lit ? 1 : Math.max(0, 1 - c.outFor / candleOut)
-    if (alpha > 0) mothDraw(mx, my, heading, w * (0.85 + 0.3 * hdHash(i)), flap, alpha, o, seed + 40 + i * 10)
+  for (let i = 0; i < 6; i++) {
+    const speed = (1.1 + 0.9 * hdHash(seed + i)) * (i % 2 ? 1 : -1)
+    const a1 = c.t * speed + hdHash(seed + i * 3) * p5.TWO_PI
+    const rx = fh * (1.2 + 1.4 * hdHash(seed + i * 5)) * (1 + scatter * 1.2)
+    const ry = rx * (0.45 + 0.3 * hdHash(seed + i * 9))
+    out.push({
+      mx: x + Math.cos(a1) * rx + Math.sin(c.t * 1.7 + i) * w * 0.3,
+      my: cy + Math.sin(a1) * ry + Math.sin(c.t * 2.3 + i * 2) * w * 0.3 - scatter * w,
+      heading: a1 + (speed > 0 ? p5.PI : 0),
+      size: w * (0.55 + 0.25 * hdHash(i + side)),
+      flap: Math.abs(Math.sin(c.t * 15 + i * 2)),
+      alpha: c.lit ? 1 : Math.max(0, 1 - c.outFor / candleOut),
+      seed: seed + 40 + i * 10
+    })
   }
+  return out
 }
 
 p5.draw = () => {
   const c = candleClock()
   hdSeed = Math.floor(c.t * 3)
-  if (candleBackground) p5.background(236, 228, 212)
-  else p5.clear()
+  p5.clear()
   const base = p5.height * 0.88
-  mothCandle(p5.width * 0.09, base, 0, c)
-  mothCandle(p5.width * 0.91, base, 1, c)
+  const swarms = []
+  for (const side of [0, 1]) {
+    const x = p5.width * (side ? 0.91 : 0.09)
+    const { w, fy, fh } = hdCandle(x, base, side, c, { ink: [70, 50, 38], paper: [242, 234, 218], flameWash: [252, 196, 100] })
+    swarms.push(mothSwarm(c, x, fy - fh * 0.5, fh, w, side, side * 100))
+  }
+  const ink = { col: [70, 50, 38], weight: 1.1, jitter: 1, grain: 0.4, gaps: 0.05, halo: [242, 234, 218], haloAlpha: 90 }
+  swarms.flat().forEach((m) => m.alpha > 0 && mothDraw(m.mx, m.my, m.heading, m.size, m.flap, m.alpha, ink, m.seed))
+  // the same moths as points of light: a line from where each one was last frame
+  const now = swarms.flat()
+  hdInto(mothLight, (g) => {
+    g.background(0)
+    g.strokeCap(p5.ROUND)
+    g.strokeWeight(2.6 * Math.min(p5.width, p5.height) / 540)
+    now.forEach((m, i) => {
+      const was = mothLast[i] || m
+      if (m.alpha <= 0 || Math.hypot(m.mx - was.mx, m.my - was.my) > p5.width * 0.1) return
+      g.stroke(255, 240, 215, 255 * m.alpha)
+      g.line(was.mx, was.my, m.mx, m.my)
+    })
+  })
+  mothLast = now
+
 }
 
-// hydra background (Hesse's), drawn into o1 so the candles stay on top of the feedback
+// --- hydra ---
+// Hesse's background, drawn into o1; the candles work on top of it
 o1.setLinear()
 a.show()
 
@@ -232,16 +291,25 @@ osc(16, -0.1, 1)
   .blend(o1)
   .out(o1)
 
-// p5's canvas arrives with straight (not premultiplied) alpha, but hyper-hydra's layer()
-// expects premultiplied colour, which turns soft glows into white discs. This blends it right.
+// layerP5: lay a texture with straight (not premultiplied) alpha over the picture, like p5's canvas.
+// keyBy: give a texture the alpha of a channel mix of a map, e.g. keyBy(src(s1), 1, 0, 0) uses its red.
+setFunction({ name: 'layerP5', type: 'combine', inputs: [], glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));' })
 setFunction({
-  name: 'layerP5',
+  name: 'keyBy',
   type: 'combine',
-  inputs: [],
-  glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));'
+  inputs: [{ name: 'r', type: 'float', default: 1 }, { name: 'g', type: 'float', default: 0 }, { name: 'b', type: 'float', default: 0 }],
+  glsl: 'return vec4(_c0.rgb, clamp(_c1.r * r + _c1.g * g + _c1.b * b, 0.0, 1.0));'
 })
-// hydra gets a hand in the drawing too: a slow wobble, as if the paper breathes
-candleLayer = src(s0).modulate(noise(2.5, 0.08), 0.005)
-src(o1).layerP5(candleLayer).out(o0)
+
+// feedback in o2: last frame, faded a little, plus the moths now. Raise the 0.97s for longer exposures.
+src(o2)
+  .mult(solid(0.975, 0.965, 0.95))
+  .add(src(s1), 1)
+  .out(o2)
+
+src(o1)
+  .add(src(o2).color(1, 0.85, 0.6), 1.1)
+  .layerP5(src(s0))
+  .out(o0)
+// try: .add(src(o2).kaleid(2).color(1, 0.8, 0.5), 0.8) for mirrored trails
 render(o0)
-// try: candleLayer = src(s0).modulate(o1, 0.02) so the background pushes the lines around

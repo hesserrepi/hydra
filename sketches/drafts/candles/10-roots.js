@@ -1,25 +1,29 @@
-// Candle draft 1/10: graphite. A fine, slightly shaky graphite line, like a
-// quick study: pale wax filled in like paper, outlines drawn twice that never
-// quite meet, an open flame with a warm wash and a few strokes for the light.
+// Candle draft 10/10: roots. While the candles burn, roots grow out of
+// their bases into the hydra picture, and the picture cracks along them and
+// shows itself inside out. When the flames die the roots fade.
+//
+// How it plugs into hydra: p5 grows a root network and draws the part grown so far into a
+// map (s1). hydra modulates o1 along the roots and fills them with an inverted
+// copy of o1, so the cracks follow whatever the background is doing.
 p5 = new P5()
 p5.hide()
 s0.init({ src: p5.canvas })
 
 candleBurn = 120 // seconds from full height to a stub
-candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
-candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
-candleHalo = true // thin contrasting edge under the lines so they read over hydra (false = bare lines)
+candleOut = 6 // draft only: seconds it stays out before it relights
+candleHalo = true // thin contrasting edge under pencil lines so they read over hydra
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
   const cycle = t % (candleBurn + candleOut)
-  return { t, left: Math.max(0, 1 - cycle / candleBurn), lit: cycle < candleBurn, outFor: cycle - candleBurn }
+  return { t, cycle, left: Math.max(0, 1 - cycle / candleBurn), lit: cycle < candleBurn, outFor: cycle - candleBurn }
 }
 
 // --- hand-drawn line kit (the same in every draft) ---
 // Lines are drawn as many short segments that wander off the ideal path,
 // change pressure, skip where the pencil lifts and pick up paper tooth.
 hdSeed = 0 // set a few times a second in p5.draw so the lines "boil" gently
+hdG = p5 // what the kit draws into: p5 itself or one of the p5.Graphics maps
 hdHash = (n) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v) }
 
 hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230, halo = null, haloAlpha = 110 } = {}) => {
@@ -50,16 +54,16 @@ hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, 
     }
     dist += len
   }
-  p5.strokeCap(p5.ROUND)
+  hdG.strokeCap(p5.ROUND)
   // a thin contrasting edge under the line (not a glow), so it reads over a busy hydra picture
-  if (halo && candleHalo && !candleBackground) {
-    p5.stroke(halo[0], halo[1], halo[2], haloAlpha)
-    segs.forEach((g) => { p5.strokeWeight(g[4] + 2.4 * k); p5.line(g[0], g[1], g[2], g[3]) })
+  if (halo && candleHalo) {
+    hdG.stroke(halo[0], halo[1], halo[2], haloAlpha)
+    segs.forEach((g) => { hdG.strokeWeight(g[4] + 2.4 * k); hdG.line(g[0], g[1], g[2], g[3]) })
   }
   segs.forEach((g) => {
-    p5.stroke(col[0], col[1], col[2], g[5])
-    p5.strokeWeight(g[4])
-    p5.line(g[0], g[1], g[2], g[3])
+    hdG.stroke(col[0], col[1], col[2], g[5])
+    hdG.strokeWeight(g[4])
+    hdG.line(g[0], g[1], g[2], g[3])
   })
 }
 
@@ -90,20 +94,20 @@ hdTear = (x, y, w, fh, lean, open = 0.2, n = 30) => {
 }
 // a flat patch of colour whose edge wanders (one call per layer of pigment)
 hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
-  p5.noStroke()
+  hdG.noStroke()
   for (let l = 0; l < layers; l++) {
-    p5.fill(col[0], col[1], col[2], alpha)
-    p5.beginShape()
+    hdG.fill(col[0], col[1], col[2], alpha)
+    hdG.beginShape()
     pts.forEach(([x, y], i) => {
       const n1 = p5.noise(seed + l * 3.1 + i * 0.31, hdSeed * 0.2) - 0.5
       const n2 = p5.noise(seed + 40 + l * 3.1 + i * 0.31, hdSeed * 0.2) - 0.5
-      p5.vertex(x + n1 * wob * 2, y + n2 * wob * 2)
+      hdG.vertex(x + n1 * wob * 2, y + n2 * wob * 2)
     })
-    p5.endShape(p5.CLOSE)
+    hdG.endShape(p5.CLOSE)
   }
 }
 hdGlow = (x, y, r, rgb, a) => {
-  const ctx = p5.drawingContext
+  const ctx = hdG.drawingContext
   const g = ctx.createRadialGradient(x, y, 0, x, y, r)
   g.addColorStop(0, `rgba(${rgb},${a})`)
   g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
@@ -148,62 +152,115 @@ hdSmoke = (x, y, w, c, col, weight, seed) => {
   for (let i = 0; i < 26; i++) pts.push([x + Math.sin(i * 0.45 - c.t * 2.5) * w * 0.25 * (i / 10), y - i * w * 0.14 - f * w])
   hdStroke(pts, { col, weight, alpha: 220 * (1 - f), jitter: 1, grain: 0.5, gaps: 0.2, seed })
 }
-// --- end of kit ---
-
-grCandle = (x, base, side, c) => {
-  const { w, h, top, fy, fh, lean, seed } = hdGeo(x, base, side, c)
-  const lead = [58, 56, 54]
-  const o = { col: lead, weight: 1.3, jitter: 1.4, grain: 0.55, gaps: 0.1, halo: [246, 242, 232] }
-  if (c.lit) hdGlow(x, fy - fh * 0.45, fh * 1.4, '255,200,120', 0.35)
-  // the wax and saucer, filled like the paper they are drawn on
-  hdWash(hdArc(x, base, w * 1.2, w * 0.22, 0, p5.TWO_PI, 20), [236, 230, 218], 200, seed + 40, w * 0.03)
-  hdWash(hdRect(x - w / 2, top, w, h), [246, 241, 230], 248, seed + 41, w * 0.03)
-  // body: each side drawn twice, overshooting the corners
+// a candle in fine pencil: solid wax, outlines drawn twice, drips, saucer, wick,
+// an open flame with a warm wash and smoke when it goes out. Returns its geometry.
+hdCandle = (x, base, side, c, { ink = [58, 56, 54], paper = [246, 241, 230], fill = 248, flame = true, flameWash = [255, 190, 90], saucer = true, width = 0.075, height = 0.55, smoke = true } = {}) => {
+  const geo = hdGeo(x, base, side, c, width, height)
+  const { w, h, top, fy, fh, lean, seed } = geo
+  const o = { col: ink, weight: 1.3, jitter: 1.4, grain: 0.55, gaps: 0.1, halo: paper }
+  if (saucer) hdWash(hdArc(x, base, w * 1.2, w * 0.22, 0, p5.TWO_PI, 20), paper.map((v) => v - 12), fill, seed + 40, w * 0.03)
+  if (fill > 0) hdWash(hdRect(x - w / 2, top, w, h), paper, fill, seed + 41, w * 0.03)
   for (const pass of [0, 1]) {
-    hdStroke(hdSeg(x - w / 2, top, x - w / 2, base), { ...o, seed: seed + 1 + pass * 7, jitter: 1.4 + pass, halo: pass ? null : o.halo })
-    hdStroke(hdSeg(x + w / 2, top, x + w / 2, base), { ...o, seed: seed + 2 + pass * 7, jitter: 1.4 + pass, alpha: pass ? 140 : 230, halo: pass ? null : o.halo })
+    hdStroke(hdSeg(x - w / 2, top, x - w / 2, base), { ...o, seed: seed + 1 + pass * 7, jitter: 1.4 + pass, halo: pass ? null : paper })
+    hdStroke(hdSeg(x + w / 2, top, x + w / 2, base), { ...o, seed: seed + 2 + pass * 7, jitter: 1.4 + pass, alpha: pass ? 140 : 230, halo: pass ? null : paper })
   }
-  // a little shading on the side away from the light
   const dir = side ? -1 : 1
   for (let y = top + w * 0.4; y < base - w * 0.2; y += w * 0.16) hdStroke([[x + dir * w * 0.46, y], [x + dir * w * 0.3, y + w * 0.12]], { ...o, weight: 0.7, alpha: 150, halo: null, seed: seed + y })
   hdStroke(hdArc(x, top, w / 2, w * 0.13, 0.3, p5.TWO_PI + 0.1), { ...o, seed: seed + 3 })
-  // drips
   for (let i = 0; i < 2; i++) {
     const dx = x + (i ? 0.22 : -0.3) * w
     const dl = Math.min(h * 0.6, w * (0.4 + 0.8 * p5.noise(seed + i)))
     hdStroke([[dx - w * 0.05, top + w * 0.1], [dx - w * 0.05, top + dl], [dx, top + dl + w * 0.06], [dx + w * 0.05, top + dl], [dx + w * 0.05, top + w * 0.14]], { ...o, weight: 0.9, halo: null, seed: seed + 10 + i })
   }
-  // saucer
-  hdStroke(hdArc(x, base, w * 1.2, w * 0.22, -0.2, p5.PI + 0.3), { ...o, seed: seed + 4 })
-  hdStroke(hdArc(x, base, w * 1.2, w * 0.22, p5.PI + 0.6, p5.TWO_PI - 0.4), { ...o, seed: seed + 5, alpha: 130, halo: null })
-  // wick
+  if (saucer) {
+    hdStroke(hdArc(x, base, w * 1.2, w * 0.22, -0.2, p5.PI + 0.3), { ...o, seed: seed + 4 })
+    hdStroke(hdArc(x, base, w * 1.2, w * 0.22, p5.PI + 0.6, p5.TWO_PI - 0.4), { ...o, seed: seed + 5, alpha: 130, halo: null })
+  }
   hdStroke([[x, top], [x + w * 0.03, fy + w * 0.1], [x + lean * 0.1, fy]], { ...o, weight: 1.8, seed: seed + 6 })
-  if (c.lit) {
-    hdWash(hdTear(x, fy, w * 0.42, fh, lean), [255, 190, 90], 110, seed + 7, w * 0.08)
+  if (flame && c.lit) {
+    hdWash(hdTear(x, fy, w * 0.42, fh, lean), flameWash, 150, seed + 7, w * 0.08)
     hdStroke(hdTear(x, fy, w * 0.42, fh, lean, 0.3), { ...o, seed: seed + 8 })
     hdStroke(hdTear(x, fy - w * 0.05, w * 0.2, fh * 0.55, lean * 0.5, 0.6), { ...o, weight: 0.9, halo: null, seed: seed + 9 })
-    for (let i = 0; i < 6; i++) {
-      const ang = -p5.HALF_PI + (i - 2.5) * 0.45
-      const cy = fy - fh * 0.45
-      const r1 = fh * 0.75
-      const r2 = fh * (0.95 + 0.15 * p5.noise(i + hdSeed))
-      hdStroke([[x + Math.cos(ang) * r1, cy + Math.sin(ang) * r1], [x + Math.cos(ang) * r2, cy + Math.sin(ang) * r2]], { ...o, weight: 0.8, seed: seed + 20 + i })
+  }
+  if (smoke) hdSmoke(x, fy, w, c, ink, 1, seed + 30)
+  return geo
+}
+// a low-resolution p5.Graphics used as an extra hydra source (maps don't need detail)
+hdMap = (div) => {
+  const g = p5.createGraphics(Math.ceil(p5.width / div), Math.ceil(p5.height / div))
+  g.pixelDensity(1)
+  return g
+}
+// draw into a map using full-screen coordinates
+hdInto = (g, fn) => {
+  hdG = g
+  g.push()
+  g.scale(g.width / p5.width)
+  fn(g)
+  g.pop()
+  hdG = p5
+}
+// --- end of kit ---
+rootMap = hdMap(2)
+s1.init({ src: rootMap.elt })
+rootNets = null // grown once for this screen size
+
+// a branching network from (x, y), heading into the picture; every segment knows
+// how far along the roots it is, so they can be revealed as time passes
+rootGrow = (x, y, dir, seed) => {
+  const segs = []
+  const s = Math.min(p5.width, p5.height)
+  const walk = (px, py, ang, depth, dist, id) => {
+    const steps = Math.floor(16 - depth * 3 + hdHash(id) * 8)
+    for (let i = 0; i < steps; i++) {
+      const len = s * 0.022 * (1 - depth * 0.15)
+      const nx = px + Math.cos(ang) * len
+      const ny = py + Math.sin(ang) * len
+      segs.push({ x1: px, y1: py, x2: nx, y2: ny, d: dist + len, depth })
+      px = nx
+      py = ny
+      dist += len
+      ang += (hdHash(id * 13.1 + i) - 0.5) * 0.8
+      if (depth < 3 && hdHash(id * 7.3 + i * 3) < 0.2) walk(px, py, ang + (hdHash(id + i) > 0.5 ? 0.8 : -0.8), depth + 1, dist, id * 3.7 + i + 1)
     }
   }
-  hdSmoke(x, fy, w, c, lead, 1, seed + 30)
+  for (let r = 0; r < 7; r++) walk(x, y, (dir > 0 ? 0 : Math.PI) + (r / 6 - 0.5) * 2.6 * dir + Math.PI / 6 * dir * 0, 0, 0, seed + r * 11)
+  const dmax = Math.max(...segs.map((g) => g.d))
+  return { segs, dmax }
+}
+
+rootDraw = (g, net, grown, alpha, col, wScale) => {
+  const k = Math.min(p5.width, p5.height) / 540
+  for (const sg of net.segs) {
+    if (sg.d > grown * net.dmax) continue
+    g.stroke(col[0], col[1], col[2], alpha)
+    g.strokeWeight(Math.max(0.6, (3.6 - sg.depth * 0.8) * (1 - 0.5 * sg.d / net.dmax) * k * wScale))
+    g.line(sg.x1, sg.y1, sg.x2, sg.y2)
+  }
 }
 
 p5.draw = () => {
   const c = candleClock()
   hdSeed = Math.floor(c.t * 3)
-  if (candleBackground) p5.background(242, 238, 230)
-  else p5.clear()
-  const base = p5.height * 0.9
-  grCandle(p5.width * 0.09, base, 0, c)
-  grCandle(p5.width * 0.91, base, 1, c)
+  p5.clear()
+  const base = p5.height * 0.8
+  if (!rootNets || rootNets.w !== p5.width) {
+    rootNets = { w: p5.width, nets: [0, 1].map((side) => rootGrow(p5.width * (side ? 0.91 : 0.09), base + 4, side ? -1 : 1, side * 100 + 1)) }
+  }
+  const grown = 0.04 + 0.96 * (1 - c.left)
+  const fade = c.lit ? 1 : Math.max(0, 1 - c.outFor / candleOut)
+  p5.strokeCap(p5.ROUND)
+  rootNets.nets.forEach((net) => rootDraw(p5, net, grown, 170 * fade, [70, 52, 38], 0.45))
+  for (const side of [0, 1]) hdCandle(p5.width * (side ? 0.91 : 0.09), base, side, c, { ink: [74, 56, 40], paper: [244, 238, 224], height: 0.5, saucer: false })
+  hdInto(rootMap, (g) => {
+    g.background(0)
+    g.strokeCap(p5.ROUND)
+    rootNets.nets.forEach((net) => rootDraw(g, net, grown, 255 * fade, [255, 255, 255], 2.2))
+  })
 }
 
-// hydra background (Hesse's), drawn into o1 so the candles stay on top of the feedback
+// --- hydra ---
+// Hesse's background, drawn into o1; the candles work on top of it
 o1.setLinear()
 a.show()
 
@@ -215,16 +272,22 @@ osc(16, -0.1, 1)
   .blend(o1)
   .out(o1)
 
-// p5's canvas arrives with straight (not premultiplied) alpha, but hyper-hydra's layer()
-// expects premultiplied colour, which turns soft glows into white discs. This blends it right.
+// layerP5: lay a texture with straight (not premultiplied) alpha over the picture, like p5's canvas.
+// keyBy: give a texture the alpha of a channel mix of a map, e.g. keyBy(src(s1), 1, 0, 0) uses its red.
+setFunction({ name: 'layerP5', type: 'combine', inputs: [], glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));' })
 setFunction({
-  name: 'layerP5',
+  name: 'keyBy',
   type: 'combine',
-  inputs: [],
-  glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));'
+  inputs: [{ name: 'r', type: 'float', default: 1 }, { name: 'g', type: 'float', default: 0 }, { name: 'b', type: 'float', default: 0 }],
+  glsl: 'return vec4(_c0.rgb, clamp(_c1.r * r + _c1.g * g + _c1.b * b, 0.0, 1.0));'
 })
-// hydra gets a hand in the drawing too: a slow wobble, as if the paper breathes
-candleLayer = src(s0).modulate(noise(2.5, 0.08), 0.005)
-src(o1).layerP5(candleLayer).out(o0)
+
+candleRoots = () => src(o1).invert().saturate(0.6)
+
+src(o1)
+  .modulate(src(s1), 0.012) // the picture cracks along the roots
+  .layerP5(candleRoots().keyBy(src(s1), 1, 0, 0)) // and shows itself inside out in them
+  .layerP5(src(s0))
+  .out(o0)
+// try: .modulate(src(s1), 0.08), or candleRoots = () => src(o1).colorama(0.4)
 render(o0)
-// try: candleLayer = src(s0).modulate(o1, 0.02) so the background pushes the lines around
