@@ -1,4 +1,4 @@
-// Candle draft 1/10: candlelight. Only the two flames keep the colour: your hydra
+// Candle draft 1/20: candlelight. Only the two flames keep the colour: your hydra
 // picture drains to grey everywhere else and shows its colour in warm pools of
 // light round the candles. The pools shrink as they burn down and vanish when
 // they go out.
@@ -107,11 +107,11 @@ hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
     hdG.endShape(p5.CLOSE)
   }
 }
-hdGlow = (x, y, r, rgb, a) => {
+hdGlow = (x, y, r, rgb, alpha) => {
   const ctx = hdG.drawingContext
   const g = ctx.createRadialGradient(x, y, 0, x, y, r)
-  g.addColorStop(0, `rgba(${rgb},${a})`)
-  g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
+  g.addColorStop(0, `rgba(${rgb},${alpha})`)
+  g.addColorStop(0.4, `rgba(${rgb},${alpha * 0.35})`)
   g.addColorStop(1, `rgba(${rgb},0)`)
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)

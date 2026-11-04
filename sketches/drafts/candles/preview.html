@@ -55,6 +55,7 @@
   .drafts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
   .drafts button { display: flex; align-items: baseline; gap: 8px; text-align: left; padding: 8px 10px; }
   .drafts .num { font: 12px var(--mono); color: var(--muted); min-width: 2ch; }
+  .group-label { grid-column: 1 / -1; margin: 6px 0 0; font: 12px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
   .drafts .nm { font: italic 17px/1.15 var(--display); }
   .drafts button[aria-pressed='true'] { border-color: var(--flame); background: var(--flame-soft); }
   .drafts button[aria-pressed='true'] .num { color: var(--flame); }
@@ -74,7 +75,7 @@
 <main class="lab">
   <header>
     <h1>Candle drafts</h1>
-    <p>Round 4: ten candles that work through hydra. p5 paints maps (light, heat, masks, wisps); hydra uses them to light, bend, burn, melt and smoke your background. Everything below runs on real hydra with your glow and voronoi feedback in o1.</p>
+    <p>Twenty new candles. Drafts 1 to 10 work through hydra: p5 paints maps (light, heat, masks, wisps) and hydra uses them to light, bend, burn, melt and smoke your background. Drafts 11 to 20 are plain p5 drawings in the same loose spirit, laid over the picture. Everything runs on real hydra with your glow and voronoi feedback in o1.</p>
   </header>
   <section class="stage" aria-label="Hydra output">
     <canvas id="stage" width="960" height="540"></canvas>
@@ -98,11 +99,11 @@
       <p id="about"></p>
       <p class="eyebrow">How it plugs into hydra</p>
       <p id="plug"></p>
-      <p class="keys">Keys <kbd>1</kbd> to <kbd>0</kbd> switch drafts. The sound flame uses its stand-in here, since this page has no microphone; in the editor it follows <code>a.fft</code>.</p>
+      <p class="keys">Keys <kbd>1</kbd> to <kbd>0</kbd> pick drafts 1 to 10, with <kbd>Shift</kbd> for 11 to 20. The sound flame uses its stand-in here, since this page has no microphone; in the editor it follows <code>a.fft</code>.</p>
     </div>
     <div>
       <div class="codehead">
-        <p class="eyebrow">The hydra part (change it in the editor)</p>
+        <p class="eyebrow" id="codeLabel">The hydra part (change it in the editor)</p>
         <button type="button" id="copy">Copy whole sketch</button>
       </div>
       <p id="copyNote" aria-live="polite"></p>

@@ -1,4 +1,4 @@
-// Candle draft 8/10: sound flame. The flames are drawn by sound: three
+// Candle draft 8/20: sound flame. The flames are drawn by sound: three
 // outlines pushed out by hydra's audio spectrum (bass at the base, treble at the
 // tip), and the wax is a stack of seismograph lines recording what it heard.
 //
@@ -106,11 +106,11 @@ hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
     hdG.endShape(p5.CLOSE)
   }
 }
-hdGlow = (x, y, r, rgb, a) => {
+hdGlow = (x, y, r, rgb, alpha) => {
   const ctx = hdG.drawingContext
   const g = ctx.createRadialGradient(x, y, 0, x, y, r)
-  g.addColorStop(0, `rgba(${rgb},${a})`)
-  g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
+  g.addColorStop(0, `rgba(${rgb},${alpha})`)
+  g.addColorStop(0.4, `rgba(${rgb},${alpha * 0.35})`)
   g.addColorStop(1, `rgba(${rgb},0)`)
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)

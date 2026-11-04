@@ -1,4 +1,4 @@
-// Candle draft 6/10: the picture melts. Candles on a shelf whose wax runs down the
+// Candle draft 6/20: the picture melts. Candles on a shelf whose wax runs down the
 // screen, and the wax is the picture itself: every drip drags the colours from
 // the shelf line down with it, so the hydra picture looks like it is melting off
 // the candles and pooling at the bottom.
@@ -107,11 +107,11 @@ hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
     hdG.endShape(p5.CLOSE)
   }
 }
-hdGlow = (x, y, r, rgb, a) => {
+hdGlow = (x, y, r, rgb, alpha) => {
   const ctx = hdG.drawingContext
   const g = ctx.createRadialGradient(x, y, 0, x, y, r)
-  g.addColorStop(0, `rgba(${rgb},${a})`)
-  g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
+  g.addColorStop(0, `rgba(${rgb},${alpha})`)
+  g.addColorStop(0.4, `rgba(${rgb},${alpha * 0.35})`)
   g.addColorStop(1, `rgba(${rgb},0)`)
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)

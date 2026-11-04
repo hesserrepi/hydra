@@ -33,6 +33,26 @@ Two small helpers are defined with `setFunction` in every sketch:
 - `keyBy(map, r, g, b)` gives a texture the alpha of a channel mix of a map, so
   one p5 map can carry three masks (red, green, blue).
 
+## Drafts 11 to 20: plain p5
+
+Drawn entirely in p5 on `s0`; hydra only lays the drawing over the picture
+(`src(o1).layerP5(src(s0)).out(o0)`). The looks borrow from hydra's world
+(oscillators, interference, scanlines, mirrors, noise fields, live code) without
+using hydra to make them.
+
+| # | File | Look |
+|---|------|------|
+| 11 | `11-phosphor.js` | an oscilloscope beam traces the candle with a fading phosphor trail; the flame is a Lissajous knot; switches off to a dot |
+| 12 | `12-moire.js` | hair-fine line sets turning against each other, so interference bands sweep the wax; the flame is two ring sets |
+| 13 | `13-scanlines.js` | video scanlines split into red, green and blue, slipping, tearing and rolling; falls apart when it goes out |
+| 14 | `14-kaleidoscope.js` | pencil candle with a turning ring of mirrored flames, curls and dots round the flame, shrinking as it burns |
+| 15 | `15-chronophotograph.js` | after Marey: earlier "exposures" of the candle stay on the plate in white, stepping out with their times |
+| 16 | `16-halftone.js` | two-colour riso halftone, screens drifting out of register, dots peeling off the rim and flame and swirling away |
+| 17 | `17-embroidery.js` | running stitch, satin-stitch wax and flame; stitches pulled out as it burns, needle holes, loose ends, a needle |
+| 18 | `18-live-code.js` | the candle typed out of your hydra code, scrolling and coloured like the editor; a flame of flickering glyphs |
+| 19 | `19-brushstrokes.js` | short thick strokes on a moving flow field, a turning swirl of strokes round each flame |
+| 20 | `20-patent-drawing.js` | patent figure: hatching, centre line, numbered parts, a height dimension in mm and "out in mm:ss" |
+
 ## Shared bits
 
 All drafts share a hand-drawn line kit (`hdStroke` and friends, the same block in
@@ -50,7 +70,8 @@ never assign `a`, `time`, `mouse`, `osc`, `o0`-`o3` or `s0`-`s3`.
 
 Run `npm run dev` and open
 http://localhost:5173/sketches/drafts/candles/preview.html. It runs one draft at
-a time on real hydra with the background in `o1` (number keys switch drafts),
-with buttons for "just lit", "half", "nearly out" and "blown out", a burn time
-slider, the draft's hydra block and a button that copies the whole sketch. The
-code for it is in `lab.js`.
+a time on real hydra with the background in `o1` (keys 1 to 0 pick drafts 1 to
+10, with Shift for 11 to 20), with buttons for "just lit", "half", "nearly out"
+and "blown out", a burn time slider, the draft's hydra block (or its drawing
+code, for the plain p5 ones) and a button that copies the whole sketch. The code
+for it is in `lab.js`.

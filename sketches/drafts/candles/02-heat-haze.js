@@ -1,4 +1,4 @@
-// Candle draft 2/10: heat haze. Engraved candlesticks whose flames bend
+// Candle draft 2/20: heat haze. Engraved candlesticks whose flames bend
 // the picture: a column of shimmering heat rises from each flame and warps and
 // warms whatever hydra is showing above it, then settles when the flame dies.
 //
@@ -105,11 +105,11 @@ hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
     hdG.endShape(p5.CLOSE)
   }
 }
-hdGlow = (x, y, r, rgb, a) => {
+hdGlow = (x, y, r, rgb, alpha) => {
   const ctx = hdG.drawingContext
   const g = ctx.createRadialGradient(x, y, 0, x, y, r)
-  g.addColorStop(0, `rgba(${rgb},${a})`)
-  g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
+  g.addColorStop(0, `rgba(${rgb},${alpha})`)
+  g.addColorStop(0.4, `rgba(${rgb},${alpha * 0.35})`)
   g.addColorStop(1, `rgba(${rgb},0)`)
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)
@@ -242,10 +242,10 @@ etchCandle = (x, base, side, c) => {
   // wax: contour hatching that follows the cylinder, closer together on the shadow side
   hdWash(hdRect(x - w / 2, top, w, h), [246, 240, 226], 235, seed + 4, 0)
   for (let i = 0; i < 9; i++) {
-    const a = (i + 0.5) / 9 * p5.PI
-    const xx = x + Math.cos(a) * w / 2 * dir
-    if (Math.cos(a) < -0.2) continue // the lit side stays bare
-    hdStroke(hdSeg(xx, top + w * 0.12, xx, base, 0), { ...o, weight: 0.5 + 0.5 * Math.cos(a), seed: seed + 20 + i, halo: null })
+    const ang = (i + 0.5) / 9 * p5.PI
+    const xx = x + Math.cos(ang) * w / 2 * dir
+    if (Math.cos(ang) < -0.2) continue // the lit side stays bare
+    hdStroke(hdSeg(xx, top + w * 0.12, xx, base, 0), { ...o, weight: 0.5 + 0.5 * Math.cos(ang), seed: seed + 20 + i, halo: null })
   }
   for (let y = top + w * 0.3; y < base; y += w * 0.12) hdStroke(hdArc(x, y, w / 2, w * 0.1, dir > 0 ? -0.3 : p5.PI * 0.55, dir > 0 ? p5.PI * 0.45 : p5.PI + 0.3, 8), { ...o, weight: 0.5, halo: null, seed: seed + y })
   hdStroke(hdSeg(x - w / 2, top, x - w / 2, base, 0), { ...o, weight: 1.2, seed: seed + 5 })

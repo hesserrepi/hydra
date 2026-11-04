@@ -49,6 +49,7 @@ export async function candleLab ({ p5: P5Lib, Hydra, drafts, loadExtensions }) {
     const m = about.match(/^Candle draft (\d+)\/\d+: ([^.]+)\. (.*)$/)
     const k = code.indexOf("name: 'keyBy'")
     const end = code.indexOf('\n})', k)
+    const kitEnd = code.indexOf('\n}\n', code.indexOf('hdInto = ')) + 3
     return {
       file,
       code,
@@ -56,13 +57,21 @@ export async function candleLab ({ p5: P5Lib, Hydra, drafts, loadExtensions }) {
       name: m ? m[2] : file,
       about: m ? m[3].trim() : about.trim(),
       plug: plug.trim(),
-      hydraPart: code.slice(end + 3).trim()
+      hydraPart: code.slice(end + 3).trim(),
+      p5Part: code.slice(kitEnd, code.indexOf('// --- hydra ---')).trim()
     }
   }
   const list = drafts.map(parse).sort((x, y) => x.n - y.n)
 
   const nav = $('drafts')
+  const groups = { 1: 'Through hydra: p5 paints maps, hydra does the effect', 11: 'Plain p5: hydra only shows the drawing' }
   list.forEach((d, i) => {
+    if (groups[d.n]) {
+      const h = document.createElement('p')
+      h.className = 'group-label'
+      h.textContent = groups[d.n]
+      nav.appendChild(h)
+    }
     const b = document.createElement('button')
     b.type = 'button'
     b.id = 'draft-btn-' + d.n
@@ -88,7 +97,11 @@ export async function candleLab ({ p5: P5Lib, Hydra, drafts, loadExtensions }) {
     $('num').textContent = `Draft ${d.n} of ${list.length}`
     $('about').textContent = d.about
     $('plug').textContent = d.plug
-    $('code').textContent = d.hydraPart
+    // plain p5 drafts have nothing to see in hydra, so show their drawing code instead
+    const plain = d.hydraPart.length < 80
+    $('codeLabel').textContent = plain ? 'The p5 part (the drawing)' : 'The hydra part (change it in the editor)'
+    $('code').textContent = plain ? d.p5Part : d.hydraPart
+    $('copyNote').textContent = ''
     $('err').hidden = true
     try {
       window.hush()
@@ -143,8 +156,10 @@ export async function candleLab ({ p5: P5Lib, Hydra, drafts, loadExtensions }) {
 
   addEventListener('keydown', (e) => {
     if (e.target.closest && e.target.closest('input, textarea')) return
-    const k = e.key === '0' ? 10 : +e.key
-    if (k >= 1 && k <= list.length) show(k - 1)
+    const m = (e.code || '').match(/^Digit(\d)$/)
+    if (!m) return
+    const k = (+m[1] || 10) + (e.shiftKey ? 10 : 0) // 1 to 0 for drafts 1 to 10, with shift for 11 to 20
+    if (k <= list.length) show(k - 1)
   })
 
   const start = +(location.hash.match(/^#draft-(\d+)$/) || [])[1] || 1

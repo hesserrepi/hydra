@@ -1,4 +1,4 @@
-// Candle draft 7/10: smoke loop. The smoke is hydra feedback: p5 only lets
+// Candle draft 7/20: smoke loop. The smoke is hydra feedback: p5 only lets
 // off a thin wisp at each flame tip (and a big puff when it goes out), and a
 // feedback loop in o2 lifts, curls and fades it into plumes that bend the picture
 // behind them. The smoke is made of the picture's negative.
@@ -107,11 +107,11 @@ hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
     hdG.endShape(p5.CLOSE)
   }
 }
-hdGlow = (x, y, r, rgb, a) => {
+hdGlow = (x, y, r, rgb, alpha) => {
   const ctx = hdG.drawingContext
   const g = ctx.createRadialGradient(x, y, 0, x, y, r)
-  g.addColorStop(0, `rgba(${rgb},${a})`)
-  g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
+  g.addColorStop(0, `rgba(${rgb},${alpha})`)
+  g.addColorStop(0.4, `rgba(${rgb},${alpha * 0.35})`)
   g.addColorStop(1, `rgba(${rgb},0)`)
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)

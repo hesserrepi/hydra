@@ -1,4 +1,4 @@
-// Candle draft 9/10: word candle. Each candle is a phrase set up its side like
+// Candle draft 9/20: word candle. Each candle is a phrase set up its side like
 // the title on a book spine, in letters cut out of your hydra picture turned
 // inside out. The flame eats the phrase from the top, one letter at a time, and
 // burnt letters lift off as grey ash: what is left, what is, what.
@@ -107,11 +107,11 @@ hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
     hdG.endShape(p5.CLOSE)
   }
 }
-hdGlow = (x, y, r, rgb, a) => {
+hdGlow = (x, y, r, rgb, alpha) => {
   const ctx = hdG.drawingContext
   const g = ctx.createRadialGradient(x, y, 0, x, y, r)
-  g.addColorStop(0, `rgba(${rgb},${a})`)
-  g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
+  g.addColorStop(0, `rgba(${rgb},${alpha})`)
+  g.addColorStop(0.4, `rgba(${rgb},${alpha * 0.35})`)
   g.addColorStop(1, `rgba(${rgb},0)`)
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)
