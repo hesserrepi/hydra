@@ -1,6 +1,6 @@
-// Candle draft 10/10: chalkboard. Chalk on a smudged slate: grainy strokes
-// that break up on the board, coloured chalk for the flame and a scribbled
-// halo, with the smoke rubbed in like a thumb smear.
+// Candle draft 10/10: chalk. Heavy chalk on a slate smudge: thick, broken
+// white strokes that skip on the board, hatching for the shadow side, coloured
+// chalk for the flame and a scribbled halo.
 p5 = new P5()
 p5.hide()
 s0.init({ src: p5.canvas })
@@ -8,6 +8,7 @@ s0.init({ src: p5.canvas })
 candleBurn = 120 // seconds from full height to a stub
 candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
 candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
+candlePaper = 0.85 // soft patch behind each candle so the lines read over hydra (0 = none)
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
@@ -15,109 +16,178 @@ candleClock = () => {
   return { t, left: Math.max(0, 1 - cycle / candleBurn), lit: cycle < candleBurn, outFor: cycle - candleBurn }
 }
 
-chalkBoard = null
-chalkMakeBoard = () => {
-  const g = p5.createGraphics(p5.width, p5.height)
-  g.background(38, 52, 46)
-  g.noStroke()
-  for (let i = 0; i < 40; i++) { // old half-wiped smudges
-    g.fill(220, 230, 220, p5.random(2, 4))
-    g.ellipse(p5.random(p5.width), p5.random(p5.height), p5.random(60, 300), p5.random(20, 90))
+// --- hand-drawn line kit (the same in every draft) ---
+// Lines are drawn as many short segments that wander off the ideal path,
+// change pressure, skip where the pencil lifts and pick up paper tooth.
+hdSeed = 0 // set a few times a second in p5.draw so the lines "boil" gently
+hdHash = (n) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v) }
+
+hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230 } = {}) => {
+  const k = Math.min(p5.width, p5.height) / 540 // sizes are tuned at 540 px
+  let dist = 0
+  p5.strokeCap(p5.ROUND)
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [x1, y1] = pts[i]
+    const [x2, y2] = pts[i + 1]
+    const len = Math.hypot(x2 - x1, y2 - y1) || 0.001
+    const steps = Math.max(1, Math.ceil(len / (2.5 * k)))
+    const nx = -(y2 - y1) / len
+    const ny = (x2 - x1) / len
+    let px, py
+    for (let j = 0; j <= steps; j++) {
+      const u = j / steps
+      const d = (dist + u * len) / k
+      const off = (p5.noise(seed * 0.37 + d * 0.015, hdSeed * 0.35) - 0.5) * 2 * jitter * k
+      const x = x1 + (x2 - x1) * u + nx * off
+      const y = y1 + (y2 - y1) * u + ny * off
+      if (j > 0 && p5.noise(seed + 50 + d * 0.012) > gaps) {
+        const pressure = 0.45 + 0.8 * p5.noise(seed + 9 + d * 0.006)
+        const tooth = 1 - grain * p5.noise(d * 0.8, seed + 3)
+        p5.stroke(col[0], col[1], col[2], alpha * tooth)
+        p5.strokeWeight(Math.max(0.5, weight * k * pressure))
+        p5.line(px, py, x, y)
+      }
+      px = x
+      py = y
+    }
+    dist += len
   }
-  for (let i = 0; i < p5.width * p5.height * 0.01; i++) {
-    g.fill(255, p5.random(4, 14))
-    g.rect(p5.random(p5.width), p5.random(p5.height), 1, 1)
-  }
-  return g
 }
 
-// a chalk stroke: many small dabs with gaps where the chalk skips on the board.
-// The dab pattern is fixed per stroke (seeded), so the line does not shimmer.
-chalkLine = (x1, y1, x2, y2, col, wgt, seed) => {
-  const n = Math.max(2, Math.ceil(p5.dist(x1, y1, x2, y2) / (wgt * 0.5)))
-  p5.noStroke()
+// a straight line that overshoots both ends a little, as quick drawings do
+hdSeg = (x1, y1, x2, y2, over = 0.04) => {
+  const dx = (x2 - x1) * over
+  const dy = (y2 - y1) * over
+  return [[x1 - dx, y1 - dy], [(x1 + x2) / 2, (y1 + y2) / 2], [x2 + dx, y2 + dy]]
+}
+hdArc = (cx, cy, rx, ry, a0, a1, n = 24) => {
+  const pts = []
   for (let i = 0; i <= n; i++) {
-    const k = i / n
-    const grain = p5.noise(seed + i * 0.9)
-    if (grain < 0.3) continue
-    p5.fill(col[0], col[1], col[2], 120 + 135 * grain)
-    const j = (p5.noise(seed * 3 + i * 0.4) - 0.5) * wgt
-    p5.rect(p5.lerp(x1, x2, k) + j, p5.lerp(y1, y2, k) - j, wgt * grain, wgt * grain)
+    const ang = a0 + (a1 - a0) * i / n
+    pts.push([cx + Math.cos(ang) * rx, cy + Math.sin(ang) * ry])
+  }
+  return pts
+}
+hdRect = (x, y, w, h) => [[x, y], [x + w / 2, y], [x + w, y], [x + w, y + h / 2], [x + w, y + h], [x + w / 2, y + h], [x, y + h], [x, y + h / 2]]
+// flame outline from its base (x, y); `open` leaves a gap at the tip so it never quite closes
+hdTear = (x, y, w, fh, lean, open = 0.2, n = 30) => {
+  const pts = []
+  for (let i = 0; i <= n; i++) {
+    const u = open + (p5.TWO_PI - open) * i / n
+    const up = (1 + Math.cos(u)) / 2
+    pts.push([x + lean * up * up + Math.sin(u) * Math.sin(u / 2) * w, y + w * 0.2 - (fh + w * 0.2) * up])
+  }
+  return pts
+}
+// a flat patch of colour whose edge wanders (one call per layer of pigment)
+hdWash = (pts, col, alpha, seed, wob = 0, layers = 1) => {
+  p5.noStroke()
+  for (let l = 0; l < layers; l++) {
+    p5.fill(col[0], col[1], col[2], alpha)
+    p5.beginShape()
+    pts.forEach(([x, y], i) => {
+      const n1 = p5.noise(seed + l * 3.1 + i * 0.31, hdSeed * 0.2) - 0.5
+      const n2 = p5.noise(seed + 40 + l * 3.1 + i * 0.31, hdSeed * 0.2) - 0.5
+      p5.vertex(x + n1 * wob * 2, y + n2 * wob * 2)
+    })
+    p5.endShape(p5.CLOSE)
   }
 }
-chalkPath = (pts, col, wgt, seed) => {
-  for (let i = 0; i < pts.length - 1; i++) chalkLine(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1], col, wgt, seed + i * 17)
+hdGlow = (x, y, r, rgb, a) => {
+  const ctx = p5.drawingContext
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r)
+  g.addColorStop(0, `rgba(${rgb},${a})`)
+  g.addColorStop(0.4, `rgba(${rgb},${a * 0.35})`)
+  g.addColorStop(1, `rgba(${rgb},0)`)
+  ctx.fillStyle = g
+  ctx.fillRect(x - r, y - r, r * 2, r * 2)
 }
+// a soft patch of paper behind a candle, so fine lines still read over a busy hydra picture
+hdPaper = (x, y, rx, ry, rgb) => {
+  if (candleBackground || candlePaper <= 0) return
+  const ctx = p5.drawingContext
+  ctx.save()
+  ctx.translate(x, y)
+  ctx.scale(1, ry / rx)
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx)
+  g.addColorStop(0, `rgba(${rgb},${candlePaper})`)
+  g.addColorStop(0.55, `rgba(${rgb},${candlePaper * 0.8})`)
+  g.addColorStop(1, `rgba(${rgb},0)`)
+  ctx.fillStyle = g
+  ctx.fillRect(-rx, -rx, rx * 2, rx * 2)
+  ctx.restore()
+}
+// where everything sits for one candle at this moment
+hdGeo = (x, base, side, c, width = 0.075, height = 0.55) => {
+  const s = Math.min(p5.width, p5.height)
+  const w = s * width
+  const h = p5.height * height * (0.1 + 0.9 * c.left)
+  const top = base - h
+  const flick = p5.noise(c.t * 4 + side * 9)
+  return {
+    s, w, h, top, flick,
+    k: s / 540,
+    fy: top - w * 0.25,
+    fh: w * (1.4 + 0.35 * flick),
+    lean: (p5.noise(c.t * 1.6 + side * 3) - 0.5) * w * 0.6,
+    seed: side * 100
+  }
+}
+// smoke after the flame goes out: one curling line that drifts up and fades
+hdSmoke = (x, y, w, c, col, weight, seed) => {
+  if (c.lit || c.outFor > candleOut) return
+  const f = c.outFor / candleOut
+  const pts = []
+  for (let i = 0; i < 26; i++) pts.push([x + Math.sin(i * 0.45 - c.t * 2.5) * w * 0.25 * (i / 10), y - i * w * 0.14 - f * w])
+  hdStroke(pts, { col, weight, alpha: 220 * (1 - f), jitter: 1, grain: 0.5, gaps: 0.2, seed })
+}
+// --- end of kit ---
 
 chalkCandle = (x, base, side, c) => {
-  const s = Math.min(p5.width, p5.height)
-  const w = s * 0.08
-  const h = p5.height * 0.55 * (0.1 + 0.9 * c.left)
-  const top = base - h
-  const wgt = Math.max(2, s * 0.01)
-  const white = [236, 236, 228]
-  const seed = side * 100
-
-  // outline and shading strokes
-  chalkLine(x - w / 2, top, x - w / 2, base, white, wgt, seed + 1)
-  chalkLine(x + w / 2, top, x + w / 2, base, white, wgt, seed + 2)
-  const rim = []
-  for (let i = 0; i <= 16; i++) rim.push([x + Math.cos(i / 16 * p5.TWO_PI) * w / 2, top + Math.sin(i / 16 * p5.TWO_PI) * w * 0.15])
-  chalkPath(rim, white, wgt * 0.8, seed + 3)
+  const { w, h, top, fy, fh, lean, seed } = hdGeo(x, base, side, c, 0.08, 0.55)
+  hdPaper(x, (top + base) / 2 - w, w * 3.4, (base - top) / 2 + w * 3.4, '38,52,46')
+  const o = { col: [238, 238, 230], weight: 3.4, jitter: 1.5, grain: 0.85, gaps: 0.16 }
+  hdStroke(hdSeg(x - w / 2, top, x - w / 2, base), { ...o, seed: seed + 1 })
+  hdStroke(hdSeg(x + w / 2, top, x + w / 2, base), { ...o, seed: seed + 2 })
+  hdStroke(hdArc(x, top, w / 2, w * 0.14, 0, p5.TWO_PI + 0.3, 16), { ...o, weight: 2.6, seed: seed + 3 })
   const dir = side ? -1 : 1
-  for (let y = top + w * 0.3; y < base - w * 0.1; y += w * 0.28) chalkLine(x + dir * w * 0.45, y, x + dir * w * 0.1, y + w * 0.2, white, wgt * 0.5, seed + y)
-  chalkLine(x - w * 1.2, base, x + w * 1.2, base, white, wgt, seed + 4)
-  chalkLine(x - w * 1.0, base + w * 0.2, x + w * 1.0, base + w * 0.2, white, wgt * 0.7, seed + 5)
-  chalkLine(x, top, x + w * 0.03, top - w * 0.25, white, wgt * 0.6, seed + 6)
-
-  const fy = top - w * 0.25
+  for (let y = top + w * 0.3; y < base - w * 0.1; y += w * 0.22) {
+    hdStroke([[x + dir * w * 0.45, y], [x + dir * w * 0.05, y + w * 0.2]], { ...o, weight: 2, seed: seed + y })
+  }
+  hdStroke(hdSeg(x - w * 1.2, base, x + w * 1.2, base), { ...o, seed: seed + 4 })
+  hdStroke(hdSeg(x - w * 1.0, base + w * 0.2, x + w * 1.0, base + w * 0.2), { ...o, weight: 2.2, seed: seed + 5 })
+  hdStroke([[x, top], [x + w * 0.03, fy]], { ...o, weight: 2, seed: seed + 6 })
   if (c.lit) {
-    // the flame is redrawn a few times a second, like a quick re-sketch
-    const step = Math.floor(c.t * 6)
-    const fh = w * (1.4 + 0.3 * p5.noise(step * 0.3 + side))
-    const lean = (p5.noise(step * 0.2 + side * 4) - 0.5) * w * 0.5
-    // teardrop: u = 0 is the pointed tip, u = PI the round bottom
-    const tear = (k) => {
-      const pts = []
-      for (let i = 0; i <= 20; i++) {
-        const u = i / 20 * p5.TWO_PI
-        const up = (1 + Math.cos(u)) / 2
-        pts.push([x + lean * k * up + Math.sin(u) * Math.sin(u / 2) * w * 0.45 * k, fy + w * 0.1 * k - (fh + w * 0.1) * k * up])
-      }
-      return pts
-    }
-    chalkPath(tear(1), [240, 150, 90], wgt, seed + step)
-    chalkPath(tear(0.55), [250, 230, 120], wgt * 0.9, seed + step + 50)
-    // scribbled halo
-    for (let i = 0; i < 14; i++) {
-      const ang = i / 14 * p5.TWO_PI
-      const r1 = w * 1.3
-      const r2 = w * (1.6 + 0.2 * p5.noise(i + step * 0.1))
+    hdStroke(hdTear(x, fy, w * 0.45, fh, lean, 0.3), { ...o, col: [250, 150, 90], seed: seed + 7 })
+    hdStroke(hdTear(x, fy, w * 0.22, fh * 0.55, lean * 0.5, 0.5), { ...o, col: [252, 232, 120], weight: 2.6, seed: seed + 8 })
+    for (let i = 0; i < 12; i++) {
+      const ang = i / 12 * p5.TWO_PI
       const cy = fy - fh * 0.5
-      chalkLine(x + Math.cos(ang) * r1, cy + Math.sin(ang) * r1, x + Math.cos(ang) * r2, cy + Math.sin(ang) * r2, [250, 230, 120], wgt * 0.6, seed + i * 7 + step)
+      const r1 = w * 1.3
+      const r2 = w * (1.6 + 0.3 * p5.noise(i + hdSeed * 0.3))
+      hdStroke([[x + Math.cos(ang) * r1, cy + Math.sin(ang) * r1], [x + Math.cos(ang) * r2, cy + Math.sin(ang) * r2]], { ...o, col: [252, 232, 120], weight: 2, seed: seed + 20 + i })
     }
   } else if (c.outFor < candleOut) {
-    // smoke smeared in with a thumb: soft translucent blobs drifting up
-    const k = c.outFor / candleOut
+    const f = c.outFor / candleOut
     p5.noStroke()
     for (let i = 0; i < 8; i++) {
-      p5.fill(220, 225, 220, 30 * (1 - k))
-      p5.ellipse(x + Math.sin(i * 0.8 + c.t) * w * 0.3 * (i / 4), fy - w * (0.4 + i * 0.4) - k * w, w * (0.4 + i * 0.12), w * 0.5)
+      p5.fill(220, 225, 220, 40 * (1 - f))
+      p5.ellipse(x + Math.sin(i * 0.8 + c.t) * w * 0.3 * (i / 4), fy - w * (0.4 + i * 0.4) - f * w, w * (0.4 + i * 0.12), w * 0.5)
     }
   }
 }
 
 p5.draw = () => {
-  if (!chalkBoard || chalkBoard.width !== p5.width) chalkBoard = chalkMakeBoard()
   const c = candleClock()
-  if (candleBackground) p5.image(chalkBoard, 0, 0)
+  hdSeed = Math.floor(c.t * 3)
+  if (candleBackground) p5.background(38, 52, 46)
   else p5.clear()
   const base = p5.height * 0.88
   chalkCandle(p5.width * 0.09, base, 0, c)
   chalkCandle(p5.width * 0.91, base, 1, c)
 }
 
-// hydra background (Hesse's), drawn into o1 so the candles stay crisp on top of the feedback
+// hydra background (Hesse's), drawn into o1 so the candles stay on top of the feedback
 o1.setLinear()
 a.show()
 
@@ -137,7 +207,8 @@ setFunction({
   inputs: [],
   glsl: 'return vec4(mix(_c0.rgb, _c1.rgb, _c1.a), max(_c0.a, _c1.a));'
 })
-src(o1).layerP5(src(s0)).out(o0)
+// hydra gets a hand in the drawing too: a slow wobble, as if the paper breathes
+candleLayer = src(s0).modulate(noise(2.5, 0.08), 0.005)
+src(o1).layerP5(candleLayer).out(o0)
 render(o0)
-// to let the candles melt into the feedback instead, use o0 in place of o1 above,
-// end that chain with .layerP5(src(s0)).out() and drop the last two lines
+// try: candleLayer = src(s0).modulate(o1, 0.02) so the background pushes the lines around

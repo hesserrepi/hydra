@@ -5,16 +5,23 @@ style before the real `candles()` p5 form (with a timed extinguish) gets built.
 
 | # | File | Style |
 |---|------|-------|
-| 1 | `01-classic.js` | ivory wax, brass saucer, warm glow, realistic flame |
-| 2 | `02-ink.js` | pen sketch on paper, boiling lines, cross-hatching |
-| 3 | `03-goth.js` | black candles bleeding red wax on wrought-iron stands |
-| 4 | `04-watercolor.js` | translucent washes with pooled edges |
-| 5 | `05-pixel.js` | 8-bit, 4-frame flame, dithered glow |
-| 6 | `06-neon.js` | neon tubes on a synthwave floor, stuttering flame |
-| 7 | `07-woodcut.js` | black-and-cream block print, carved rays |
-| 8 | `08-nouveau.js` | Mucha-style gold halos and curling holders |
-| 9 | `09-bauhaus.js` | flat primary shapes, pulsing rings |
-| 10 | `10-chalk.js` | chalk on a smudged slate |
+| 1 | `01-graphite.js` | fine shaky graphite line, outlines that never quite meet |
+| 2 | `02-botanical.js` | sepia ink, candles growing from a tuft of leaves with roots |
+| 3 | `03-charcoal-goth.js` | heavy charcoal, iron stands, red pencil wax, endless smoke thread |
+| 4 | `04-ink-and-wash.js` | pen line with off-register watercolour washes |
+| 5 | `05-riso.js` | two-ink risograph, drifting misregistration, dot grain |
+| 6 | `06-neon-pastel.js` | fluorescent oil-pastel scribbles with a soft glow |
+| 7 | `07-linocut.js` | hand-cut lino: uneven black shapes, white gouges, cut rays |
+| 8 | `08-gold-line.js` | single gold line, halo rings, whiplash flame |
+| 9 | `09-paper-cutout.js` | torn paper in Bauhaus colours, stop-motion jitter |
+| 10 | `10-chalk.js` | heavy broken chalk on a slate smudge |
+
+All ten share a small hand-drawn line kit (`hdStroke` and friends, the same
+block in every file): lines wander off their path, change pressure, lift
+off and pick up paper grain, and "boil" a few times a second. Hydra also
+wobbles the finished candles slightly (`candleLayer`). `candlePaper` sets the
+soft patch of paper (or slate) behind each candle that keeps fine lines
+readable over a busy hydra picture; set it to 0 to drop it.
 
 Each file is a complete editor sketch: paste it into the editor and run it. The
 candles are drawn with p5 on a transparent canvas (`s0`) and layered over a hydra
