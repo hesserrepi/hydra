@@ -5,23 +5,23 @@ style before the real `candles()` p5 form (with a timed extinguish) gets built.
 
 | # | File | Style |
 |---|------|-------|
-| 1 | `01-graphite.js` | fine shaky graphite line, outlines that never quite meet |
-| 2 | `02-botanical.js` | sepia ink, candles growing from a tuft of leaves with roots |
-| 3 | `03-charcoal-goth.js` | heavy charcoal, iron stands, red pencil wax, endless smoke thread |
-| 4 | `04-ink-and-wash.js` | pen line with off-register watercolour washes |
-| 5 | `05-riso.js` | two-ink risograph, drifting misregistration, dot grain |
-| 6 | `06-neon-pastel.js` | fluorescent oil-pastel scribbles with a soft glow |
-| 7 | `07-linocut.js` | hand-cut lino: uneven black shapes, white gouges, cut rays |
-| 8 | `08-gold-line.js` | single gold line, halo rings, whiplash flame |
-| 9 | `09-paper-cutout.js` | torn paper in Bauhaus colours, stop-motion jitter |
-| 10 | `10-chalk.js` | heavy broken chalk on a slate smudge |
+| 1 | `01-graphite.js` | fine shaky graphite line, pale wax, outlines that never quite meet |
+| 2 | `02-botanical.js` | sepia ink, leaves and roots, a tendril the flame eats as it burns |
+| 3 | `03-charcoal-goth.js` | heavy charcoal, black wax, red pencil drips, low iron stand |
+| 4 | `04-riso.js` | two-ink risograph, drifting misregistration, dots swirling off and fading |
+| 5 | `05-gold-line.js` | single gold line, halo rings, rising motes, low curling holder |
+| 6 | `06-moths.js` | sepia vanitas: moths circle the flame and scatter when it goes out |
+| 7 | `07-cyanotype.js` | white sun print on a brushed Prussian-blue sheet, with ferns |
+| 8 | `08-etching.js` | engraved baroque candlestick, contour hatching, flame of fine rays |
+| 9 | `09-sumi-brush.js` | bold dry-brush ink, vermilion flame, red seal, smoke written across the sky |
+| 10 | `10-constellation.js` | the candle as linked stars on a round star chart, sparks drifting off |
 
 All ten share a small hand-drawn line kit (`hdStroke` and friends, the same
 block in every file): lines wander off their path, change pressure, lift
 off and pick up paper grain, and "boil" a few times a second. Hydra also
-wobbles the finished candles slightly (`candleLayer`). `candlePaper` sets the
-soft patch of paper (or slate) behind each candle that keeps fine lines
-readable over a busy hydra picture; set it to 0 to drop it.
+wobbles the finished candles slightly (`candleLayer`). Only the flame glows.
+`candleHalo` draws a thin contrasting edge under the lines so they stay
+readable over a busy hydra picture; set it to `false` for bare lines.
 
 Each file is a complete editor sketch: paste it into the editor and run it. The
 candles are drawn with p5 on a transparent canvas (`s0`) and layered over a hydra

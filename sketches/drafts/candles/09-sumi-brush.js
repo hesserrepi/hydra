@@ -1,6 +1,6 @@
-// Candle draft 4/10: ink and wash. A thin sepia pen line with watercolour
-// laid in loosely and a little off register: rose wax, a flame and halo that
-// bleed past their outlines, pigment pooling at the edges.
+// Candle draft 9/10: ink brush. Bold sumi ink: each candle is one dry-brush
+// stroke, the flame a vermilion comma, a red seal stamped at the foot, and the
+// smoke a long calligraphic line that writes itself across the sky.
 p5 = new P5()
 p5.hide()
 s0.init({ src: p5.canvas })
@@ -8,7 +8,7 @@ s0.init({ src: p5.canvas })
 candleBurn = 120 // seconds from full height to a stub
 candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
 candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
-candlePaper = 0.8 // soft patch behind each candle so the lines read over hydra (0 = none)
+candleHalo = true // thin contrasting edge under the lines so they read over hydra (false = bare lines)
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
@@ -22,10 +22,10 @@ candleClock = () => {
 hdSeed = 0 // set a few times a second in p5.draw so the lines "boil" gently
 hdHash = (n) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v) }
 
-hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230 } = {}) => {
+hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230, halo = null, haloAlpha = 110 } = {}) => {
   const k = Math.min(p5.width, p5.height) / 540 // sizes are tuned at 540 px
+  const segs = []
   let dist = 0
-  p5.strokeCap(p5.ROUND)
   for (let i = 0; i < pts.length - 1; i++) {
     const [x1, y1] = pts[i]
     const [x2, y2] = pts[i + 1]
@@ -43,15 +43,24 @@ hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, 
       if (j > 0 && p5.noise(seed + 50 + d * 0.012) > gaps) {
         const pressure = 0.45 + 0.8 * p5.noise(seed + 9 + d * 0.006)
         const tooth = 1 - grain * p5.noise(d * 0.8, seed + 3)
-        p5.stroke(col[0], col[1], col[2], alpha * tooth)
-        p5.strokeWeight(Math.max(0.5, weight * k * pressure))
-        p5.line(px, py, x, y)
+        segs.push([px, py, x, y, Math.max(0.5, weight * k * pressure), alpha * tooth])
       }
       px = x
       py = y
     }
     dist += len
   }
+  p5.strokeCap(p5.ROUND)
+  // a thin contrasting edge under the line (not a glow), so it reads over a busy hydra picture
+  if (halo && candleHalo && !candleBackground) {
+    p5.stroke(halo[0], halo[1], halo[2], haloAlpha)
+    segs.forEach((g) => { p5.strokeWeight(g[4] + 2.4 * k); p5.line(g[0], g[1], g[2], g[3]) })
+  }
+  segs.forEach((g) => {
+    p5.stroke(col[0], col[1], col[2], g[5])
+    p5.strokeWeight(g[4])
+    p5.line(g[0], g[1], g[2], g[3])
+  })
 }
 
 // a straight line that overshoots both ends a little, as quick drawings do
@@ -102,21 +111,19 @@ hdGlow = (x, y, r, rgb, a) => {
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)
 }
-// a soft patch of paper behind a candle, so fine lines still read over a busy hydra picture
-hdPaper = (x, y, rx, ry, rgb) => {
-  if (candleBackground || candlePaper <= 0) return
-  const ctx = p5.drawingContext
-  ctx.save()
-  ctx.translate(x, y)
-  ctx.scale(1, ry / rx)
-  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx)
-  g.addColorStop(0, `rgba(${rgb},${candlePaper})`)
-  g.addColorStop(0.55, `rgba(${rgb},${candlePaper * 0.8})`)
-  g.addColorStop(1, `rgba(${rgb},0)`)
-  ctx.fillStyle = g
-  ctx.fillRect(-rx, -rx, rx * 2, rx * 2)
-  ctx.restore()
+// particles that leave (x, y), swirl outwards and fade, worked out from the clock alone.
+// draw(px, py, age 0..1, index) paints one of them.
+hdSparks = (x, y, t, { count = 40, life = 4, reach = 100, swirl = 1.5, rise = 0.4, seed = 0, draw }) => {
+  for (let i = 0; i < count; i++) {
+    const age = ((t + hdHash(seed + i) * life) % life) / life
+    const dir = hdHash(seed + i * 2.7) > 0.5 ? 1 : -1
+    const ang = hdHash(seed + i * 1.3) * p5.TWO_PI + age * swirl * dir
+    const r = reach * (0.12 + age * (0.5 + 0.7 * hdHash(seed + i * 3.1)))
+    draw(x + Math.cos(ang) * r, y + Math.sin(ang) * r * 0.8 - age * reach * rise, age, i)
+  }
 }
+// rotate a list of points around (cx, cy)
+hdRot = (pts, cx, cy, ang) => pts.map(([x, y]) => [cx + (x - cx) * Math.cos(ang) - (y - cy) * Math.sin(ang), cy + (x - cx) * Math.sin(ang) + (y - cy) * Math.cos(ang)])
 // where everything sits for one candle at this moment
 hdGeo = (x, base, side, c, width = 0.075, height = 0.55) => {
   const s = Math.min(p5.width, p5.height)
@@ -143,44 +150,58 @@ hdSmoke = (x, y, w, c, col, weight, seed) => {
 }
 // --- end of kit ---
 
-washCandle = (x, base, side, c) => {
-  const { w, h, top, fy, fh, lean, s, seed } = hdGeo(x, base, side, c, 0.08, 0.55)
-  const ink = [90, 62, 52]
-  const o = { col: ink, weight: 0.9, jitter: 1.2, grain: 0.35, gaps: 0.12 }
-  hdPaper(x, (top + base) / 2 - w, w * 3.4, (base - top) / 2 + w * 3.2, '248,243,232')
-  // washes first, shifted off the line as in a quick sketchbook painting
-  const sx = w * 0.12
-  const sy = -w * 0.06
-  if (c.lit) hdWash(hdArc(x + sx, fy - fh * 0.5, s * 0.13, s * 0.13, 0, p5.TWO_PI, 30), [250, 214, 140], 22, seed + 1, s * 0.02, 4)
-  hdWash(hdArc(x + sx, base + w * 0.1, w * 1.3, w * 0.25, 0, p5.TWO_PI, 20), [150, 162, 196], 30, seed + 2, w * 0.12, 3)
-  hdWash(hdRect(x - w / 2 + sx, top + sy, w, h), [214, 150, 150], 34, seed + 3, w * 0.1, 4)
-  hdWash(hdRect(x - w / 2 + sx, top + sy, w * 0.35, h), [170, 104, 120], 30, seed + 4, w * 0.06, 3)
+brushCandle = (x, base, side, c) => {
+  const { w, h, top, fy, fh, lean, s, seed, k } = hdGeo(x, base, side, c, 0.1, 0.55)
+  const sumi = [16, 14, 14]
+  const dir = side ? -1 : 1 // towards the middle of the screen
+  // the table: one horizontal sweep
+  hdStroke([[x - dir * w * 1.6, base + w * 0.12], [x + dir * w * 2.8, base + w * 0.05]], { col: sumi, weight: 5, jitter: 1.5, grain: 0.6, gaps: 0.12, seed: seed + 1 })
+  // the candle: one dry-brush stroke made of parallel hairs that run dry towards the bottom
+  for (let i = 0; i < 12; i++) {
+    const u = i / 11
+    const xx = x - w / 2 + u * w
+    hdStroke([[xx, top + w * 0.05], [xx + w * 0.03, (top + base) / 2], [xx, base]], { col: sumi, weight: w / (12 * k) * 1.6, jitter: 0.8, grain: 0.5, gaps: 0.1 + 0.35 * Math.abs(u - 0.5), seed: seed + 10 + i })
+  }
+  // splashes of ink
+  p5.noStroke()
+  p5.fill(sumi[0], sumi[1], sumi[2], 220)
+  for (let i = 0; i < 9; i++) p5.circle(x + (hdHash(seed + i) - 0.3) * w * 2.5 * dir, base - hdHash(seed + i * 2) * w * 1.2, (1 + 4 * hdHash(seed + i * 3)) * k)
+  // seal
+  const sx = x + dir * w * 1.1
+  const sy = base - w * 0.75
+  hdWash(hdRect(sx - w * 0.3, sy - w * 0.3, w * 0.6, w * 0.6), [196, 38, 30], 235, seed + 2, w * 0.03)
+  hdStroke([[sx - w * 0.18, sy - w * 0.15], [sx + w * 0.18, sy - w * 0.15]], { col: [240, 230, 220], weight: 1.4, jitter: 0.5, grain: 0.3, gaps: 0.1, seed: seed + 3 })
+  hdStroke([[sx + w * 0.05, sy - w * 0.22], [sx + w * 0.05, sy + w * 0.02]], { col: [240, 230, 220], weight: 1.4, jitter: 0.5, grain: 0.3, gaps: 0.1, seed: seed + 4 })
+  hdStroke([[sx - w * 0.14, sy + w * 0.2], [sx - w * 0.14, sy + w * 0.06], [sx + w * 0.16, sy + w * 0.06]], { col: [240, 230, 220], weight: 1.2, jitter: 0.5, grain: 0.3, gaps: 0.1, seed: seed + 5 })
+  hdStroke([[x, top], [x + w * 0.04, fy]], { col: sumi, weight: 2.4, jitter: 0.6, grain: 0.3, gaps: 0, seed: seed + 6 })
   if (c.lit) {
-    hdWash(hdTear(x + sx, fy, w * 0.5, fh, lean), [240, 140, 60], 40, seed + 5, w * 0.1, 4)
-    hdWash(hdTear(x + sx * 0.5, fy, w * 0.25, fh * 0.6, lean * 0.6), [252, 222, 100], 60, seed + 6, w * 0.06, 3)
+    // the flame: a vermilion comma with a darker heart
+    hdWash(hdTear(x, fy, w * 0.42, fh * 1.1, lean * 1.4), [222, 60, 34], 235, seed + 7, w * 0.05)
+    hdWash(hdTear(x, fy, w * 0.16, fh * 0.45, lean * 0.6), [120, 20, 16], 220, seed + 8, w * 0.02)
   }
-  // then the pen
-  hdStroke(hdSeg(x - w / 2, top, x - w / 2, base), { ...o, seed: seed + 7 })
-  hdStroke(hdSeg(x + w / 2, top, x + w / 2, base), { ...o, seed: seed + 8 })
-  hdStroke(hdArc(x, top, w / 2, w * 0.12, 0.5, p5.TWO_PI + 0.2), { ...o, seed: seed + 9 })
-  hdStroke(hdArc(x, base, w * 1.15, w * 0.2, -0.1, p5.PI + 0.2), { ...o, seed: seed + 10 })
-  hdStroke([[x, top], [x + w * 0.04, fy]], { ...o, weight: 1.4, seed: seed + 11 })
-  if (c.lit) hdStroke(hdTear(x, fy, w * 0.4, fh * 0.95, lean, 0.5), { ...o, seed: seed + 12 })
-  else if (c.outFor < candleOut) {
-    const f = c.outFor / candleOut
-    hdWash(hdArc(x + w * 0.3, fy - w * (1 + 3 * f), w * (0.5 + f), w * (0.8 + f), 0, p5.TWO_PI, 16), [140, 140, 160], 30 * (1 - f), seed + 13, w * 0.3, 3)
+  // smoke: a calligraphic line written slowly from the wick across the sky, then wiped and begun again
+  const cycle = 14
+  const ph = ((c.t + side * 5) % cycle) / cycle
+  const drawn = Math.min(1, ph * 1.5)
+  const fade = ph > 0.75 ? 1 - (ph - 0.75) / 0.25 : 1
+  const pts = []
+  const n = Math.floor(60 * drawn)
+  for (let i = 0; i <= n; i++) {
+    const u = i / 60
+    pts.push([x + dir * u * p5.width * 0.32 + Math.sin(u * 9 + side) * w * 0.6 * u, fy - fh - u * p5.height * 0.35 + Math.sin(u * 5) * w * 0.8])
   }
-  hdSmoke(x, fy, w, c, ink, 0.7, seed + 30)
+  if (pts.length > 1) hdStroke(pts, { col: [60, 56, 56], weight: c.lit ? 1.2 : 2.6, jitter: 1.2, grain: 0.5, gaps: 0.15, alpha: 200 * fade, seed: seed + 9 })
+  hdSmoke(x, fy, w, c, sumi, 2, seed + 30)
 }
 
 p5.draw = () => {
   const c = candleClock()
   hdSeed = Math.floor(c.t * 3)
-  if (candleBackground) p5.background(246, 241, 230)
+  if (candleBackground) p5.background(238, 232, 218)
   else p5.clear()
-  const base = p5.height * 0.88
-  washCandle(p5.width * 0.09, base, 0, c)
-  washCandle(p5.width * 0.91, base, 1, c)
+  const base = p5.height * 0.9
+  brushCandle(p5.width * 0.09, base, 0, c)
+  brushCandle(p5.width * 0.91, base, 1, c)
 }
 
 // hydra background (Hesse's), drawn into o1 so the candles stay on top of the feedback

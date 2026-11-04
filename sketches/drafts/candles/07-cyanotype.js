@@ -1,6 +1,6 @@
-// Candle draft 7/10: linocut. A hand-cut lino print: black shapes with
-// wandering edges, white gouge marks carved into the wax, a flame of nested
-// rings and tapering rays of light cut around it.
+// Candle draft 7/10: cyanotype. A sun print: each candle sits on a
+// brushed sheet of Prussian blue, the candle, ferns and flame printed into it
+// in white. The candle leaves a faint ghost of the height it had.
 p5 = new P5()
 p5.hide()
 s0.init({ src: p5.canvas })
@@ -8,7 +8,7 @@ s0.init({ src: p5.canvas })
 candleBurn = 120 // seconds from full height to a stub
 candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
 candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
-candlePaper = 0.85 // soft patch behind each candle so the lines read over hydra (0 = none)
+candleHalo = true // thin contrasting edge under the lines so they read over hydra (false = bare lines)
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
@@ -22,10 +22,10 @@ candleClock = () => {
 hdSeed = 0 // set a few times a second in p5.draw so the lines "boil" gently
 hdHash = (n) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v) }
 
-hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230 } = {}) => {
+hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230, halo = null, haloAlpha = 110 } = {}) => {
   const k = Math.min(p5.width, p5.height) / 540 // sizes are tuned at 540 px
+  const segs = []
   let dist = 0
-  p5.strokeCap(p5.ROUND)
   for (let i = 0; i < pts.length - 1; i++) {
     const [x1, y1] = pts[i]
     const [x2, y2] = pts[i + 1]
@@ -43,15 +43,24 @@ hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, 
       if (j > 0 && p5.noise(seed + 50 + d * 0.012) > gaps) {
         const pressure = 0.45 + 0.8 * p5.noise(seed + 9 + d * 0.006)
         const tooth = 1 - grain * p5.noise(d * 0.8, seed + 3)
-        p5.stroke(col[0], col[1], col[2], alpha * tooth)
-        p5.strokeWeight(Math.max(0.5, weight * k * pressure))
-        p5.line(px, py, x, y)
+        segs.push([px, py, x, y, Math.max(0.5, weight * k * pressure), alpha * tooth])
       }
       px = x
       py = y
     }
     dist += len
   }
+  p5.strokeCap(p5.ROUND)
+  // a thin contrasting edge under the line (not a glow), so it reads over a busy hydra picture
+  if (halo && candleHalo && !candleBackground) {
+    p5.stroke(halo[0], halo[1], halo[2], haloAlpha)
+    segs.forEach((g) => { p5.strokeWeight(g[4] + 2.4 * k); p5.line(g[0], g[1], g[2], g[3]) })
+  }
+  segs.forEach((g) => {
+    p5.stroke(col[0], col[1], col[2], g[5])
+    p5.strokeWeight(g[4])
+    p5.line(g[0], g[1], g[2], g[3])
+  })
 }
 
 // a straight line that overshoots both ends a little, as quick drawings do
@@ -102,21 +111,19 @@ hdGlow = (x, y, r, rgb, a) => {
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)
 }
-// a soft patch of paper behind a candle, so fine lines still read over a busy hydra picture
-hdPaper = (x, y, rx, ry, rgb) => {
-  if (candleBackground || candlePaper <= 0) return
-  const ctx = p5.drawingContext
-  ctx.save()
-  ctx.translate(x, y)
-  ctx.scale(1, ry / rx)
-  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx)
-  g.addColorStop(0, `rgba(${rgb},${candlePaper})`)
-  g.addColorStop(0.55, `rgba(${rgb},${candlePaper * 0.8})`)
-  g.addColorStop(1, `rgba(${rgb},0)`)
-  ctx.fillStyle = g
-  ctx.fillRect(-rx, -rx, rx * 2, rx * 2)
-  ctx.restore()
+// particles that leave (x, y), swirl outwards and fade, worked out from the clock alone.
+// draw(px, py, age 0..1, index) paints one of them.
+hdSparks = (x, y, t, { count = 40, life = 4, reach = 100, swirl = 1.5, rise = 0.4, seed = 0, draw }) => {
+  for (let i = 0; i < count; i++) {
+    const age = ((t + hdHash(seed + i) * life) % life) / life
+    const dir = hdHash(seed + i * 2.7) > 0.5 ? 1 : -1
+    const ang = hdHash(seed + i * 1.3) * p5.TWO_PI + age * swirl * dir
+    const r = reach * (0.12 + age * (0.5 + 0.7 * hdHash(seed + i * 3.1)))
+    draw(x + Math.cos(ang) * r, y + Math.sin(ang) * r * 0.8 - age * reach * rise, age, i)
+  }
 }
+// rotate a list of points around (cx, cy)
+hdRot = (pts, cx, cy, ang) => pts.map(([x, y]) => [cx + (x - cx) * Math.cos(ang) - (y - cy) * Math.sin(ang), cy + (x - cx) * Math.sin(ang) + (y - cy) * Math.cos(ang)])
 // where everything sits for one candle at this moment
 hdGeo = (x, base, side, c, width = 0.075, height = 0.55) => {
   const s = Math.min(p5.width, p5.height)
@@ -143,62 +150,66 @@ hdSmoke = (x, y, w, c, col, weight, seed) => {
 }
 // --- end of kit ---
 
-linoInk = [26, 22, 20]
-linoPaper = [236, 226, 204]
+cyanFern = (x, y, len, ang, seed) => {
+  // a pressed fern frond: a curved rib with paired, slanted leaflets getting smaller
+  const rib = []
+  for (let i = 0; i <= 14; i++) {
+    const u = i / 14
+    const a2 = ang + u * 0.5
+    const px = x + Math.cos(ang) * len * u + Math.cos(a2) * len * u * u * 0.2
+    const py = y + Math.sin(ang) * len * u + Math.sin(a2) * len * u * u * 0.2
+    rib.push([px, py])
+    if (i === 0 || i === 14) continue
+    const sz = len * 0.13 * (1 - u * 0.75)
+    for (const sg of [-1, 1]) {
+      const la = a2 + sg * 0.9
+      const cx = px + Math.cos(la) * sz
+      const cy = py + Math.sin(la) * sz
+      hdWash(hdRot(hdArc(cx, cy, sz, sz * 0.32, 0, p5.TWO_PI, 10), cx, cy, la), [235, 244, 250], 170, seed + i * 2 + sg, 0)
+    }
+  }
+  hdStroke(rib, { col: [235, 244, 250], weight: 1, jitter: 0.6, grain: 0.3, gaps: 0.04, seed })
+}
 
-linoCandle = (x, base, side, c) => {
-  const { w, h, top, fy, fh, lean, s, seed } = hdGeo(x, base, side, c, 0.09, 0.55)
-  hdPaper(x, (top + base) / 2 - w, w * 3.4, (base - top) / 2 + w * 3.4, '236,226,204')
-  const cut = { col: linoPaper, weight: 2.2, jitter: 0.8, grain: 0.15, gaps: 0.02 }
-  const ink = { ...cut, col: linoInk }
+cyanCandle = (x, base, side, c) => {
+  const { w, h, top, fy, fh, lean, s, seed } = hdGeo(x, base, side, c, 0.08, 0.52)
+  const white = [236, 244, 250]
+  const o = { col: white, weight: 1.4, jitter: 1.1, grain: 0.35, gaps: 0.06 }
+  // the sheet: brushed-on chemistry with ragged edges and brush streaks
+  const fullTop = base - p5.height * 0.52 - w * 2.6
+  const left = Math.max(s * 0.02, x - w * 2.3)
+  const right = Math.min(p5.width - s * 0.02, x + w * 2.3)
+  hdWash(hdRect(left, fullTop, right - left, base + w * 0.7 - fullTop), [20, 56, 118], 255, seed + 1, w * 0.12)
+  hdWash(hdRect(left + w * 0.1, fullTop + w * 0.1, right - left - w * 0.2, base + w * 0.5 - fullTop), [28, 70, 138], 120, seed + 2, w * 0.2, 2)
+  for (let i = 0; i < 9; i++) {
+    const yy = fullTop + (base - fullTop) * hdHash(seed + i * 4)
+    hdStroke([[left + w * 0.1, yy], [right - w * 0.1, yy + w * 0.3 * (hdHash(seed + i) - 0.5)]], { col: [50, 96, 160], weight: 5, jitter: 2, grain: 0.7, gaps: 0.3, alpha: 60, seed: seed + 10 + i })
+  }
+  // ferns printed at the foot
+  cyanFern(left + w * 0.3, base + w * 0.4, w * 2.2, -1.2, seed + 20)
+  cyanFern(right - w * 0.3, base + w * 0.4, w * 1.8, -1.9, seed + 30)
+  // ghost of the full candle, then the candle itself
+  hdWash(hdRect(x - w / 2, base - p5.height * 0.52, w, p5.height * 0.52), white, 30, seed + 3, w * 0.04)
+  hdWash(hdRect(x - w / 2 - w * 0.06, top, w * 1.12, h), white, 80, seed + 4, w * 0.08)
+  hdWash(hdRect(x - w / 2, top, w, h), white, 200, seed + 5, w * 0.03)
+  hdStroke(hdArc(x, base, w * 1.2, w * 0.22, 0, p5.TWO_PI + 0.2), { ...o, seed: seed + 6 })
+  hdStroke([[x, top], [x, fy]], { ...o, col: [20, 56, 118], weight: 1.6, seed: seed + 7 })
   if (c.lit) {
-    // rays cut around the flame: tapering black strokes
-    for (let i = 0; i < 16; i++) {
-      const ang = i / 16 * p5.TWO_PI + c.t * 0.05 * (side ? -1 : 1)
-      const cy = fy - fh * 0.45
-      const r1 = fh * 0.8
-      const r2 = fh * (1.3 + 0.4 * hdHash(seed + i))
-      hdStroke([[x + Math.cos(ang) * r1, cy + Math.sin(ang) * r1], [x + Math.cos(ang) * r2, cy + Math.sin(ang) * r2]], { ...ink, weight: 2.6, seed: seed + 40 + i })
-    }
+    hdWash(hdTear(x, fy, w * 0.55, fh * 1.15, lean), white, 70, seed + 8, w * 0.1)
+    hdWash(hdTear(x, fy, w * 0.4, fh, lean), white, 230, seed + 9, w * 0.04)
+    hdStroke(hdTear(x, fy, w * 0.18, fh * 0.5, lean * 0.5, 0.5), { ...o, col: [120, 170, 220], weight: 1, seed: seed + 10 })
   }
-  // the block: wax and saucer as black shapes with uneven edges
-  hdWash(hdArc(x, base + w * 0.08, w * 1.25, w * 0.26, 0, p5.TWO_PI, 20), linoInk, 255, seed + 1, w * 0.05)
-  hdWash(hdRect(x - w / 2, top, w, h), linoInk, 255, seed + 2, w * 0.05)
-  // gouges, longer on the side facing the middle of the screen
-  const toward = side ? -1 : 1
-  for (let y = top + w * 0.35; y < base - w * 0.1; y += w * 0.2) {
-    const len = w * (0.3 + 0.25 * hdHash(seed + y))
-    const x0 = x + toward * w * 0.4
-    hdStroke([[x0, y], [x0 - toward * len, y + w * 0.05]], { ...cut, weight: 1.8, seed: seed + y })
-  }
-  hdStroke(hdArc(x, top + w * 0.08, w * 0.38, w * 0.08, 0, p5.TWO_PI, 12), { ...cut, seed: seed + 3 })
-  hdStroke(hdSeg(x - w, base + w * 0.12, x + w, base + w * 0.12, 0), { ...cut, weight: 1.4, seed: seed + 4 })
-  hdWash(hdRect(x - w * 0.04, fy, w * 0.08, top - fy), linoInk, 255, seed + 5, 0)
-  if (c.lit) {
-    const ring = (k, col) => hdWash(hdTear(x, fy, w * 0.5 * k, fh * k, lean * k, 0), col, 255, seed + 6 + k, w * 0.03)
-    ring(1, linoInk)
-    ring(0.8, linoPaper)
-    ring(0.6, linoInk)
-    ring(0.4, linoPaper)
-  } else if (c.outFor < candleOut) {
-    const f = c.outFor / candleOut
-    for (let i = 0; i < 5; i++) {
-      if (i / 5 > 1 - f * 0.8) continue
-      const yy = fy - w * (0.4 + i * 0.6) - f * w
-      const xx = x + Math.sin(i * 1.4 + c.t * 2) * w * 0.25
-      hdStroke([[xx - w * 0.25, yy], [xx + w * 0.25, yy - w * 0.25]], { ...ink, seed: seed + 50 + i })
-    }
-  }
+  hdSmoke(x, fy, w, c, white, 1.2, seed + 40)
 }
 
 p5.draw = () => {
   const c = candleClock()
   hdSeed = Math.floor(c.t * 3)
-  if (candleBackground) p5.background(236, 226, 204)
+  if (candleBackground) p5.background(232, 228, 216)
   else p5.clear()
   const base = p5.height * 0.9
-  linoCandle(p5.width * 0.09, base, 0, c)
-  linoCandle(p5.width * 0.91, base, 1, c)
+  cyanCandle(p5.width * 0.09, base, 0, c)
+  cyanCandle(p5.width * 0.91, base, 1, c)
 }
 
 // hydra background (Hesse's), drawn into o1 so the candles stay on top of the feedback

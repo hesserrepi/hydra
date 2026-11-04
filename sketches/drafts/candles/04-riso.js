@@ -1,6 +1,6 @@
-// Candle draft 5/10: riso print. Two-colour risograph: fluoro pink and blue
-// inks printed slightly out of register (the offset drifts), grainy dot
-// shading, a flat flame and a ring of pink dots for the light.
+// Candle draft 4/10: riso print. Two-colour risograph: fluoro pink and blue
+// inks slightly out of register (the offset drifts), grainy dot shading, a flat
+// flame, and dots that leave the candle, swirl around it and fade away.
 p5 = new P5()
 p5.hide()
 s0.init({ src: p5.canvas })
@@ -8,7 +8,7 @@ s0.init({ src: p5.canvas })
 candleBurn = 120 // seconds from full height to a stub
 candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
 candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
-candlePaper = 0.85 // soft patch behind each candle so the lines read over hydra (0 = none)
+candleHalo = true // thin contrasting edge under the lines so they read over hydra (false = bare lines)
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
@@ -22,10 +22,10 @@ candleClock = () => {
 hdSeed = 0 // set a few times a second in p5.draw so the lines "boil" gently
 hdHash = (n) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v) }
 
-hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230 } = {}) => {
+hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230, halo = null, haloAlpha = 110 } = {}) => {
   const k = Math.min(p5.width, p5.height) / 540 // sizes are tuned at 540 px
+  const segs = []
   let dist = 0
-  p5.strokeCap(p5.ROUND)
   for (let i = 0; i < pts.length - 1; i++) {
     const [x1, y1] = pts[i]
     const [x2, y2] = pts[i + 1]
@@ -43,15 +43,24 @@ hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, 
       if (j > 0 && p5.noise(seed + 50 + d * 0.012) > gaps) {
         const pressure = 0.45 + 0.8 * p5.noise(seed + 9 + d * 0.006)
         const tooth = 1 - grain * p5.noise(d * 0.8, seed + 3)
-        p5.stroke(col[0], col[1], col[2], alpha * tooth)
-        p5.strokeWeight(Math.max(0.5, weight * k * pressure))
-        p5.line(px, py, x, y)
+        segs.push([px, py, x, y, Math.max(0.5, weight * k * pressure), alpha * tooth])
       }
       px = x
       py = y
     }
     dist += len
   }
+  p5.strokeCap(p5.ROUND)
+  // a thin contrasting edge under the line (not a glow), so it reads over a busy hydra picture
+  if (halo && candleHalo && !candleBackground) {
+    p5.stroke(halo[0], halo[1], halo[2], haloAlpha)
+    segs.forEach((g) => { p5.strokeWeight(g[4] + 2.4 * k); p5.line(g[0], g[1], g[2], g[3]) })
+  }
+  segs.forEach((g) => {
+    p5.stroke(col[0], col[1], col[2], g[5])
+    p5.strokeWeight(g[4])
+    p5.line(g[0], g[1], g[2], g[3])
+  })
 }
 
 // a straight line that overshoots both ends a little, as quick drawings do
@@ -102,21 +111,19 @@ hdGlow = (x, y, r, rgb, a) => {
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)
 }
-// a soft patch of paper behind a candle, so fine lines still read over a busy hydra picture
-hdPaper = (x, y, rx, ry, rgb) => {
-  if (candleBackground || candlePaper <= 0) return
-  const ctx = p5.drawingContext
-  ctx.save()
-  ctx.translate(x, y)
-  ctx.scale(1, ry / rx)
-  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx)
-  g.addColorStop(0, `rgba(${rgb},${candlePaper})`)
-  g.addColorStop(0.55, `rgba(${rgb},${candlePaper * 0.8})`)
-  g.addColorStop(1, `rgba(${rgb},0)`)
-  ctx.fillStyle = g
-  ctx.fillRect(-rx, -rx, rx * 2, rx * 2)
-  ctx.restore()
+// particles that leave (x, y), swirl outwards and fade, worked out from the clock alone.
+// draw(px, py, age 0..1, index) paints one of them.
+hdSparks = (x, y, t, { count = 40, life = 4, reach = 100, swirl = 1.5, rise = 0.4, seed = 0, draw }) => {
+  for (let i = 0; i < count; i++) {
+    const age = ((t + hdHash(seed + i) * life) % life) / life
+    const dir = hdHash(seed + i * 2.7) > 0.5 ? 1 : -1
+    const ang = hdHash(seed + i * 1.3) * p5.TWO_PI + age * swirl * dir
+    const r = reach * (0.12 + age * (0.5 + 0.7 * hdHash(seed + i * 3.1)))
+    draw(x + Math.cos(ang) * r, y + Math.sin(ang) * r * 0.8 - age * reach * rise, age, i)
+  }
 }
+// rotate a list of points around (cx, cy)
+hdRot = (pts, cx, cy, ang) => pts.map(([x, y]) => [cx + (x - cx) * Math.cos(ang) - (y - cy) * Math.sin(ang), cy + (x - cx) * Math.sin(ang) + (y - cy) * Math.cos(ang)])
 // where everything sits for one candle at this moment
 hdGeo = (x, base, side, c, width = 0.075, height = 0.55) => {
   const s = Math.min(p5.width, p5.height)
@@ -145,6 +152,7 @@ hdSmoke = (x, y, w, c, col, weight, seed) => {
 
 risoBlue = [0, 120, 191]
 risoPink = [255, 72, 176]
+risoPaper = [247, 242, 230]
 
 // grainy dot fill inside a rectangle, denser on one side
 risoDots = (x, y, w, h, col, density, seed, towards) => {
@@ -162,41 +170,40 @@ risoDots = (x, y, w, h, col, density, seed, towards) => {
 
 risoCandle = (x, base, side, c) => {
   const { w, h, top, fy, fh, lean, s, seed, k } = hdGeo(x, base, side, c, 0.08, 0.55)
-  hdPaper(x, (top + base) / 2 - w, w * 3.3, (base - top) / 2 + w * 3, '247,242,230')
   // misregistration: the pink plate drifts a few pixels against the blue one
   const mx = (p5.noise(c.t * 0.2) - 0.5) * 8 * k
   const my = (p5.noise(c.t * 0.2 + 5) - 0.5) * 6 * k
-  const ob = { col: risoBlue, weight: 1.6, jitter: 1, grain: 0.3, gaps: 0.05 }
-  const op = { ...ob, col: risoPink }
-  if (c.lit) {
+  const ob = { col: risoBlue, weight: 1.8, jitter: 1, grain: 0.3, gaps: 0.05, halo: risoPaper, haloAlpha: 150 }
+  // dots drifting out of the candle and the flame, circling, then gone
+  const dot = (col) => (px, py, age, i) => {
+    const fade = (1 - age) * Math.min(1, age * 6)
+    const d = (4 + 6 * hdHash(i + 7)) * k * (1 - age * 0.4)
     p5.noStroke()
-    p5.fill(risoPink[0], risoPink[1], risoPink[2], 150)
-    for (let i = 0; i < 70; i++) {
-      const ang = hdHash(seed + i) * p5.TWO_PI
-      const r = s * (0.06 + 0.12 * Math.sqrt(hdHash(seed + i + 0.5)))
-      p5.circle(x + mx + Math.cos(ang) * r, fy - fh * 0.5 + my + Math.sin(ang) * r, (1.5 + hdHash(i + 9) * 2.5) * k)
+    if (candleHalo && !candleBackground) {
+      p5.fill(risoPaper[0], risoPaper[1], risoPaper[2], 220 * fade)
+      p5.circle(px, py, d + 3.5 * k)
     }
+    p5.fill(col[0], col[1], col[2], 240 * fade)
+    p5.circle(px, py, d)
+  }
+  const live = c.lit ? 1 : Math.max(0, 1 - c.outFor / 2)
+  if (live > 0) {
+    hdSparks(x + mx, fy - fh * 0.5 + my, c.t, { count: Math.floor(45 * live), life: 5, reach: s * 0.3, swirl: 2.2, rise: 0.5, seed: seed + 1, draw: dot(risoPink) })
+    hdSparks(x, (top + base) / 2, c.t, { count: Math.floor(35 * live), life: 6, reach: s * 0.26, swirl: 1.6, rise: 0.3, seed: seed + 2, draw: dot(risoBlue) })
   }
   // blue plate
+  hdWash(hdRect(x - w / 2, top, w, h), risoPaper, 248, seed + 9, w * 0.02)
   risoDots(x - w / 2, top, w, h, risoBlue, 2.2, seed + 1, side ? -1 : 1)
   hdStroke(hdSeg(x - w / 2, top, x - w / 2, base), { ...ob, seed: seed + 2 })
   hdStroke(hdSeg(x + w / 2, top, x + w / 2, base), { ...ob, seed: seed + 3 })
   hdStroke(hdArc(x, top, w / 2, w * 0.13, 0.2, p5.TWO_PI + 0.1), { ...ob, seed: seed + 4 })
-  hdStroke(hdSeg(x - w * 1.3, base, x + w * 1.3, base), { ...ob, weight: 2.2, seed: seed + 5 })
+  hdStroke(hdSeg(x - w * 1.3, base, x + w * 1.3, base), { ...ob, weight: 2.4, seed: seed + 5 })
   hdStroke([[x, top], [x, fy]], { ...ob, weight: 1.8, seed: seed + 6 })
   // pink plate
-  hdWash(hdRect(x - w / 2 + mx, top + my, w * 0.3, h), risoPink, 90, seed + 7, w * 0.04)
+  hdWash(hdRect(x - w / 2 + mx, top + my, w * 0.3, h), risoPink, 110, seed + 7, w * 0.04)
   if (c.lit) {
-    hdWash(hdTear(x + mx, fy + my, w * 0.45, fh, lean), risoPink, 210, seed + 8, w * 0.04)
-    hdStroke(hdTear(x, fy, w * 0.22, fh * 0.55, lean * 0.5, 0.5), { ...ob, weight: 1.2, seed: seed + 9 })
-  } else if (c.outFor < candleOut) {
-    const f = c.outFor / candleOut
-    p5.noStroke()
-    p5.fill(risoBlue[0], risoBlue[1], risoBlue[2], 200 * (1 - f))
-    for (let i = 0; i < 30; i++) {
-      const u = hdHash(seed + i)
-      p5.circle(x + Math.sin(u * 9 + c.t) * w * 0.4 * u, fy - u * w * 3 - f * w, (1 + 2 * u) * k)
-    }
+    hdWash(hdTear(x + mx, fy + my, w * 0.45, fh, lean), risoPink, 220, seed + 8, w * 0.04)
+    hdStroke(hdTear(x, fy, w * 0.22, fh * 0.55, lean * 0.5, 0.5), { ...ob, weight: 1.2, halo: null, seed: seed + 9 })
   }
 }
 

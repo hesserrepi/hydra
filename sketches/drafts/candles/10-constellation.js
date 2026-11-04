@@ -1,6 +1,6 @@
-// Candle draft 10/10: chalk. Heavy chalk on a slate smudge: thick, broken
-// white strokes that skip on the board, hatching for the shadow side, coloured
-// chalk for the flame and a scribbled halo.
+// Candle draft 10/10: constellation. Candles mapped as constellations: stars
+// at the corners joined by fine lines, twinkling; the flame a tight cluster with
+// a bright core, and small stars drifting off it into the dark.
 p5 = new P5()
 p5.hide()
 s0.init({ src: p5.canvas })
@@ -8,7 +8,7 @@ s0.init({ src: p5.canvas })
 candleBurn = 120 // seconds from full height to a stub
 candleOut = 6 // draft only: seconds it stays out (smoking) before it relights
 candleBackground = false // true paints this draft's own backdrop; false keeps it transparent so hydra shows behind
-candlePaper = 0.85 // soft patch behind each candle so the lines read over hydra (0 = none)
+candleHalo = true // thin contrasting edge under the lines so they read over hydra (false = bare lines)
 candleT0 = p5.millis()
 candleClock = () => {
   const t = (p5.millis() - candleT0) / 1000
@@ -22,10 +22,10 @@ candleClock = () => {
 hdSeed = 0 // set a few times a second in p5.draw so the lines "boil" gently
 hdHash = (n) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v) }
 
-hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230 } = {}) => {
+hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, gaps = 0.1, seed = 0, alpha = 230, halo = null, haloAlpha = 110 } = {}) => {
   const k = Math.min(p5.width, p5.height) / 540 // sizes are tuned at 540 px
+  const segs = []
   let dist = 0
-  p5.strokeCap(p5.ROUND)
   for (let i = 0; i < pts.length - 1; i++) {
     const [x1, y1] = pts[i]
     const [x2, y2] = pts[i + 1]
@@ -43,15 +43,24 @@ hdStroke = (pts, { col = [50, 46, 44], weight = 1.2, jitter = 1.4, grain = 0.5, 
       if (j > 0 && p5.noise(seed + 50 + d * 0.012) > gaps) {
         const pressure = 0.45 + 0.8 * p5.noise(seed + 9 + d * 0.006)
         const tooth = 1 - grain * p5.noise(d * 0.8, seed + 3)
-        p5.stroke(col[0], col[1], col[2], alpha * tooth)
-        p5.strokeWeight(Math.max(0.5, weight * k * pressure))
-        p5.line(px, py, x, y)
+        segs.push([px, py, x, y, Math.max(0.5, weight * k * pressure), alpha * tooth])
       }
       px = x
       py = y
     }
     dist += len
   }
+  p5.strokeCap(p5.ROUND)
+  // a thin contrasting edge under the line (not a glow), so it reads over a busy hydra picture
+  if (halo && candleHalo && !candleBackground) {
+    p5.stroke(halo[0], halo[1], halo[2], haloAlpha)
+    segs.forEach((g) => { p5.strokeWeight(g[4] + 2.4 * k); p5.line(g[0], g[1], g[2], g[3]) })
+  }
+  segs.forEach((g) => {
+    p5.stroke(col[0], col[1], col[2], g[5])
+    p5.strokeWeight(g[4])
+    p5.line(g[0], g[1], g[2], g[3])
+  })
 }
 
 // a straight line that overshoots both ends a little, as quick drawings do
@@ -102,21 +111,19 @@ hdGlow = (x, y, r, rgb, a) => {
   ctx.fillStyle = g
   ctx.fillRect(x - r, y - r, r * 2, r * 2)
 }
-// a soft patch of paper behind a candle, so fine lines still read over a busy hydra picture
-hdPaper = (x, y, rx, ry, rgb) => {
-  if (candleBackground || candlePaper <= 0) return
-  const ctx = p5.drawingContext
-  ctx.save()
-  ctx.translate(x, y)
-  ctx.scale(1, ry / rx)
-  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx)
-  g.addColorStop(0, `rgba(${rgb},${candlePaper})`)
-  g.addColorStop(0.55, `rgba(${rgb},${candlePaper * 0.8})`)
-  g.addColorStop(1, `rgba(${rgb},0)`)
-  ctx.fillStyle = g
-  ctx.fillRect(-rx, -rx, rx * 2, rx * 2)
-  ctx.restore()
+// particles that leave (x, y), swirl outwards and fade, worked out from the clock alone.
+// draw(px, py, age 0..1, index) paints one of them.
+hdSparks = (x, y, t, { count = 40, life = 4, reach = 100, swirl = 1.5, rise = 0.4, seed = 0, draw }) => {
+  for (let i = 0; i < count; i++) {
+    const age = ((t + hdHash(seed + i) * life) % life) / life
+    const dir = hdHash(seed + i * 2.7) > 0.5 ? 1 : -1
+    const ang = hdHash(seed + i * 1.3) * p5.TWO_PI + age * swirl * dir
+    const r = reach * (0.12 + age * (0.5 + 0.7 * hdHash(seed + i * 3.1)))
+    draw(x + Math.cos(ang) * r, y + Math.sin(ang) * r * 0.8 - age * reach * rise, age, i)
+  }
 }
+// rotate a list of points around (cx, cy)
+hdRot = (pts, cx, cy, ang) => pts.map(([x, y]) => [cx + (x - cx) * Math.cos(ang) - (y - cy) * Math.sin(ang), cy + (x - cx) * Math.sin(ang) + (y - cy) * Math.cos(ang)])
 // where everything sits for one candle at this moment
 hdGeo = (x, base, side, c, width = 0.075, height = 0.55) => {
   const s = Math.min(p5.width, p5.height)
@@ -143,48 +150,87 @@ hdSmoke = (x, y, w, c, col, weight, seed) => {
 }
 // --- end of kit ---
 
-chalkCandle = (x, base, side, c) => {
-  const { w, h, top, fy, fh, lean, seed } = hdGeo(x, base, side, c, 0.08, 0.55)
-  hdPaper(x, (top + base) / 2 - w, w * 3.4, (base - top) / 2 + w * 3.4, '38,52,46')
-  const o = { col: [238, 238, 230], weight: 3.4, jitter: 1.5, grain: 0.85, gaps: 0.16 }
-  hdStroke(hdSeg(x - w / 2, top, x - w / 2, base), { ...o, seed: seed + 1 })
-  hdStroke(hdSeg(x + w / 2, top, x + w / 2, base), { ...o, seed: seed + 2 })
-  hdStroke(hdArc(x, top, w / 2, w * 0.14, 0, p5.TWO_PI + 0.3, 16), { ...o, weight: 2.6, seed: seed + 3 })
-  const dir = side ? -1 : 1
-  for (let y = top + w * 0.3; y < base - w * 0.1; y += w * 0.22) {
-    hdStroke([[x + dir * w * 0.45, y], [x + dir * w * 0.05, y + w * 0.2]], { ...o, weight: 2, seed: seed + y })
+starDot = (px, py, size, bright, k) => {
+  p5.noStroke()
+  p5.fill(255, 240, 200, 255 * bright)
+  p5.circle(px, py, size * k)
+  if (size > 3.5) {
+    p5.stroke(255, 240, 200, 160 * bright)
+    p5.strokeWeight(0.8 * k)
+    p5.line(px - size * 1.6 * k, py, px + size * 1.6 * k, py)
+    p5.line(px, py - size * 1.6 * k, px, py + size * 1.6 * k)
   }
-  hdStroke(hdSeg(x - w * 1.2, base, x + w * 1.2, base), { ...o, seed: seed + 4 })
-  hdStroke(hdSeg(x - w * 1.0, base + w * 0.2, x + w * 1.0, base + w * 0.2), { ...o, weight: 2.2, seed: seed + 5 })
-  hdStroke([[x, top], [x + w * 0.03, fy]], { ...o, weight: 2, seed: seed + 6 })
+}
+
+starCandle = (x, base, side, c) => {
+  const { w, h, top, fy, fh, lean, s, seed, k } = hdGeo(x, base, side, c, 0.08, 0.55)
+  const line = { col: [255, 236, 190], weight: 0.8, jitter: 0.4, grain: 0.2, gaps: 0.02, alpha: 150, halo: [10, 12, 30], haloAlpha: 140 }
+  const tw = (i) => 0.55 + 0.45 * p5.noise(c.t * 2 + i * 7 + side * 50)
+  // a round star chart behind each candle, with a ring of degree ticks that turns slowly
+  const px0 = x
+  const py0 = base - p5.height * 0.32
+  const pr = Math.min(p5.height * 0.34, p5.width * 0.2)
+  hdWash(hdArc(px0, py0, pr, pr, 0, p5.TWO_PI, 60), [12, 14, 36], 235, seed + 90, pr * 0.01)
+  hdStroke(hdArc(px0, py0, pr * 0.97, pr * 0.97, 0, p5.TWO_PI, 80), { ...line, alpha: 120, halo: null, seed: seed + 91 })
+  hdStroke(hdArc(px0, py0, pr * 0.9, pr * 0.9, 0, p5.TWO_PI, 80), { ...line, alpha: 70, halo: null, seed: seed + 92 })
+  for (let i = 0; i < 72; i++) {
+    const ang = i / 72 * p5.TWO_PI + c.t * 0.01
+    const r2 = pr * (i % 6 ? 0.94 : 0.91)
+    p5.stroke(255, 236, 190, 110)
+    p5.strokeWeight(0.8 * k)
+    p5.line(px0 + Math.cos(ang) * pr * 0.97, py0 + Math.sin(ang) * pr * 0.97, px0 + Math.cos(ang) * r2, py0 + Math.sin(ang) * r2)
+  }
+  for (let i = 0; i < 40; i++) {
+    const ang = hdHash(seed + i * 1.7) * p5.TWO_PI
+    const r = pr * 0.88 * Math.sqrt(hdHash(seed + i * 2.3))
+    starDot(px0 + Math.cos(ang) * r, py0 + Math.sin(ang) * r, 1 + 1.5 * hdHash(i), 0.5 * tw(i + 70), k)
+  }
+  // the candle's outline as stars down both sides, linked
+  const stars = []
+  const rows = Math.max(1, Math.round(h / (w * 0.55)))
+  for (let r = 0; r <= rows; r++) {
+    const y = top + h * r / rows
+    stars.push([x - w / 2 + (hdHash(seed + r) - 0.5) * w * 0.12, y])
+  }
+  const right = []
+  for (let r = 0; r <= rows; r++) right.push([x + w / 2 + (hdHash(seed + 50 + r) - 0.5) * w * 0.12, top + h * r / rows])
+  hdStroke(stars, { ...line, seed: seed + 1 })
+  hdStroke(right, { ...line, seed: seed + 2 })
+  hdStroke([stars[0], right[0]], { ...line, seed: seed + 3 })
+  // base: three stars in a flat triangle
+  const b1 = [x - w * 1.3, base + w * 0.2]
+  const b2 = [x + w * 1.3, base + w * 0.2]
+  hdStroke([b1, stars[stars.length - 1], right[right.length - 1], b2, b1], { ...line, alpha: 110, seed: seed + 4 })
+  stars.concat(right, [b1, b2]).forEach(([px, py], i) => starDot(px, py, 2 + 2.5 * hdHash(seed + i * 3), tw(i), k))
+  // a dotted orbit around the flame
+  const cy = fy - fh * 0.5
+  for (let i = 0; i < 36; i++) {
+    const ang = i / 36 * p5.TWO_PI + c.t * 0.15 * (side ? -1 : 1)
+    starDot(x + Math.cos(ang) * fh * 1.5, cy + Math.sin(ang) * fh * 1.1, 1.2, 0.45 * (c.lit ? 1 : 0.4), k)
+  }
   if (c.lit) {
-    hdStroke(hdTear(x, fy, w * 0.45, fh, lean, 0.3), { ...o, col: [250, 150, 90], seed: seed + 7 })
-    hdStroke(hdTear(x, fy, w * 0.22, fh * 0.55, lean * 0.5, 0.5), { ...o, col: [252, 232, 120], weight: 2.6, seed: seed + 8 })
-    for (let i = 0; i < 12; i++) {
-      const ang = i / 12 * p5.TWO_PI
-      const cy = fy - fh * 0.5
-      const r1 = w * 1.3
-      const r2 = w * (1.6 + 0.3 * p5.noise(i + hdSeed * 0.3))
-      hdStroke([[x + Math.cos(ang) * r1, cy + Math.sin(ang) * r1], [x + Math.cos(ang) * r2, cy + Math.sin(ang) * r2]], { ...o, col: [252, 232, 120], weight: 2, seed: seed + 20 + i })
-    }
+    hdGlow(x, cy, fh * 1.2, '255,220,160', 0.3)
+    // flame: stars along the outline, a bright core, and stars drifting off
+    const t = hdTear(x, fy, w * 0.42, fh, lean, 0, 9)
+    hdStroke(t, { ...line, alpha: 170, seed: seed + 5 })
+    t.forEach(([px, py], i) => starDot(px, py, 2.2, tw(i + 30), k))
+    starDot(x + lean * 0.3, fy - fh * 0.3, 7, 1, k)
+    hdSparks(x, cy, c.t, { count: 30, life: 5, reach: s * 0.22, swirl: 1.4, rise: 0.8, seed: seed + 9, draw: (px, py, age, i) => starDot(px, py, 1.4 + 2 * hdHash(i), (1 - age) * Math.min(1, age * 5), k) })
   } else if (c.outFor < candleOut) {
+    // the stars of the flame drift apart and fade
     const f = c.outFor / candleOut
-    p5.noStroke()
-    for (let i = 0; i < 8; i++) {
-      p5.fill(220, 225, 220, 40 * (1 - f))
-      p5.ellipse(x + Math.sin(i * 0.8 + c.t) * w * 0.3 * (i / 4), fy - w * (0.4 + i * 0.4) - f * w, w * (0.4 + i * 0.12), w * 0.5)
-    }
+    hdTear(x, fy, w * 0.42, fh, lean, 0, 9).forEach(([px, py], i) => starDot(px + (hdHash(i) - 0.5) * f * w * 3, py - f * w * 2 * hdHash(i + 3), 2, 1 - f, k))
   }
 }
 
 p5.draw = () => {
   const c = candleClock()
   hdSeed = Math.floor(c.t * 3)
-  if (candleBackground) p5.background(38, 52, 46)
+  if (candleBackground) p5.background(10, 12, 30)
   else p5.clear()
-  const base = p5.height * 0.88
-  chalkCandle(p5.width * 0.09, base, 0, c)
-  chalkCandle(p5.width * 0.91, base, 1, c)
+  const base = p5.height * 0.9
+  starCandle(p5.width * 0.09, base, 0, c)
+  starCandle(p5.width * 0.91, base, 1, c)
 }
 
 // hydra background (Hesse's), drawn into o1 so the candles stay on top of the feedback
