@@ -601,7 +601,7 @@
       if (val(st.next) && nextLine?.text) {
         const small = size * 0.6
         ctx.font = `${val(st.weight)} ${small}px ${val(st.font)}`
-        this._drawLine(ctx, { ...nextLine, words: null }, y + Math.max(used, size * 1.2) * (1 - anchor) + size * (up ? 1.1 : 0), small, 0.45, t, 0)
+        this._drawLine(ctx, { ...nextLine, words: null }, y + Math.max(0, used - size * 1.2) * (1 - anchor) + size * 1.1, small, 0.45, t, 0)
       }
     }
   }
