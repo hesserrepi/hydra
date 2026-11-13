@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>hydra song: Spotify login</title>
+  <style>
+    body { background: #111; color: #eee; font: 16px/1.5 monospace; padding: 2em; }
+  </style>
+</head>
+<body>
+<p id="message">Finishing the Spotify login…</p>
+<script>
+  // Spotify sends the login popup here (redirect URI .../spotify-callback).
+  // This page only passes the code on to the hydra editor that asked for it;
+  // public/extensions/effects/hydra-song.js does the rest.
+  (function () {
+    var message = document.getElementById('message')
+    var params = new URLSearchParams(location.search)
+    var data = { type: 'spotify-auth', code: params.get('code'), state: params.get('state'), error: params.get('error') }
+    var isLoopback = function (host) { return host === 'localhost' || host === '127.0.0.1' || host === '[::1]' }
+
+    // the editor may be open at localhost while Spotify only accepts 127.0.0.1:
+    // hop to the editor's own address so that the two pages can talk
+    var origin = null
+    try { origin = JSON.parse(atob(String(data.state).replace(/-/g, '+').replace(/_/g, '/'))).o } catch (e) {}
+    if (origin && origin !== location.origin) {
+      var target = null
+      try { target = new URL(origin) } catch (e) {}
+      if (target && isLoopback(target.hostname) && isLoopback(location.hostname)) {
+        location.replace(target.origin + '/spotify-callback' + location.search)
+        return
+      }
+      message.textContent = 'This login was started from ' + origin + ', which is not this page. Open the editor at ' + location.origin + ' and try again.'
+      return
+    }
+
+    try { localStorage.setItem('hydra-song:auth', JSON.stringify(data)) } catch (e) {}
+    try {
+      var channel = new BroadcastChannel('hydra-song')
+      channel.postMessage(data)
+      channel.close()
+    } catch (e) {}
+    message.textContent = data.error
+      ? 'Spotify did not log in (' + data.error + '). You can close this window and try again.'
+      : 'Logged in. You can close this window.'
+    if (!data.error) setTimeout(function () { window.close() }, 600)
+  })()
+</script>
+</body>
+</html>

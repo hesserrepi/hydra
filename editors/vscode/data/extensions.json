@@ -132,6 +132,18 @@
       "name": "snowflake-audio",
       "description": "Audio-reactive growth: loud passages bring more vapour and the crystal branches out, quiet ones let it fill in.",
       "code": "// Audio-reactive growth: loud passages bring more vapour and the crystal branches out, quiet ones let it fill in.\n// The browser asks for microphone access the first time.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\na.setBins(4)\na.setSmooth(0.9)\n\nflake = snowflake(p5, {\n  habit: 'stellar',\n  life: 'cycle',\n  grow: 18,\n  cycle: 26,\n  rho: () => 0.38 + a.fft[0] * 0.35,\n  glow: () => 0.6 + a.fft[2] * 2,\n  palette: 'neon',\n  twin: 0.6 // a second crystal turned 30 degrees: twelve branches\n})\n\np5.draw = () => {\n  snowflake.backdrop(p5, { palette: 'neon', grain: 0.4 })\n  flake.draw()\n}\n\nsrc(s0)\n  .blend(src(o0).scale(1.015), 0.5)\n  .out()\n"
+    },
+    {
+      "topic": "song",
+      "name": "song-spotify",
+      "description": "Follow the song that plays in Spotify and show its lyrics.",
+      "code": "// Follow the song that plays in Spotify and show its lyrics.\n// First time: song.connect('your Spotify client id'), then click \"connect Spotify\"\n// (bottom right). Afterwards song.connect() is enough.\n// Ctrl+Alt+Left / Right shift the timing by 0.1 s if the lyrics are early or late.\nsong.connect()\nsong.lyrics.init(s1, { size: 0.08, position: 'bottom', next: true })\n\n// for every song without its own function\nsong.on('*', () => {\n  osc(8, 0.05, 1.2)\n    .modulate(noise(2, 0.1), () => 0.05 + song.progress * 0.3)\n    .layer(src(s1))\n    .out()\n})\n\n// for one song: part of 'artist - title', or its Spotify link\nsong.on('part of the title', (track) => {\n  console.log('now playing', track.artist, '-', track.name)\n  voronoi(6, 0.3).color(1, 0.4, 0.7).layer(src(s1)).out()\n  // switch the picture at set times; joining late runs the last cue before now\n  song.cue('0:45', () => noise(3, 0.2).kaleid(5).layer(src(s1)).out())\n  song.cue('1:30', () => voronoi(6, 0.3).color(1, 0.4, 0.7).layer(src(s1)).out())\n})\n"
+    },
+    {
+      "topic": "song",
+      "name": "song-by-hand",
+      "description": "No Spotify needed: the bundled test \"song\" (lyrics in public/lyrics/) shows how",
+      "code": "// No Spotify needed: the bundled test \"song\" (lyrics in public/lyrics/) shows how\n// the clock, the cues and the lyrics work. Run it, then try the lines at the end.\nsong.hud(true)\nsong.lyrics.init(s1, { size: 0.09, position: 'center', highlight: '#ffd54a', next: true })\n\nsong.on('hydra - test song', () => {\n  osc(10, 0.05, 1).color(0.3, 0.5, 1).layer(src(s1)).out()\n  song.cue(8, () => noise(3, 0.2).color(1, 0.4, 0.6).layer(src(s1)).out())\n  song.cue(16, () => voronoi(8, 0.4).kaleid(4).layer(src(s1)).out())\n  song.bpm(120)\n})\n\n// \"the song started just now\"\nsong.start('hydra - test song', 0)\n\n// noticed late? say where the song is, one line at a time (Ctrl+Enter):\n// song.start('hydra - test song', 9)   // it started 9 seconds ago\n// song.sync(17)                        // it is at 17 s now\n// song.nudge(-0.2)                     // lyrics came 0.2 s late: bring them earlier\n"
     }
   ],
   "extensions": [
@@ -1652,6 +1664,24 @@
         ],
         "methods": [
           "ink"
+        ]
+      }
+    },
+    {
+      "id": "effects/song",
+      "collection": "effects",
+      "name": "hydra-song",
+      "author": "hesserrepi",
+      "documentation": "extensions/effects/hydra-song.js",
+      "description": "Keep a sketch in time with a song playing in Spotify: song.time follows the playback position, song.on() runs a function when a song starts (also when you join late), song.cue() switches at set times, and the synced lyrics become a hydra source.",
+      "examples": [
+        "song.connect() // song.connect('your Spotify client id') the first time\nsong.lyrics.init(s1, { size: 0.08 })\nosc(8, 0.05, 1.2)\n  .modulate(noise(2), () => song.progress * 0.3)\n  .layer(src(s1))\n  .out()",
+        "// without Spotify: say which song plays and how far in it is\nsong.start('artist - title', 5)\nsong.lyrics.init(s1, { position: 'center', next: true })\nsong.on('title', () => {\n  noise(3).color(1, 0.4, 0.7).layer(src(s1)).out()\n  song.cue('1:00', () => voronoi(8).layer(src(s1)).out())\n})"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "song"
         ]
       }
     },
