@@ -34,9 +34,40 @@
       "author": "hesserrepi",
       "homepage": "https://github.com/hesserrepi/hydra/tree/main/public/extensions/p5-forms",
       "license": "AGPL-3.0"
+    },
+    {
+      "id": "curves",
+      "name": "curves",
+      "author": "hesserrepi",
+      "homepage": "https://github.com/hesserrepi/hydra/tree/main/public/extensions/curves",
+      "license": "AGPL-3.0"
     }
   ],
   "sketches": [
+    {
+      "topic": "curves",
+      "name": "harmonograph",
+      "description": "A harmonograph that never settles: it spirals in, then the pendulums drift a little and swing again.",
+      "code": "// A harmonograph that never settles: it spirals in, then the pendulums drift a little and swing again.\n// harmonograph() loads automatically; its options are documented in\n// public/extensions/curves/harmonograph.js. Run again to start over.\nh = harmonograph(s0, {\n  f1: 2, f2: 3,     // pendulum frequencies; whole-number ratios close the figure\n  detune: 0.012,    // a slight mistuning makes the figure turn as it decays\n  mix: 0.35,        // the third, rotary pendulum\n  damp: 0.003,      // friction: higher spirals in faster\n  drift: 0.02       // how far the frequencies wander at each new swing\n})\n\n// tinted, with a slow rotating echo of the previous frames\nsrc(s0)\n  .color(1, 0.75, 0.45)\n  .blend(src(o0).scale(1.006).rotate(0.003), 0.6)\n  .modulate(osc(4, 0.02).rotate(1.2), 0.002)\n  .out()\n\n// try: h.next(), h.set({ f1: 3, f2: 4 }), h.set({ mix: () => 0.5 + 0.5 * Math.sin(time * 0.1) })\n"
+    },
+    {
+      "topic": "curves",
+      "name": "harmonograph-pen",
+      "description": "A harmonograph with your own pen path: the X swing wobbles and a slow fourth pendulum beats the Y swing.",
+      "code": "// A harmonograph with your own pen path: the X swing wobbles and a slow fourth pendulum beats the Y swing.\nh = harmonograph(s0, {\n  f1: 3, f2: 2, damp: 0.0025, speed: 160, line: 1,\n  color: 'rgba(170, 220, 255, 0.7)',\n  pen: (t, P) => {\n    const d = Math.exp(-P.damp * t)\n    const wobble = 1 + 0.15 * Math.sin(P.f3 * 0.1 * t)\n    const x = Math.sin(P.f1 * t + P.p1) * wobble + P.mix * Math.sin(P.f3 * t + P.p3)\n    const y = Math.sin(P.f2 * t + P.p2) * Math.cos(P.f4 * 0.5 * t)\n    return [d * x / (1 + P.mix), d * y]\n  }\n})\n\nsrc(s0)\n  .diff(src(s0).scale(1, -1, 1))   // mirrored copy, so it reads like a moth\n  .add(src(o0).scale(1.004), 0.5)\n  .out()\n"
+    },
+    {
+      "topic": "curves",
+      "name": "superbloom",
+      "description": "A superformula outline that morphs on its own through stars, flowers and blobs, with echo layers lagging behind.",
+      "code": "// A superformula outline that morphs on its own through stars, flowers and blobs, with echo layers lagging behind.\n// superformula() and superbloom() load automatically; their inputs are documented in\n// public/extensions/curves/lib-superformula.js.\nsuperbloom(\n  6,     // m: symmetry the outline circles around\n  2.5,   // how far m wanders\n  1.2,   // n1: low pinches into stars, high puffs into blobs\n  1.6,   // n2 and n3: low makes sharp petals, high square-ish sides\n  0.9,   // how strongly n1, n2, n3 wander\n  0.25,  // morph speed\n  4,     // echo layers\n  0.005, // line thickness\n  0.08   // spin\n)\n  .color(0.55, 0.75, 1)\n  .blend(src(o0).scale(0.985).rotate(0.01).color(1, 0.85, 0.6), 0.6)\n  .out()\n"
+    },
+    {
+      "topic": "curves",
+      "name": "superformula-hand",
+      "description": "The superformula with every number in your hands: functions, arrays and the mouse.",
+      "code": "// The superformula with every number in your hands: functions, arrays and the mouse.\nsuperformula(\n  () => 3 + 9 * mouse.x / width,              // m: move the mouse left and right\n  () => 0.3 + 4 * mouse.y / height,           // n1: up and down\n  [1, 4, 0.5, 8].smooth(),                    // n2 cycles with the bpm\n  () => 2 + Math.sin(time * 0.3),             // n3\n  0.8, 0.005, 0.1,\n  () => time * 0.1                            // turn\n)\n  .mult(osc(6, 0.05, 1.2).kaleid(6))\n  .add(src(o0).scale(1.012), 0.75)\n  .out()\n"
+    },
     {
       "topic": "p5",
       "name": "p5-as-source",
@@ -1689,6 +1720,45 @@
       "provides": {
         "globals": [
           "snowflake"
+        ]
+      }
+    },
+    {
+      "id": "curves/harmonograph",
+      "collection": "curves",
+      "name": "harmonograph",
+      "author": "hesserrepi",
+      "documentation": "https://github.com/hesserrepi/hydra/blob/main/public/extensions/curves/harmonograph.js",
+      "description": "A pen swung by damped pendulums, like a Lissajous figure that spirals inward. When the swing dies down it restarts with frequencies that have drifted a little, so the drawing keeps evolving. Draws on a canvas used as s0.",
+      "examples": [
+        "harmonograph(s0)\nsrc(s0).out()",
+        "harmonograph(s0, { f1: 3, f2: 4, detune: 0.02, mix: 0.6 })\nsrc(s0)\n  .color(1, 0.75, 0.45)\n  .blend(src(o0).scale(1.006).rotate(0.003), 0.6)\n  .out()",
+        "harmonograph(s0, { f1: 2, f2: 5, damp: 0.002, mix: () => 0.5 + 0.5 * Math.sin(time * 0.05) })\nsrc(s0)\n  .modulate(osc(4, 0.02).rotate(1.2), 0.003)\n  .diff(src(s0).rotate(Math.PI / 2))\n  .out()"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "harmonograph"
+        ]
+      }
+    },
+    {
+      "id": "curves/superformula",
+      "collection": "curves",
+      "name": "superformula",
+      "author": "hesserrepi",
+      "documentation": "https://github.com/hesserrepi/hydra/blob/main/public/extensions/curves/lib-superformula.js",
+      "description": "Gielis' superformula: one outline whose numbers m, n1, n2, n3 turn it into stars, flowers, polygons and blobs. superbloom() lets it morph on its own, with echo layers lagging behind.",
+      "examples": [
+        "superbloom()\n  .color(0.55, 0.75, 1)\n  .blend(src(o0).scale(0.985).rotate(0.01).color(1, 0.85, 0.6), 0.6)\n  .out()",
+        "superformula(() => 6 + 3 * Math.sin(time * 0.2), 0.4, [1, 4, 8].smooth(), 3)\n  .out()",
+        "superbloom(5, 3, 0.6, 2, 1.2, 0.4, 6, 0.004, -0.1)\n  .mult(osc(8, 0.05, 1.4).kaleid(5))\n  .add(src(o0).scale(1.01), 0.7)\n  .out()"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "superformula",
+          "superbloom"
         ]
       }
     }

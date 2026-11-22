@@ -16,6 +16,7 @@
 import { pictureShaders, PICTURE_SHADERS_CDN } from './picture-shaders.js'
 import { effects, EFFECTS_CDN } from './effects.js'
 import { p5Forms, P5_FORMS_CDN } from './p5-forms.js'
+import { curves, CURVES_CDN } from './curves.js'
 
 const HYPER_HYDRA_CDN = 'https://cdn.jsdelivr.net/gh/geikha/hyper-hydra@latest/'
 const HYPER_HYDRA_DOCS = 'https://github.com/geikha/hyper-hydra/blob/main/doc/'
@@ -57,6 +58,13 @@ export const collections = [
     name: 'p5 forms',
     author: 'hesserrepi',
     homepage: 'https://github.com/hesserrepi/hydra/tree/main/public/extensions/p5-forms',
+    license: 'AGPL-3.0'
+  },
+  {
+    id: 'curves',
+    name: 'curves',
+    author: 'hesserrepi',
+    homepage: 'https://github.com/hesserrepi/hydra/tree/main/public/extensions/curves',
     license: 'AGPL-3.0'
   }
 ]
@@ -456,7 +464,8 @@ render()`]
 
   ...pictureShaders,
   ...effects,
-  ...p5Forms
+  ...p5Forms,
+  ...curves
 ]
 
 // URLs people already use in sketches, mapped to the bundled copies:
@@ -465,6 +474,7 @@ render()`]
 // the fork's own picture shaders on jsDelivr (see ./picture-shaders.js)
 // the fork's own effects on jsDelivr (see ./effects.js)
 // the fork's own p5 forms on jsDelivr (see ./p5-forms.js)
+// the fork's own curves on jsDelivr (see ./curves.js)
 // libraries the bundled extensions load from a CDN, served from public/vendor/
 // instead (copied from node_modules by scripts/copy-runtime.mjs)
 const localCopies = {
@@ -493,7 +503,8 @@ export function extensionsForURL(url) {
     return extensions.filter((ext) => ext.url === parsed.href)
   }
 
-  if (parsed.href.startsWith(EFFECTS_CDN) || parsed.href.startsWith(P5_FORMS_CDN)) {
+  if (parsed.href.startsWith(EFFECTS_CDN) || parsed.href.startsWith(P5_FORMS_CDN) ||
+      parsed.href.startsWith(CURVES_CDN)) {
     return extensions.filter((ext) => ext.url === parsed.href)
   }
 

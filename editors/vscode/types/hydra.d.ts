@@ -2799,6 +2799,33 @@ declare function chladni(n?: HydraParam, m?: HydraParam, sym?: HydraParam, thick
  */
 declare function chladniTable(cols?: HydraParam, rows?: HydraParam, seed?: HydraParam, speed?: HydraParam): HydraSource
 /**
+ * superformula: source (curves/superformula, loaded automatically)
+ * @param m default 6
+ * @param n1 default 1
+ * @param n2 default 1
+ * @param n3 default 1
+ * @param size default 0.8
+ * @param thick default 0.006
+ * @param fill default 0.15
+ * @param turn default 0
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/curves/lib-superformula.js
+ */
+declare function superformula(m?: HydraParam, n1?: HydraParam, n2?: HydraParam, n3?: HydraParam, size?: HydraParam, thick?: HydraParam, fill?: HydraParam, turn?: HydraParam): HydraSource
+/**
+ * superbloom: source (curves/superformula, loaded automatically)
+ * @param m default 6
+ * @param wander default 2.5
+ * @param n1 default 1.2
+ * @param n23 default 1.6
+ * @param nWander default 0.9
+ * @param speed default 0.25
+ * @param layers default 4
+ * @param thick default 0.005
+ * @param spin default 0.08
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/curves/lib-superformula.js
+ */
+declare function superbloom(m?: HydraParam, wander?: HydraParam, n1?: HydraParam, n23?: HydraParam, nWander?: HydraParam, speed?: HydraParam, layers?: HydraParam, thick?: HydraParam, spin?: HydraParam): HydraSource
+/**
  * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
  * From hyper-hydra/arithmetics, loaded automatically.
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
@@ -4102,6 +4129,43 @@ declare const snowflake: {
   palettes: Record<SnowflakePaletteName, SnowflakePalette>
   /** Every option with its default for a habit. */
   defaults(habit?: SnowflakeHabit): SnowflakeOptions
+}
+/** A number, or a function read every frame. */
+type HarmonographValue<T = number> = T | (() => T)
+/** The live values handed to a custom pen. */
+interface HarmonographParams { f1: number; f2: number; f3: number; f4: number; p1: number; p2: number; p3: number; p4: number; damp: number; mix: number }
+/** Options of harmonograph(). See public/extensions/curves/harmonograph.js for what each one does. */
+interface HarmonographOptions {
+  f1?: HarmonographValue; f2?: HarmonographValue; detune?: HarmonographValue; mix?: HarmonographValue
+  damp?: HarmonographValue; drift?: HarmonographValue; phaseDrift?: HarmonographValue; speed?: HarmonographValue
+  until?: HarmonographValue; fade?: HarmonographValue; size?: HarmonographValue; line?: HarmonographValue
+  color?: HarmonographValue<string>; background?: HarmonographValue<string>
+  /** phases of the first swing; omit for random */
+  seed?: number
+  /** your own pen path, x and y in about -1..1 */
+  pen?: (t: number, P: HarmonographParams) => [number, number]
+}
+interface Harmonograph {
+  canvas: HTMLCanvasElement
+  /** how many swings so far */
+  readonly swing: number
+  /** change options while it draws */
+  set(options: HarmonographOptions): Harmonograph
+  /** drift and release a new swing now */
+  next(): Harmonograph
+  clear(): Harmonograph
+  stop(): void
+}
+/**
+ * A pen swung by damped pendulums, like a Lissajous figure that spirals inward. When the swing dies down it restarts with frequencies that have drifted a little, so the drawing keeps evolving. Draws on a canvas used as s0.
+ * From curves/harmonograph, loaded automatically.
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/curves/harmonograph.js
+ */
+declare const harmonograph: {
+  (source?: HydraExternalSource | HarmonographOptions, options?: HarmonographOptions): Harmonograph
+  defaults: HarmonographOptions
+  /** the classic pen path, for use inside your own */
+  pen: (t: number, P: HarmonographParams) => [number, number]
 }
 
 interface Array<T> {

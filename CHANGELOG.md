@@ -18,6 +18,7 @@
 - `radiolaria()`: growing radiolarian skeletons after Haeckel's Stephoidea plate, drawn with p5 (forms ring, cage, lattice, bush, star and basket), with `radiolaria.plate()` and five p5 + hydra examples; loads automatically and has autocomplete
 - `snowflake()`: snow crystals grown by a vapour-diffusion simulation after Wilson Bentley's photomicrographs (habits plate, sectored, broad, stellar, dendrite, fern, feather, needle, thick, or a random life story), with weather that can change while they grow, `snowflake.plate()`, `snowflake.snowfall()` and five p5 + hydra examples; loads automatically and has autocomplete
 - `ink()`: click and drag on the canvas to push the colours around like ink on water, in `push`, `fluid` or `comb` (marbling) mode; loads automatically and has autocomplete
+- `curves` collection with its own extensions tab: `harmonograph()` (damped pendulums drawn on a canvas used as `s0`, restarting with drifted frequencies so the drawing keeps evolving, with an optional custom pen path) and the `superformula()` and `superbloom()` sources (Gielis' superformula, still or morphing on its own with echo layers); they load automatically, have autocomplete and four examples in `sketches/examples/curves`
 - the editor works offline: hydra-synth, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
 - bundled example gif and image for the hydra-gif and hydra-src examples
 
