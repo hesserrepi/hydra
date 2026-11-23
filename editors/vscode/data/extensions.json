@@ -1691,6 +1691,24 @@
           "snowflake"
         ]
       }
+    },
+    {
+      "id": "p5-forms/proof-spine",
+      "collection": "p5-forms",
+      "name": "proof-spine",
+      "author": "hesserrepi",
+      "documentation": "https://github.com/hesserrepi/hydra/blob/main/public/extensions/p5-forms/proof-spine.js",
+      "description": "A glowing proof tree: a jagged white-hot trunk (the proof), curved branches in thick halos (the lemmas it calls), lemma names on leader lines and faint dust. Pick its colour, seven overall shapes (spine, fan, river, spiral, ring, star, harmonograph) and five ways it evolves: grow, lightning, search, assemble, sway.",
+      "examples": [
+        "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\ntree = proofSpine.show(p5, { mode: 'grow', color: '#d24dff' })\nsrc(s0).out()",
+        "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\ntree = proofSpine.show(p5, { mode: 'lightning', shape: 'star', color: '#7fd8ff' })\nsrc(s0).blend(src(o0).scale(1.004), 0.5).out()"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "proofSpine"
+        ]
+      }
     }
   ]
 }

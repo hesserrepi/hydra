@@ -4103,6 +4103,100 @@ declare const snowflake: {
   /** Every option with its default for a habit. */
   defaults(habit?: SnowflakeHabit): SnowflakeOptions
 }
+type ProofSpineMode = 'grow' | 'lightning' | 'search' | 'assemble' | 'sway' | 'still'
+type ProofSpineShape = 'spine' | 'fan' | 'river' | 'spiral' | 'ring' | 'star' | 'harmonograph'
+/** A value, or a function of the tree's age in seconds, read every frame. */
+type ProofSpineValue<T = number> = T | ((t: number) => T)
+/** Options of proofSpine(). See public/extensions/p5-forms/proof-spine.js for what each one does. */
+interface ProofSpineOptions {
+  /** how it is drawn and evolves ('grow') */
+  mode?: ProofSpineValue<ProofSpineMode>
+  /** the overall form of the trunk ('spine') */
+  shape?: ProofSpineValue<ProofSpineShape>
+  /** your own trunk: s from 0 (root) to 1, x and y in about -0.5..0.5 */
+  path?: (s: number) => [number, number]
+  /** any CSS colour, [r, g, b] (0-255 or 0-1), or a hue 0-1 ('#d24dff') */
+  color?: ProofSpineValue<string | number | number[]>
+  /** CSS colour; false = transparent; null = draw on top without clearing ('#050307') */
+  background?: ProofSpineValue<string | false | null>
+  /** centre, as a fraction of the canvas (0.5) */
+  x?: ProofSpineValue
+  y?: ProofSpineValue
+  /** fraction of the canvas the tree fills (0.92) */
+  size?: ProofSpineValue
+  seed?: ProofSpineValue
+  /** how many branches (320) */
+  branches?: ProofSpineValue
+  /** halo width, 0 = none (1) */
+  halo?: ProofSpineValue
+  /** glow around the trunk (1) */
+  glow?: ProofSpineValue
+  /** amount of background dust (1) */
+  dust?: ProofSpineValue
+  /** true, false, how many, or the names (22) */
+  labels?: ProofSpineValue<boolean | number | string[]>
+  /** the name at the root ('mainTheorem') */
+  goal?: ProofSpineValue<string>
+  /** true, false, or lines of text (bottom left) */
+  legend?: ProofSpineValue<boolean | string[]>
+  /** label size in pixels */
+  textSize?: ProofSpineValue
+  /** seconds of one run */
+  duration?: ProofSpineValue
+  /** seconds it stays finished before starting again (4) */
+  hold?: ProofSpineValue
+  /** seconds between lightning strikes (4) */
+  period?: ProofSpineValue
+  /** 0-1, how much of a struck tree stays visible (0.12) */
+  afterglow?: ProofSpineValue
+  loop?: ProofSpineValue<boolean>
+  /** a new tree every run */
+  vary?: ProofSpineValue<boolean>
+  /** 0-1, overrides the clock */
+  progress?: ProofSpineValue
+  /** sway amount (1 in 'sway' mode, else 0) */
+  sway?: ProofSpineValue
+  speed?: ProofSpineValue
+  opacity?: ProofSpineValue
+  /** trunks of the 'star' shape (5) */
+  arms?: ProofSpineValue
+  /** turns of the 'spiral' shape (1.6) */
+  turns?: ProofSpineValue
+  /** frequencies of the 'harmonograph' shape (2, 3) */
+  f1?: ProofSpineValue
+  f2?: ProofSpineValue
+  /** how fast the 'harmonograph' figure shrinks (0.5) */
+  damp?: ProofSpineValue
+}
+interface ProofSpineTree {
+  /** draw it on the p5 canvas; call from p5.draw */
+  draw(): ProofSpineTree
+  set(options: ProofSpineOptions): ProofSpineTree
+  /** run the animation again from the start */
+  restart(): ProofSpineTree
+  /** a new tree (random when seed is left out) */
+  reseed(seed?: number): ProofSpineTree
+  /** how far the current run is, 0-1 */
+  readonly progress: number
+}
+/**
+ * A glowing proof tree: a jagged white-hot trunk (the proof), curved branches in thick halos (the lemmas it calls), lemma names on leader lines and faint dust. Pick its colour, seven overall shapes (spine, fan, river, spiral, ring, star, harmonograph) and five ways it evolves: grow, lightning, search, assemble, sway.
+ * From p5 forms/proof-spine, loaded automatically.
+ * @see https://github.com/hesserrepi/hydra/blob/main/public/extensions/p5-forms/proof-spine.js
+ */
+declare const proofSpine: {
+  /** A glowing proof tree on a p5 canvas: proofSpine(p5, { mode: 'grow' }), then tree.draw() in p5.draw. */
+  (p5: P5, options?: ProofSpineOptions): ProofSpineTree
+  (options?: ProofSpineOptions): ProofSpineTree
+  /** The same, and sets p5.draw to draw it. */
+  show(p5: P5, options?: ProofSpineOptions): ProofSpineTree
+  modes: ProofSpineMode[]
+  shapes: ProofSpineShape[]
+  /** the lemma names it picks labels from */
+  lemmas: string[]
+  /** Every option with its default for a mode. */
+  defaults(mode?: ProofSpineMode): ProofSpineOptions
+}
 
 interface Array<T> {
   /** Speed at which the array is cycled through. */
