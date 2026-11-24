@@ -21,9 +21,11 @@ const importSource = (p) => import(dataURL(p))
 const glslFunctions = (await importSource('node_modules/hydra-synth/src/glsl/glsl-functions.js')).default()
 const { extensions, collections } = await importSource('src/extensions/registry.js')
 
-// extra shaders and picture shaders are plain setFunction() calls: run them against a stub to read their definitions
+// extra shaders, picture shaders and the curves' lib-*.js files are plain setFunction() calls: run them against a stub to read their definitions
 const shaderDefs = new Map() // name -> { def, ext }
-for (const ext of extensions.filter((e) => e.collection === 'extra-shaders' || e.collection === 'picture-shaders')) {
+const isShaderFile = (e) => e.collection === 'extra-shaders' || e.collection === 'picture-shaders' ||
+  (e.collection === 'curves' && /\/lib-[^/]+\.js$/.test(e.file))
+for (const ext of extensions.filter(isShaderFile)) {
   const defs = []
   vm.runInNewContext(read(`public/extensions/${ext.file}`), { setFunction: (def) => defs.push(def), window: {}, console })
   defs.forEach((def) => { if (!shaderDefs.has(def.name)) shaderDefs.set(def.name, { def, ext }) })
@@ -687,6 +689,53 @@ for (const ext of extensions.filter((e) => e.collection === 'p5-forms')) {
     if (seenGlobals.has(name)) continue
     seenGlobals.add(name)
     globalsOut.push(doc(extDoc(ext)).replace(/^ {2}/gm, '') + (p5FormSignatures[name] || `declare const ${name}: any`))
+  }
+}
+
+// curves drawn on a canvas: signatures by hand
+const curveTypes = {
+  harmonograph: `/** A number, or a function read every frame. */
+type HarmonographValue<T = number> = T | (() => T)
+/** The live values handed to a custom pen. */
+interface HarmonographParams { f1: number; f2: number; f3: number; f4: number; p1: number; p2: number; p3: number; p4: number; damp: number; mix: number }
+/** Options of harmonograph(). See public/extensions/curves/harmonograph.js for what each one does. */
+interface HarmonographOptions {
+  f1?: HarmonographValue; f2?: HarmonographValue; detune?: HarmonographValue; mix?: HarmonographValue
+  damp?: HarmonographValue; drift?: HarmonographValue; phaseDrift?: HarmonographValue; speed?: HarmonographValue
+  until?: HarmonographValue; fade?: HarmonographValue; size?: HarmonographValue; line?: HarmonographValue
+  color?: HarmonographValue<string>; background?: HarmonographValue<string>
+  /** phases of the first swing; omit for random */
+  seed?: number
+  /** your own pen path, x and y in about -1..1 */
+  pen?: (t: number, P: HarmonographParams) => [number, number]
+}
+interface Harmonograph {
+  canvas: HTMLCanvasElement
+  /** how many swings so far */
+  readonly swing: number
+  /** change options while it draws */
+  set(options: HarmonographOptions): Harmonograph
+  /** drift and release a new swing now */
+  next(): Harmonograph
+  clear(): Harmonograph
+  stop(): void
+}`
+}
+const curveSignatures = {
+  harmonograph: `declare const harmonograph: {
+  (source?: HydraExternalSource | HarmonographOptions, options?: HarmonographOptions): Harmonograph
+  defaults: HarmonographOptions
+  /** the classic pen path, for use inside your own */
+  pen: (t: number, P: HarmonographParams) => [number, number]
+}`
+}
+for (const ext of extensions.filter((e) => e.collection === 'curves' && !isShaderFile(e))) {
+  const short = ext.id.split('/')[1]
+  if (curveTypes[short]) globalsOut.push(curveTypes[short])
+  for (const name of ext.provides.globals || []) {
+    if (seenGlobals.has(name)) continue
+    seenGlobals.add(name)
+    globalsOut.push(doc(extDoc(ext)).replace(/^ {2}/gm, '') + (curveSignatures[name] || `declare const ${name}: any`))
   }
 }
 

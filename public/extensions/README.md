@@ -22,6 +22,11 @@ such as `radiolaria.js` (growing Haeckel radiolarians) and `snowflake.js` (snow
 crystals after Wilson Bentley), used in hydra through
 `s0.init({ src: p5.canvas })`.
 
+`curves/` is not vendored either: simple geometric curves that keep evolving,
+such as `harmonograph.js` (damped pendulums that drift between swings, drawn on a
+canvas used as `s0`) and `lib-superformula.js` (Gielis' superformula as the
+`superformula()` and `superbloom()` sources).
+
 Do not edit the vendored files here; fix things upstream and re-run
 `npm run vendor-extensions`. Which function names load which file is defined in
 `src/extensions/registry.js`.
