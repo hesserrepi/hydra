@@ -132,6 +132,18 @@
       "name": "snowflake-audio",
       "description": "Audio-reactive growth: loud passages bring more vapour and the crystal branches out, quiet ones let it fill in.",
       "code": "// Audio-reactive growth: loud passages bring more vapour and the crystal branches out, quiet ones let it fill in.\n// The browser asks for microphone access the first time.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\na.setBins(4)\na.setSmooth(0.9)\n\nflake = snowflake(p5, {\n  habit: 'stellar',\n  life: 'cycle',\n  grow: 18,\n  cycle: 26,\n  rho: () => 0.38 + a.fft[0] * 0.35,\n  glow: () => 0.6 + a.fft[2] * 2,\n  palette: 'neon',\n  twin: 0.6 // a second crystal turned 30 degrees: twelve branches\n})\n\np5.draw = () => {\n  snowflake.backdrop(p5, { palette: 'neon', grain: 0.4 })\n  flake.draw()\n}\n\nsrc(s0)\n  .blend(src(o0).scale(1.015), 0.5)\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "radiolaria-swarm",
+      "description": "A radiolarian appears at a random free position on every bass peak, then dissolves.",
+      "code": "// A radiolarian appears at a random free position on every bass peak, then dissolves.\n// a few seconds and dissolves again. The parameters come from a JSON file in\n// public/extensions/p5-forms/presets/radiolaria-swarm/.\n// The browser asks for microphone access the first time.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nswarm = radiolaria.swarm(p5, { preset: 'default', debug: true, draw: true })\n\n// a.show() draws hydra's own fft meter, so the threshold can be tuned:\n//   swarm.set({ threshold: 0.8, cooldown: 0.5, max: 6 })\n//   swarm.load('storm')     // another parameter set\n//   swarm.trigger()         // spawn one by hand\n\nsrc(s0)\n  .blend(src(o0).scale(1.006).rotate(0.0008), 0.45)\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "radiolaria-swarm-presets",
+      "description": "Compares the swarm parameter presets: press 1-9 to load one, 0 for the next, click to spawn.",
+      "code": "// Compares the swarm parameter presets: press 1-9 to load one, 0 for the next, click to spawn.\n// click to trigger a specimen by hand. The name and the level meter are drawn\n// on the canvas, so a setting can be judged without reading the code.\n// Start with 'silent-pulse' or 'silent-mouse' to test without a microphone.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nswarm = radiolaria.swarm(p5, { preset: 'silent-pulse', debug: true })\nnames = ['default']\nradiolaria.loadPresets().then((index) => { names = index.presets.map((x) => x.name) })\n\nshow = (text) => {\n  p5.push()\n  p5.noStroke()\n  p5.fill(255, 220)\n  p5.textSize(14)\n  p5.textFont('monospace')\n  p5.text(text, 12, 24)\n  p5.pop()\n}\n\np5.draw = () => {\n  swarm.draw()\n  show(`${swarm.preset}   1-9 load   0 next   click spawn`)\n}\np5.keyPressed = () => {\n  const k = Number(p5.key)\n  if (Number.isNaN(k)) return\n  const i = k === 0 ? (names.indexOf(swarm.preset) + 1) % names.length : k - 1\n  if (names[i]) swarm.clear(false).load(names[i])\n}\np5.mousePressed = () => swarm.trigger()\n\nsrc(s0).out()\n"
     }
   ],
   "extensions": [

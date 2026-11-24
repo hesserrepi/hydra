@@ -1,0 +1,24 @@
+{
+  "name": "storm",
+  "description": "A low threshold and almost no cooldown: the canvas fills with small specimens and the oldest are pushed out while they are still alive.",
+  "audio": { "bins": 4, "cutoff": 1, "scale": 10, "smooth": 0.5 },
+  "swarm": {
+    "bin": 0,
+    "threshold": 0.35,
+    "rearm": 0.25,
+    "cooldown": 0.08,
+    "max": 26,
+    "overflow": "retire",
+    "grow": 0.5,
+    "hold": 2,
+    "dissolve": 0.8,
+    "size": [0.04, 0.08],
+    "punch": 0.8,
+    "margin": 0.06,
+    "spacing": 0.1,
+    "tries": 14,
+    "palette": ["neon", "cyanotype"],
+    "glow": 0.25,
+    "grain": 0.25
+  }
+}
