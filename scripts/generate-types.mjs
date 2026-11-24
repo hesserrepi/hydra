@@ -1060,7 +1060,7 @@ const sketchExamples = fs.existsSync(examplesDir) ? fs.readdirSync(examplesDir).
   })) : []
 
 // sources for the 'Insert source' picker (Shift+Tab on an empty line in VS Code): every
-// function that starts a chain, never an effect. `snippet` is VS Code snippet syntax with the
+// function that starts a chain, never an effect (hyper-hydra's are left out on purpose). `snippet` is VS Code snippet syntax with the
 // defaults as placeholders; textures default to o0.
 const snippetText = (v) => String(v).replace(/[$}\\]/g, (c) => '\\' + c)
 const callSnippet = (name, def) => `${name}(${params(def).map((p, i) =>
@@ -1080,28 +1080,6 @@ for (const [name, { def, ext }] of shaderDefs) {
   addSource({ name, group: collection === 'extra shaders' ? `${collection}: ${ext.name}` : collection,
     signature: callLabel(name, def), snippet: callSnippet(name, def), description: ext.description })
 }
-// upstream hyper-hydra GLSL calls length(a, b), which doesn't compile: the canvas freezes
-const brokenSources = new Set(['distance', 'distanceCenter'])
-// hyper-hydra functions that return a new chain (not convolutions: those filter a texture)
-const hyperSourceSnippets = {
-  srcAbs: 'srcAbs(${1:s0})', srcRel: 'srcRel(${1:s0})', srcMask: 'srcMask(${1:s0})',
-  srcAbsMask: 'srcAbsMask(${1:s0})', srcRelMask: 'srcRelMask(${1:s0})',
-  text: "text('${1:hydra}')", strokeText: "strokeText('${1:hydra}')",
-  fillStrokeText: "fillStrokeText('${1:hydra}')", strokeFillText: "strokeFillText('${1:hydra}')",
-  vec4: 'vec4(${1:1}, ${2:0.5}, ${3:0}, ${4:1})'
-}
-for (const ext of extensions.filter((e) => e.collection === 'hyper-hydra' && e.autoload)) {
-  const short = ext.id.split('/')[1]
-  if (!['arithmetics', 'src', 'text', 'vec4'].includes(short)) continue
-  for (const name of ext.provides.globals || []) {
-    if (brokenSources.has(name)) continue
-    const def = hyperDefs.get(name)
-    const snippet = hyperSourceSnippets[name] || (def && callSnippet(name, def))
-    if (!snippet) continue
-    addSource({ name, group: 'hyper-hydra', signature: def ? callLabel(name, def) : snippet.replace(/\$\{\d+:([^}]*)\}/g, '$1'),
-      snippet, description: ext.description })
-  }
-}
 // drawn on a canvas: set it up as s0 and start the chain with src(s0)
 const p5Setup = 'p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n'
 const canvasSources = {
@@ -1119,8 +1097,8 @@ for (const ext of extensions.filter((e) => e.collection === 'p5-forms' || e.coll
 }
 const missingCanvas = Object.keys(canvasSources).filter((name) => !seenSources.has(name))
 if (missingCanvas.length) throw new Error(`canvas sources not in the registry: ${missingCanvas.join(', ')}`)
-// hydra and hyper-hydra first, then the shader collections, then the drawn ones
-const groupRank = (group) => (group === 'hydra' ? 0 : group === 'hyper-hydra' ? 1 : group.includes('(drawn into') ? 3 : 2)
+// hydra first, then the shader collections, then the drawn ones
+const groupRank = (group) => (group === 'hydra' ? 0 : group.includes('(drawn into') ? 2 : 1)
 sources.sort((a, b) => groupRank(a.group) - groupRank(b.group))
 
 const data = {

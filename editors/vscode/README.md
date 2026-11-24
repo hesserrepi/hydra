@@ -20,7 +20,7 @@ repository, with the bundled hyper-hydra and extra shaders extensions.
 - **Status bar**: shows whether the hydra editor is running and a window is open;
   click to open one or start the server.
 - **Pick a source**: `shift+tab` on an empty line lists every source (hydra's `osc`,
-  `noise`..., hyper-hydra's `x`, `text`..., the extra and picture shaders, `superbloom`,
+  `noise`..., the extra and picture shaders, `superbloom`,
   and the drawn ones like `harmonograph` or `proofSpine`, which come with their
   `s0` setup). Pick one to insert it with its defaults; `tab` steps through them.
   On a line with code, `shift+tab` still outdents. Also `Hydra: Insert source`.
