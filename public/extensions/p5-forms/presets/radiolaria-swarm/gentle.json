@@ -1,0 +1,23 @@
+{
+  "name": "gentle",
+  "description": "Few, large and slow: a loud passage opens one specimen over four seconds and keeps it for twelve, like a slide being drawn.",
+  "audio": { "bins": 4, "cutoff": 2, "scale": 12, "smooth": 0.92 },
+  "swarm": {
+    "bin": 1,
+    "threshold": 0.55,
+    "rearm": 0.35,
+    "cooldown": 2,
+    "max": 4,
+    "grow": 4,
+    "hold": 12,
+    "dissolve": 4,
+    "size": [0.16, 0.26],
+    "punch": 0.4,
+    "margin": 0.18,
+    "spacing": 0.4,
+    "tries": 20,
+    "palette": "haeckel",
+    "glow": 1,
+    "grain": 0.5
+  }
+}
