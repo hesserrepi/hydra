@@ -121,6 +121,19 @@ export default function hydraLive({ watch = process.env.HYDRA_WATCH } = {}) {
     configureServer(_server) {
       server = _server
 
+      // the editor always runs at 127.0.0.1: the browser keeps the Spotify
+      // login (and everything else in localStorage) per address, so an editor
+      // opened at localhost would not see a login made at 127.0.0.1
+      server.middlewares.use((req, res, next) => {
+        const [hostname, port] = String(req.headers.host || '').split(':')
+        if (req.method === 'GET' && hostname === 'localhost' && /^\/(index\.html)?(\?|$)/.test(req.url)) {
+          res.statusCode = 302
+          res.setHeader('Location', `http://127.0.0.1${port ? ':' + port : ''}${req.url}`)
+          return res.end()
+        }
+        next()
+      })
+
       // the Spotify login of hydra-song returns to /spotify-callback (see
       // public/spotify-callback.html); without this the editor page would answer
       server.middlewares.use((req, _res, next) => {
