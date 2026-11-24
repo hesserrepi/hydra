@@ -69,6 +69,9 @@
 //                   word timing (null = no highlight)                  null
 //       outline     outline colour (null = none), outlineWidth 0.12 (of size)
 //       shadow      soft dark glow behind the text for readability    true
+//       glow        colour of a soft light around the letters (replaces
+//                   the shadow), e.g. 'rgba(255,235,210,0.9)'         null
+//       glowSize    how far the glow reaches, as a fraction of size   0.5
 //       background  colour behind everything (null = transparent)     null
 //       position    'center' | 'top' | 'bottom' or [x, y] in 0-1      'bottom'
 //       align       'center' | 'left' | 'right'                       'center'
@@ -113,13 +116,13 @@
 //       The video loops (in step with the song; loop: false plays it once)
 //       and is otherwise untouched. The synced lyrics are drawn on s1 in
 //       Newsreader from the font kit (public/fonts), centred, fading slowly,
-//       and cut into the video like an inscription: inside the words the
-//       video sinks, nearly black, with a faint light on the lower edge, and
-//       each line settles deeper while it stays.
+//       and made of light: added onto the video so it shows through them,
+//       with a soft warm glow around the letters that breathes slowly.
 //       lyrics: {...} changes the lyrics style (see Lyrics above), e.g.
 //       uboa({ lyrics: { font: '"Bricolage Grotesque"', weight: 800 } });
 //       letters: (text, video) => chain gives the words your own look, e.g.
-//       uboa({ letters: (t) => src(t) }) for plain white text;
+//       uboa({ letters: (t, v) => src(v).add(src(t).color(0.6, 0.8, 1)) })
+//       for colder light (the lyrics canvas is black behind the letters);
 //       lyricsSource: s2 draws them on another source; lyrics: false shows
 //       the video alone. If lrclib.net has no synced lyrics for the song,
 //       put an .lrc file in public/lyrics/
@@ -481,7 +484,7 @@
     return { ...found, source: 'lrclib.net' }
   }
 
-  const defaultStyle = { font: 'Chivo, Helvetica, Arial, sans-serif', weight: 700, size: 0.08, color: 'white', highlight: null, outline: null, outlineWidth: 0.12, shadow: true, background: null, position: 'bottom', align: 'center', width: 0.86, uppercase: false, next: false, fade: 0.25, lead: 0 }
+  const defaultStyle = { font: 'Chivo, Helvetica, Arial, sans-serif', weight: 700, size: 0.08, color: 'white', highlight: null, outline: null, outlineWidth: 0.12, shadow: true, glow: null, glowSize: 0.5, background: null, position: 'bottom', align: 'center', width: 0.86, uppercase: false, next: false, fade: 0.25, lead: 0 }
 
   const lyrics = {
     lines: [],
@@ -634,11 +637,25 @@
       ctx.textBaseline = 'middle'
       ctx.textAlign = 'left'
       ctx.lineJoin = 'round'
-      if (val(st.shadow)) { ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = size * 0.25 } else { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0 }
+      const glow = val(st.glow)
+      if (val(st.shadow) && !glow) { ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = size * 0.25 } else { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0 }
       const pos = val(st.position)
       const up = pos === 'bottom'
       const y = Array.isArray(pos) ? val(pos[1]) * Ht : pos === 'top' ? size * 1.1 : pos === 'center' ? Ht / 2 : Ht - size * (val(st.next) ? 2.4 : 1.1)
       const anchor = up ? 1 : pos === 'top' ? 0 : 0.5
+      if (glow && line.text) {
+        // soft light around the letters: the line drawn blurred in the glow colour first
+        const color = st.color
+        const highlight = st.highlight
+        st.color = glow
+        st.highlight = null
+        ctx.filter = `blur(${Math.max(1, size * (val(st.glowSize) ?? 0.5) * 0.5)}px)`
+        this._drawLine(ctx, line, y, size, alpha, t, anchor)
+        this._drawLine(ctx, line, y, size, alpha * 0.6, t, anchor)
+        ctx.filter = 'none'
+        st.color = color
+        st.highlight = highlight
+      }
       const used = line.text ? this._drawLine(ctx, line, y, size, alpha, t, anchor) : 0
       if (val(st.next) && nextLine?.text) {
         const small = size * 0.6
@@ -834,22 +851,13 @@
     /^the origin of my depression\b/.test(norm(t.name))
   // the lyrics use the project's font kit (public/fonts, loaded on demand)
   // centred, unhurried: lines fade in and out slowly
-  // the video stays exactly as it is; only the letters carry the weight.
-  // The words are cut into the picture like an inscription: inside them the
-  // video sinks, set back and nearly black, with a faint light on the lower
-  // lip of each stroke. The longer a line stays, the deeper it settles.
-  const engraved = (text, source) => {
-    const depth = () => 0.32 - 0.16 * lyrics.lineProgress
-    return scope.src(source)
-      .scale(0.985)
-      .saturate(0.5)
-      .color(depth, depth, depth)
-      .mask(scope.src(text))
-      .layer(scope.solid(1, 0.96, 0.9, 1)
-        .mask(scope.src(text).sub(scope.src(text).scrollY(0.0025)).luma(0.05, 0.4))
-        .color(1, 1, 1, 0.4))
-  }
-  const UBOA_LYRICS = { font: '"Newsreader", Georgia, serif', weight: 600, size: 0.1, position: 'center', width: 0.72, shadow: false, fade: 1.2 }
+  // the video stays exactly as it is; the words are made of light: they
+  // are added onto the picture, so the video shows through them, and a soft
+  // warm glow spreads around each letter. The light breathes very slowly.
+  // (The lyrics are drawn on black so they can simply be added as light.)
+  const luminous = (text, source) => scope.src(source)
+    .add(scope.src(text).color(1, 0.95, 0.88), () => 0.5 + 0.06 * Math.sin(now() / 2600))
+  const UBOA_LYRICS = { font: '"Newsreader", Georgia, serif', weight: 500, size: 0.1, position: 'center', width: 0.72, color: 'white', glow: 'rgba(255,225,190,0.9)', glowSize: 0.6, fade: 1.2, background: 'black' }
   function loadFonts() {
     if (window.hydraFonts) return window.hydraFonts.ready
     if (!loadFonts.promise) {
@@ -866,7 +874,7 @@
   function uboa(options = {}) {
     if (!spotify.clientId) warn("uboa() needs Spotify: run song.connect('your client id') once (see the top of hydra-song.js)")
     else if (!spotify.active) song.connect()
-    const { lyrics: lyricStyle = {}, lyricsSource, letters = engraved, ...rest } = options
+    const { lyrics: lyricStyle = {}, lyricsSource, letters = luminous, ...rest } = options
     let show = rest.show ?? true
     if (lyricStyle !== false) {
       const target = lyricsSource || scope.s1

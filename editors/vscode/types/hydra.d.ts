@@ -4699,6 +4699,10 @@ interface LyricsStyle {
   outline?: string | null | (() => string | null)
   outlineWidth?: number | (() => number)
   shadow?: boolean | (() => boolean)
+  /** Colour of a soft light around the letters (replaces the shadow). */
+  glow?: string | null | (() => string | null)
+  /** How far the glow reaches, as a fraction of size (default 0.5). */
+  glowSize?: number | (() => number)
   /** Colour behind everything; null = transparent. */
   background?: string | null | (() => string | null)
   position?: 'center' | 'top' | 'bottom' | [number | (() => number), number | (() => number)] | (() => 'center' | 'top' | 'bottom' | [number, number])
@@ -4785,7 +4789,7 @@ declare const song: {
  * From effects/song, loaded automatically.
  * @see extensions/effects/hydra-song.js
  */
-/** Play vids/uboa.mp4 on s0, in sync, only while Uboa - The Origin of My Depression plays on the connected Spotify account, with the synced lyrics (Newsreader, on s1) cut into it like an inscription. */
+/** Play vids/uboa.mp4 on s0, in sync, only while Uboa - The Origin of My Depression plays on the connected Spotify account, with the synced lyrics (Newsreader, on s1) as translucent glowing light on top. */
 declare function uboa(options?: SongVideoOptions & { url?: string; /** Lyrics style, or false for no lyrics. */ lyrics?: LyricsStyle | false; /** Source for the lyrics (default s1). */ lyricsSource?: HydraExternalSource; /** Your own look for the words: (text, video) => chain. */ letters?: (text: HydraExternalSource, video: HydraExternalSource) => any }): SongVideo | null
 type RadiolariaForm = 'ring' | 'cage' | 'lattice' | 'bush' | 'star' | 'basket'
 type RadiolariaPaletteName = 'haeckel' | 'cyanotype' | 'gilded' | 'ink' | 'neon'
