@@ -354,8 +354,8 @@ const effectSignatures = {
 }`
   },
   uboa: {
-    global: `/** Play vids/uboa.mp4 on s0, in sync, only while Uboa - The Origin of My Depression plays on the connected Spotify account, with the synced lyrics (Newsreader, on s1) on top. */
-declare function uboa(options?: SongVideoOptions & { url?: string; /** Lyrics style, or false for no lyrics. */ lyrics?: LyricsStyle | false; /** Source for the lyrics (default s1). */ lyricsSource?: HydraExternalSource }): SongVideo | null`
+    global: `/** Play vids/uboa.mp4 on s0, in sync, only while Uboa - The Origin of My Depression plays on the connected Spotify account, with the synced lyrics (Newsreader, on s1) cut into it like an inscription. */
+declare function uboa(options?: SongVideoOptions & { url?: string; /** Lyrics style, or false for no lyrics. */ lyrics?: LyricsStyle | false; /** Source for the lyrics (default s1). */ lyricsSource?: HydraExternalSource; /** Your own look for the words: (text, video) => chain. */ letters?: (text: HydraExternalSource, video: HydraExternalSource) => any }): SongVideo | null`
   },
   ink: {
     global: `declare const ink: {\n  (source: HydraTexture, mode?: InkMode | InkOptions, options?: InkOptions): HydraSource\n  /** Undo every deformation, or only the layer with this id. */\n  reset(id?: string): void\n}`,

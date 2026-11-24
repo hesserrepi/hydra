@@ -110,14 +110,19 @@
 //       of My Depression plays on the connected Spotify account (songs started
 //       by hand with song.start do not count); also connects to Spotify.
 //       Same options, e.g. uboa({ show: (s) => src(s).kaleid(4).out() }).
-//       The video loops (in step with the song; loop: false plays it once).
-//       The synced lyrics are drawn on s1 in Newsreader from the font kit
-//       (public/fonts), centred, fading slowly; the video is drained of colour,
-//       sinks into a dark vignette and dims further while a line is sung. Change them with
-//       uboa({ lyrics: { font: '"Bricolage Grotesque"', weight: 800 } })
-//       (any lyrics style, see Lyrics above), lyricsSource: s2 for another
-//       source, or lyrics: false for the video alone. If lrclib.net has no
-//       synced lyrics for the song, put an .lrc file in public/lyrics/
+//       The video loops (in step with the song; loop: false plays it once)
+//       and is otherwise untouched. The synced lyrics are drawn on s1 in
+//       Newsreader from the font kit (public/fonts), centred, fading slowly,
+//       and cut into the video like an inscription: inside the words the
+//       video sinks, nearly black, with a faint light on the lower edge, and
+//       each line settles deeper while it stays.
+//       lyrics: {...} changes the lyrics style (see Lyrics above), e.g.
+//       uboa({ lyrics: { font: '"Bricolage Grotesque"', weight: 800 } });
+//       letters: (text, video) => chain gives the words your own look, e.g.
+//       uboa({ letters: (t) => src(t) }) for plain white text;
+//       lyricsSource: s2 draws them on another source; lyrics: false shows
+//       the video alone. If lrclib.net has no synced lyrics for the song,
+//       put an .lrc file in public/lyrics/
 //       named 'Uboa - The Origin of My Depression.lrc'.
 //       To try the video without Spotify:
 //       song.video('uboa', 'vids/uboa.mp4'); song.start('uboa', 30)
@@ -829,26 +834,22 @@
     /^the origin of my depression\b/.test(norm(t.name))
   // the lyrics use the project's font kit (public/fonts, loaded on demand)
   // centred, unhurried: lines fade in and out slowly
-  const UBOA_LYRICS = { font: '"Newsreader", Georgia, serif', weight: 500, size: 0.085, position: 'center', width: 0.72, shadow: true, fade: 0.9 }
-  // the "gravity" look: the video loses colour and sinks into a dark vignette,
-  // and dims further while a line is sung so the words carry the weight
-  function gravity(source, text) {
-    let dim = 1
-    let last = now()
-    const level = () => {
-      const t = now()
-      const k = 1 - Math.exp(-(t - last) / 900) // ~1 s ease
-      last = t
-      dim += ((lyrics.line ? 0.45 : 0.85) - dim) * k
-      return dim
-    }
+  // the video stays exactly as it is; only the letters carry the weight.
+  // The words are cut into the picture like an inscription: inside them the
+  // video sinks, set back and nearly black, with a faint light on the lower
+  // lip of each stroke. The longer a line stays, the deeper it settles.
+  const engraved = (text, source) => {
+    const depth = () => 0.32 - 0.16 * lyrics.lineProgress
     return scope.src(source)
-      .saturate(0.35)
-      .contrast(1.2)
-      .color(level, level, level)
-      .mult(scope.shape(96, 0.38, 0.75).scale(1, () => (H?.canvas ? H.canvas.height / H.canvas.width : 0.5625)), 0.85)
-      .layer(scope.src(text))
+      .scale(0.985)
+      .saturate(0.5)
+      .color(depth, depth, depth)
+      .mask(scope.src(text))
+      .layer(scope.solid(1, 0.96, 0.9, 1)
+        .mask(scope.src(text).sub(scope.src(text).scrollY(0.0025)).luma(0.05, 0.4))
+        .color(1, 1, 1, 0.4))
   }
+  const UBOA_LYRICS = { font: '"Newsreader", Georgia, serif', weight: 600, size: 0.1, position: 'center', width: 0.72, shadow: false, fade: 1.2 }
   function loadFonts() {
     if (window.hydraFonts) return window.hydraFonts.ready
     if (!loadFonts.promise) {
@@ -865,14 +866,16 @@
   function uboa(options = {}) {
     if (!spotify.clientId) warn("uboa() needs Spotify: run song.connect('your client id') once (see the top of hydra-song.js)")
     else if (!spotify.active) song.connect()
-    const { lyrics: lyricStyle = {}, lyricsSource, ...rest } = options
+    const { lyrics: lyricStyle = {}, lyricsSource, letters = engraved, ...rest } = options
     let show = rest.show ?? true
     if (lyricStyle !== false) {
       const target = lyricsSource || scope.s1
       loadFonts()
       lyrics.init(target, { ...UBOA_LYRICS, ...lyricStyle })
-      // default look: the video with the synced lyrics on top, with gravity
-      if (show === true) show = (source) => gravity(source, target).out(scope.o0)
+      // default look: the video untouched, the lyrics on top with the letter effect
+      if (typeof letters !== 'function') throw new Error('uboa: letters must be a function(text, video) that returns a hydra chain')
+      const look = letters
+      if (show === true) show = (source) => scope.src(source).layer(look(target, source)).out(scope.o0)
     }
     return video(uboaSong, rest.url || UBOA_VIDEO, { loop: true, ...rest, show, key: 'uboa', label: 'Uboa - The Origin of My Depression on Spotify' })
   }
