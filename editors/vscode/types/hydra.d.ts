@@ -4785,8 +4785,8 @@ declare const song: {
  * From effects/song, loaded automatically.
  * @see extensions/effects/hydra-song.js
  */
-/** Play vids/uboa.mp4 on s0, in sync, while its song plays in Spotify. A string picks the song ('artist - title' or a Spotify link). */
-declare function uboa(options?: string | (SongVideoOptions & { song?: SongMatch; url?: string })): SongVideo | null
+/** Play vids/uboa.mp4 on s0, in sync, only while Uboa - The Origin of My Depression plays on the connected Spotify account. */
+declare function uboa(options?: SongVideoOptions & { url?: string }): SongVideo | null
 type RadiolariaForm = 'ring' | 'cage' | 'lattice' | 'bush' | 'star' | 'basket'
 type RadiolariaPaletteName = 'haeckel' | 'cyanotype' | 'gilded' | 'ink' | 'neon'
 interface RadiolariaPalette {

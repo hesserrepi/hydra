@@ -106,9 +106,12 @@
 //         loop    repeat the video while the song plays                 false
 //       Registering the same match again replaces the video;
 //       song.video(match, null) removes it.
-//   uboa(options)  the same for vids/uboa.mp4 and its song (UBOA_SONG
-//       below); also connects to Spotify. uboa('artist - title') picks
-//       another song, uboa({ show: (s) => src(s).kaleid(4).out() }) another look.
+//   uboa(options)  the same for vids/uboa.mp4, only while Uboa - The Origin
+//       of My Depression plays on the connected Spotify account (songs started
+//       by hand with song.start do not count); also connects to Spotify.
+//       Same options, e.g. uboa({ show: (s) => src(s).kaleid(4).out() }).
+//       To try the video without Spotify:
+//       song.video('uboa', 'vids/uboa.mp4'); song.start('uboa', 30)
 //
 //   song.hud(true)  small status line (song, time, offset, lyrics); it is on
 //                   while connecting. song.status() returns the same as text.
@@ -795,7 +798,7 @@
     const e = { match, url, o, el, source, at: seconds(o.at), ready: false, shown: false, track: null, lastSeek: 0 }
     el.addEventListener('loadeddata', () => {
       e.ready = true
-      log(`video ${url} ready (${clockText(el.duration)}), plays with "${match}"`)
+      log(`video ${url} ready (${clockText(el.duration)}), plays with ${o.label || `"${match}"`}`)
     })
     el.addEventListener('error', () => {
       warn(`the video ${url} could not be loaded (${el.error?.message || 'not found'}). Is the file there, and is the editor open through npm run dev?`)
@@ -807,15 +810,18 @@
   }
   song.video = video
 
-  // uboa(): vids/uboa.mp4 plays on s0 while its song plays in Spotify.
-  // Change UBOA_SONG to the song (part of 'artist - title' or a Spotify link).
-  const UBOA_SONG = 'uboa'
+  // uboa(): vids/uboa.mp4 plays on s0 only while Uboa - The Origin of My
+  // Depression plays on the connected Spotify account (not for songs
+  // started by hand with song.start, and not for other Uboa songs).
   const UBOA_VIDEO = 'vids/uboa.mp4'
+  const uboaSong = (t) =>
+    t.source === 'spotify' &&
+    (t.artists?.length ? t.artists : [t.artist]).some((a) => norm(a) === 'uboa') &&
+    /^the origin of my depression\b/.test(norm(t.name))
   function uboa(options = {}) {
-    if (typeof options === 'string') options = { song: options }
-    if (!spotify.active && spotify.clientId) song.connect()
-    else if (!spotify.clientId) warn("uboa() needs Spotify: run song.connect('your client id') once (see the top of hydra-song.js)")
-    return video(options.song || UBOA_SONG, options.url || UBOA_VIDEO, { key: 'uboa', ...options })
+    if (!spotify.clientId) warn("uboa() needs Spotify: run song.connect('your client id') once (see the top of hydra-song.js)")
+    else if (!spotify.active) song.connect()
+    return video(uboaSong, options.url || UBOA_VIDEO, { ...options, key: 'uboa', label: 'Uboa - The Origin of My Depression on Spotify' })
   }
 
   // ----------------------------------------------------------------- loop

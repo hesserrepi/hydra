@@ -51,7 +51,7 @@ song.lyrics.init(s1, { position: 'center', next: true })
 song.on('title', () => {
   noise(3).color(1, 0.4, 0.7).layer(src(s1)).out()
   song.cue('1:00', () => voronoi(8).layer(src(s1)).out())
-})`, `// vids/uboa.mp4 plays on s0, in sync, while its song plays in Spotify
+})`, `// vids/uboa.mp4 plays on s0, in sync, while Uboa - The Origin of My Depression plays in Spotify
 uboa()`]
   })
 ]

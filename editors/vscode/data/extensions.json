@@ -2128,7 +2128,7 @@
       "examples": [
         "song.connect() // song.connect('your Spotify client id') the first time\nsong.lyrics.init(s1, { size: 0.08 })\nosc(8, 0.05, 1.2)\n  .modulate(noise(2), () => song.progress * 0.3)\n  .layer(src(s1))\n  .out()",
         "// without Spotify: say which song plays and how far in it is\nsong.start('artist - title', 5)\nsong.lyrics.init(s1, { position: 'center', next: true })\nsong.on('title', () => {\n  noise(3).color(1, 0.4, 0.7).layer(src(s1)).out()\n  song.cue('1:00', () => voronoi(8).layer(src(s1)).out())\n})",
-        "// vids/uboa.mp4 plays on s0, in sync, while its song plays in Spotify\nuboa()"
+        "// vids/uboa.mp4 plays on s0, in sync, while Uboa - The Origin of My Depression plays in Spotify\nuboa()"
       ],
       "autoload": true,
       "provides": {

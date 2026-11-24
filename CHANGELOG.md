@@ -1,7 +1,7 @@
 # Changelog
 # [Unreleased]
 ## Added
-- `uboa()`: plays `vids/uboa.mp4` on s0 while its song plays in Spotify, kept at the song's position; `song.video(match, url, options)` does the same for any song and video. `npm run dev` serves the repo's `vids/` folder (not committed)
+- `uboa()`: plays `vids/uboa.mp4` on s0 only while Uboa - The Origin of My Depression plays on the connected Spotify account, kept at the song's position; `song.video(match, url, options)` does the same for any song and video. `npm run dev` serves the repo's `vids/` folder (not committed)
 - `radiolaria.swarm()`: spawns a radiolarian at a random free position on each audio peak, with a lifecycle and JSON parameter presets (examples 17-18)
 - bundled [hyper-hydra](https://github.com/geikha/hyper-hydra) and [extra-shaders-for-hydra](https://gitlab.com/metagrowing/extra-shaders-for-hydra) extensions, which load automatically the first time a sketch uses one of their functions
 - `hyper-hydra` and `extra shaders` tabs in the extensions window
