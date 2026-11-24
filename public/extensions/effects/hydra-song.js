@@ -85,6 +85,31 @@
 //   song.lyrics.online = false never ask lrclib.net
 //   song.lyrics.forget()       empty the remembered lyrics
 //
+// Videos
+//   song.video(match, url, options)  while a matching song plays, the video
+//       plays on a hydra source (s0) at the song's position, so a music video
+//       or a clip with the vocals stays in sync: joining late, seeking or
+//       pausing in Spotify moves the video too, and small drift is evened out
+//       by playing a little faster or slower. The video is muted (the sound
+//       comes from Spotify). song.nudge / Ctrl+Alt+arrows shift it as well.
+//       Videos in the repo's vids/ folder are served at vids/<name> by
+//       npm run dev (vids/ is not committed to git).
+//       options
+//         source  the hydra source to play on                          s0
+//         at      song time where the video starts, e.g. '0:42'         0
+//         offset  extra seconds (+ = the video runs later)              0
+//         show    true: src(source).out(o0) when the song starts;
+//                 a function(source, track) to show it your own way;
+//                 false: only play it on the source                     true
+//         end     function(source) run when the song stops or changes   null
+//         sound   play the video's own sound too                        false
+//         loop    repeat the video while the song plays                 false
+//       Registering the same match again replaces the video;
+//       song.video(match, null) removes it.
+//   uboa(options)  the same for vids/uboa.mp4 and its song (UBOA_SONG
+//       below); also connects to Spotify. uboa('artist - title') picks
+//       another song, uboa({ show: (s) => src(s).kaleid(4).out() }) another look.
+//
 //   song.hud(true)  small status line (song, time, offset, lyrics); it is on
 //                   while connecting. song.status() returns the same as text.
 
@@ -696,11 +721,109 @@
     }
   }
 
+  // --------------------------------------------------------------- videos
+  // a video that plays while a song plays, held at the song's position
+  const videos = new Map() // key -> entry
+  const VIDEO_DEFAULTS = { at: 0, offset: 0, source: null, show: true, end: null, sound: false, loop: false, seekAfter: 0.35 }
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v))
+
+  function dropVideo(e) {
+    e.el.pause()
+    e.el.removeAttribute('src')
+    e.el.load()
+  }
+  function showVideo(e) {
+    e.source.init({ src: e.el, dynamic: true })
+    const show = e.o.show
+    try {
+      if (typeof show === 'function') show(e.source, track, song)
+      else if (show) scope.src(e.source).out(scope.o0)
+    } catch (err) { console.error('song: the show function of the video failed', err) }
+  }
+  function syncVideo(e) {
+    const el = e.el
+    const active = !!track && matches(e.match, track)
+    if (!active) {
+      if (e.track) {
+        e.track = null
+        el.pause()
+        if (typeof e.o.end === 'function') try { e.o.end(e.source, song) } catch (err) { console.error('song: the end function of the video failed', err) }
+      }
+      return
+    }
+    if (e.track !== track) { e.track = track; e.shown = false }
+    if (!e.ready) return
+    if (!e.shown) { e.shown = true; showVideo(e) }
+
+    const duration = el.duration || Infinity
+    let target = song.time - e.at + e.o.offset
+    if (e.o.loop && isFinite(duration)) target = ((target % duration) + duration) % duration
+    const inside = target >= 0 && target < duration
+    if (!song.playing || !inside) {
+      // paused, or the song is outside the video: hold the matching frame
+      if (!el.paused) { el.pause(); el.playbackRate = 1 }
+      const hold = clamp(target, 0, Math.max(0, duration - 0.05))
+      if (!el.seeking && Math.abs(el.currentTime - hold) > 0.05) el.currentTime = hold
+      return
+    }
+    const drift = el.currentTime - target // > 0: the video is ahead of the song
+    if (Math.abs(drift) > e.o.seekAfter) {
+      // joined late, seeked or drifted far: jump (not again until that seek is done)
+      if (!el.seeking && now() - e.lastSeek > 400) { el.playbackRate = 1; el.currentTime = target; e.lastSeek = now() }
+    } else {
+      // small drift: play a little faster or slower until it is gone
+      el.playbackRate = Math.abs(drift) < 0.03 ? 1 : 1 - clamp(drift * 0.6, -0.08, 0.08)
+    }
+    if (el.paused) el.play().catch((err) => { if (!e.playWarned) { e.playWarned = true; warn(`the video cannot start yet (${err.message}); click into the page once`) } })
+  }
+
+  function video(match, url, options = {}) {
+    if (typeof url === 'object' && url !== null) { options = url; url = options.url }
+    const key = options.key || keyOf(match)
+    const old = videos.get(key)
+    if (old) { videos.delete(key); dropVideo(old) }
+    if (!url) return null // song.video(match, null) removes it
+
+    const o = { ...VIDEO_DEFAULTS, ...options }
+    const source = o.source || scope.s0
+    if (!source?.init) throw new Error('song.video: options.source must be a hydra source such as s0')
+    const el = document.createElement('video')
+    el.crossOrigin = 'anonymous'
+    el.muted = !o.sound // the sound comes from Spotify
+    el.playsInline = true
+    el.preload = 'auto'
+    const e = { match, url, o, el, source, at: seconds(o.at), ready: false, shown: false, track: null, lastSeek: 0 }
+    el.addEventListener('loadeddata', () => {
+      e.ready = true
+      log(`video ${url} ready (${clockText(el.duration)}), plays with "${match}"`)
+    })
+    el.addEventListener('error', () => {
+      warn(`the video ${url} could not be loaded (${el.error?.message || 'not found'}). Is the file there, and is the editor open through npm run dev?`)
+    })
+    el.src = url
+    el.load()
+    videos.set(key, e)
+    return { video: el, source, remove: () => video(match, null, { key }) }
+  }
+  song.video = video
+
+  // uboa(): vids/uboa.mp4 plays on s0 while its song plays in Spotify.
+  // Change UBOA_SONG to the song (part of 'artist - title' or a Spotify link).
+  const UBOA_SONG = 'uboa'
+  const UBOA_VIDEO = 'vids/uboa.mp4'
+  function uboa(options = {}) {
+    if (typeof options === 'string') options = { song: options }
+    if (!spotify.active && spotify.clientId) song.connect()
+    else if (!spotify.clientId) warn("uboa() needs Spotify: run song.connect('your client id') once (see the top of hydra-song.js)")
+    return video(options.song || UBOA_SONG, options.url || UBOA_VIDEO, { key: 'uboa', ...options })
+  }
+
   // ----------------------------------------------------------------- loop
   let frame = 0
   let raf = 0
   const tick = () => {
     raf = requestAnimationFrame(tick)
+    videos.forEach(syncVideo)
     if (track) runCues(song.time)
     lyrics._draw()
     if (++frame % 6 === 0) hud.update()
@@ -727,8 +850,10 @@
       window.removeEventListener('storage', onStorage)
       channel?.close()
       hud.el?.remove()
+      videos.forEach(dropVideo)
     },
     parseLRC
   }
   scope.song = song
+  scope.uboa = uboa
 }

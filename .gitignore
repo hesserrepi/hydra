@@ -6,3 +6,7 @@ node_modules
 backend/certs
 public/vendor
 *.vsix
+
+# videos for song.video() / uboa(): served by npm run dev, not committed
+vids/*
+!vids/README.md
