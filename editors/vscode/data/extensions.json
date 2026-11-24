@@ -132,6 +132,42 @@
       "name": "snowflake-audio",
       "description": "Audio-reactive growth: loud passages bring more vapour and the crystal branches out, quiet ones let it fill in.",
       "code": "// Audio-reactive growth: loud passages bring more vapour and the crystal branches out, quiet ones let it fill in.\n// The browser asks for microphone access the first time.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\na.setBins(4)\na.setSmooth(0.9)\n\nflake = snowflake(p5, {\n  habit: 'stellar',\n  life: 'cycle',\n  grow: 18,\n  cycle: 26,\n  rho: () => 0.38 + a.fft[0] * 0.35,\n  glow: () => 0.6 + a.fft[2] * 2,\n  palette: 'neon',\n  twin: 0.6 // a second crystal turned 30 degrees: twelve branches\n})\n\np5.draw = () => {\n  snowflake.backdrop(p5, { palette: 'neon', grain: 0.4 })\n  flake.draw()\n}\n\nsrc(s0)\n  .blend(src(o0).scale(1.015), 0.5)\n  .out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-grow",
+      "description": "A proof tree growing from its root: the trunk creeps down, branches unfurl as it",
+      "code": "// A proof tree growing from its root: the trunk creeps down, branches unfurl as it\n// passes them and the lemma names fade in. proofSpine() loads automatically; every\n// option is documented in public/extensions/p5-forms/proof-spine.js.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine(p5, {\n  mode: 'grow', // 'grow', 'lightning', 'search', 'assemble', 'sway' or 'still'\n  shape: 'spine', // 'spine', 'fan', 'river', 'spiral', 'ring', 'star', 'harmonograph'\n  color: '#d24dff', // any CSS colour, [r, g, b] or a hue 0-1\n  duration: 14, // seconds to grow\n  hold: 4 // seconds it stays grown, then it fades and grows again\n})\np5.draw = () => tree.draw()\n\nsrc(s0)\n  .modulate(noise(1.5, 0.05), 0.004)\n  .out()\n\n// try: tree.reseed(), tree.set({ color: '#ffb347' }), tree.set({ vary: true })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-lightning",
+      "description": "Lightning: a stepped leader zigzags along the trunk, the whole tree flashes,",
+      "code": "// Lightning: a stepped leader zigzags along the trunk, the whole tree flashes,\n// flickers and dies down. Every strike is a new tree.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine.show(p5, {\n  mode: 'lightning',\n  color: '#8fd3ff',\n  period: 3.5, // seconds between strikes\n  afterglow: 0.1, // how much of the last tree stays visible\n  legend: false\n})\n\n// a short echo of the last frames makes the flicker linger\nsrc(s0)\n  .blend(src(o0).scale(1.003), 0.45)\n  .out()\n\n// try: tree.set({ shape: 'star', arms: 6 }), tree.set({ afterglow: 0.3 })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-search",
+      "description": "A proof search: a cursor walks the trunk and probes every branch. Lemmas that",
+      "code": "// A proof search: a cursor walks the trunk and probes every branch. Lemmas that\n// get used light up and their names type out; dead ends fade. At the end a pulse\n// runs back to the root and the goal is proved. Your own names work too.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine.show(p5, {\n  mode: 'search',\n  color: '#ffb347',\n  goal: 'everything_is_fine',\n  labels: ['coffee_first', 'read_the_docs', 'small_steps', 'ask_a_friend', 'try_again',\n    'sleep_on_it', 'draw_a_picture', 'simplify', 'invert_the_problem', 'check_the_edges',\n    'work_backwards', 'find_a_pattern', 'name_the_thing', 'go_for_a_walk'],\n  duration: 20\n})\n\nsrc(s0).out()\n\n// try: tree.set({ shape: 'river' }), tree.set({ labels: 30 }), tree.set({ goal: 'qed' })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-assemble",
+      "description": "The lemmas drift in out of the dust and settle into place, from the leaves",
+      "code": "// The lemmas drift in out of the dust and settle into place, from the leaves\n// towards the root; then the trunks light up and the goal is proved.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine.show(p5, {\n  mode: 'assemble',\n  shape: 'star',\n  arms: 5,\n  color: [0.55, 1, 0.6], // r, g, b 0-1\n  vary: true // a new tree every run\n})\n\nsrc(s0)\n  .modulate(osc(3, 0.03).rotate(0.7), 0.003)\n  .out()\n\n// try: tree.set({ shape: 'spiral', turns: 2 }), tree.set({ arms: 8 })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-sway",
+      "description": "Fully grown and alive: the branches sway like weed in a current, the halos",
+      "code": "// Fully grown and alive: the branches sway like weed in a current, the halos\n// breathe, and pulses of light run from the branch tips into the trunk. The\n// colour can be a function of time; here its hue drifts slowly.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine.show(p5, {\n  mode: 'sway',\n  shape: 'fan',\n  color: (t) => (0.8 + t * 0.01) % 1, // a hue 0-1\n  sway: 1.2 // how far they sway (also works in the other modes)\n})\n\n// a slow feedback trail; the tree's background is opaque so it doesn't build up\nsrc(s0)\n  .blend(src(o0).scale(1.002).rotate(0.0005), 0.6)\n  .out()\n\n// try: tree.set({ shape: 'ring' }), tree.set({ sway: 3 }), tree.set({ halo: 2 })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-shapes",
+      "description": "Every shape in turn, like the figures of a harmonograph: the tree grows, holds,",
+      "code": "// Every shape in turn, like the figures of a harmonograph: the tree grows, holds,\n// fades, and grows again in the next shape. The 'harmonograph' shape follows a\n// decaying Lissajous figure set by f1, f2 and damp.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nshapeRun = 14 + 4 + 1.5 // duration + hold + the fade between runs, in seconds\ntree = proofSpine.show(p5, {\n  mode: 'grow',\n  shape: (t) => proofSpine.shapes[Math.floor(t / shapeRun) % proofSpine.shapes.length],\n  f1: 3, // harmonograph frequencies\n  f2: 4,\n  color: '#d24dff',\n  labels: 14\n})\n\n// or draw your own trunk: s runs from the root (0) to the tip (1)\n// tree.set({ path: (s) => [0.3 * Math.sin(s * 9), s - 0.5] })\n\nsrc(s0).out()\n"
     }
   ],
   "extensions": [

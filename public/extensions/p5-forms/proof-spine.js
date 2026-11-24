@@ -56,6 +56,8 @@
 //   labels      true, false, how many, or an array of names          true (22)
 //   goal        the name at the root                                 'mainTheorem'
 //   legend      true, false, or an array of lines (bottom left)      true
+//   text        false hides every name and the legend; the tree
+//               then fills the whole width                           true
 //   textSize    label size in pixels; default scales with the tree
 //   duration    seconds of one run (grow, search, assemble)          14 / 18 / 14
 //   hold        seconds it stays finished before it starts again     4
@@ -145,6 +147,7 @@
     labels: true,
     goal: 'mainTheorem',
     legend: true,
+    text: true,
     textSize: undefined,
     period: 4,
     afterglow: 0.12,
@@ -755,7 +758,7 @@
       if (alpha <= 0) return
 
       // fit: leave room for the label columns
-      const hasLabels = tree.labels.length > 0
+      const hasLabels = tree.labels.length > 0 && o.text !== false
       const availW = W * (hasLabels ? 0.78 : 0.94)
       const S = Math.max(1, o.size * Math.min(availW / tree.w, H / tree.h))
       const cx = o.x * W
@@ -1010,6 +1013,7 @@
     }
 
     drawLabels (ctx, o, tree, st, pal, arms, bxs, g) {
+      if (o.text === false) return // no names, no legend
       const { W, H, S, px, cx } = g
       const fs = o.textSize || Math.max(9, Math.min(22, 12.5 * Math.max(0.75, px)))
       ctx.font = `${fs}px ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace`

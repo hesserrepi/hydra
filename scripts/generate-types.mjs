@@ -490,6 +490,8 @@ interface ProofSpineOptions {
   goal?: ProofSpineValue<string>
   /** true, false, or lines of text (bottom left) */
   legend?: ProofSpineValue<boolean | string[]>
+  /** false hides every name and the legend (true) */
+  text?: ProofSpineValue<boolean>
   /** label size in pixels */
   textSize?: ProofSpineValue
   /** seconds of one run */
