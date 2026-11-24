@@ -74,6 +74,27 @@
 //   f1, f2      frequencies of the 'harmonograph' shape              2, 3
 //   damp        how fast the 'harmonograph' figure shrinks           0.5
 //
+// audio (the tree listens; off unless audio is set)
+//   audio       true: hydra's microphone (a.fft, all bins averaged);
+//               a number: one bin, a.fft[n]; or a function giving 0-1,
+//               e.g. () => a.fft[0] or a p5.sound / Web Audio level   off
+//   audioTo     what the sound drives, a name or a list of them:
+//                 'speed'     the animation runs with the sound and
+//                             nearly stops in silence
+//                 'progress'  loudness is how far it is drawn: loud =
+//                             fully grown, quiet = shrinks back
+//                 'sway'      the branches sway harder when it's loud
+//                 'glow'      brightness, glow and halos pulse
+//                 'strike'    each beat or onset fires: in 'lightning' a
+//                             strike (instead of the period), in the other
+//                             modes a flash and a pulse along the trunk
+//                                              ['speed', 'sway', 'glow', 'strike']
+//   audioGain   how strongly it responds                              1
+//   audioFloor  speed in silence, for 'speed'                         0.1
+//   audioPeak   0-1, how loud a beat must be to count, for 'strike'   0.5
+// While it listens, tree.level is the smoothed loudness (0-1) and
+// tree.beats counts the beats it heard.
+//
 // Every option can be a function of time (seconds since the tree started),
 // e.g. { color: (t) => [0.5 + 0.5 * Math.sin(t), 0.3, 1] }. Changing shape,
 // seed, branches, labels or the shape's numbers makes a new tree.
@@ -158,7 +179,12 @@
     turns: 1.6,
     f1: 2,
     f2: 3,
-    damp: 0.5
+    damp: 0.5,
+    audio: false,
+    audioTo: ['speed', 'sway', 'glow', 'strike'],
+    audioGain: 1,
+    audioFloor: 0.1,
+    audioPeak: 0.5
   }
 
   // ------------------------------------------------------------------ shapes
@@ -673,6 +699,13 @@
       this.treeKey = ''
       this.dustCache = null
       this.lastMode = undefined
+      this.level = 0
+      this.slow = 0
+      this.shape = 0
+      this.beats = 0
+      this.beatAge = 99
+      this.lastBeat = -1
+      this.strikeAge = 99
     }
 
     set (options = {}) { Object.assign(this.options, options); return this }
@@ -682,7 +715,7 @@
     resolve (t) {
       const raw = { ...common, ...this.options }
       const o = {}
-      for (const key in raw) o[key] = key === 'path' ? raw[key] : value(raw[key], t)
+      for (const key in raw) o[key] = key === 'path' || key === 'audio' ? raw[key] : value(raw[key], t)
       return o
     }
 
@@ -701,9 +734,12 @@
       const now = p.millis() / 1000
       const dt = this.last === undefined ? 0 : Math.min(0.25, Math.max(0, now - this.last))
       this.last = now
-      this.age += dt * value(this.options.speed ?? 1, this.age)
+      this.clock = (this.clock || 0) + dt
+      const ears = this.listen(dt, this.clock)
+      this.age += dt * value(this.options.speed ?? 1, this.age) * ears.speed
       const t = this.age
       const o = this.resolve(t)
+      if (ears.on && ears.to.progress && (o.progress === undefined || o.progress === null)) o.progress = this.shape
       const mode = MODES[o.mode] ? o.mode : 'grow'
       if (this.lastMode !== undefined && mode !== this.lastMode) this.age = 0
       this.lastMode = mode
@@ -716,7 +752,14 @@
       // where in its run the animation is
       let run = 0
       let inRun = t
-      if (o.progress !== undefined && o.progress !== null) inRun = clamp01(o.progress) * duration
+      const struck = ears.on && ears.to.strike && mode === 'lightning'
+      if (struck) {
+        // strikes come from the beats, not the period
+        this.strikeAge += dt * value(this.options.speed ?? 1, t)
+        if (ears.beat) { this.strikeAge = 0; this.strikes = (this.strikes || 0) + 1 }
+        run = this.strikes || 0
+        inRun = Math.min(this.strikeAge, 30)
+      } else if (o.progress !== undefined && o.progress !== null) inRun = clamp01(o.progress) * duration
       else if (o.loop !== false && mode !== 'sway') { run = Math.floor(t / cycleLen); inRun = t - run * cycleLen }
       const u = clamp01(inRun / duration)
       this.progress = u
@@ -731,10 +774,63 @@
         ? frameFor('sway', tree, o, 1, 0, 0)
         : frameFor(mode, tree, o, u, mode === 'lightning' ? inRun : t, t)
       if (mode === 'still') { st.trunkPulses = []; st.branchPulses = []; st.bright = 1; st.haloWidth = 1; st.halo.fill(1); st.line.fill(1) }
-      const swayAmt = o.sway ?? M.sway
+      let swayAmt = o.sway ?? M.sway
+      if (ears.on) {
+        const L = this.level
+        if (ears.to.sway) swayAmt += L * 1.2 * ears.gain
+        if (ears.to.glow) {
+          st.bright *= 0.75 + 0.6 * Math.min(1.5, L * ears.gain)
+          st.haloWidth = (st.haloWidth || 1) * (1 + 0.35 * Math.min(1.5, L * ears.gain))
+          o.glow *= 0.6 + 1.4 * Math.min(1.5, L * ears.gain)
+        }
+        if (ears.to.strike && !struck && this.beatAge < 0.9) {
+          // a beat: a flash and a pulse running out from the root
+          st.trunkPulses.push([this.beatAge / 0.9, 0.1, 1.2, -1])
+          st.flash += 0.07 * Math.exp(-this.beatAge / 0.1)
+        }
+      }
 
       this.render(o, tree, st, swayAmt, t, fade * clamp01(o.opacity))
       return this
+    }
+
+    // read the sound: smoothed level, a slower level for 'progress', and beats
+    listen (dt, now) {
+      const opt = this.options
+      const src = opt.audio
+      const off = { on: false, speed: 1, to: {}, gain: 1 }
+      if (src === undefined || src === null || src === false) { this.level = 0; return off }
+      let raw = 0
+      try {
+        if (typeof src === 'function') raw = Number(src()) || 0
+        else {
+          const fft = window.a && window.a.fft
+          if (fft && fft.length) {
+            if (typeof src === 'number') raw = Number(fft[Math.max(0, Math.min(fft.length - 1, Math.round(src)))]) || 0
+            else { let sum = 0; for (let i = 0; i < fft.length; i++) sum += Number(fft[i]) || 0; raw = sum / fft.length }
+          }
+        }
+      } catch (e) { raw = 0 }
+      const t = this.age
+      const gain = Math.max(0, Number(value(opt.audioGain ?? common.audioGain, t)))
+      raw = Math.max(0, raw)
+      const lv = Math.min(1.5, raw * gain)
+      const k = (tau) => 1 - Math.exp(-dt / tau)
+      this.level += (lv - this.level) * k(lv > this.level ? 0.03 : 0.25)
+      this.shape += (Math.min(1, lv) - this.shape) * k(lv > this.shape ? 0.15 : 0.9)
+      const peakAt = clamp01(Number(value(opt.audioPeak ?? common.audioPeak, t)))
+      // a beat: loud enough, clearly above the recent level, not too soon after the last
+      const beat = lv > peakAt && lv > this.slow + 0.12 && now - this.lastBeat > 0.2
+      this.slow += (lv - this.slow) * k(0.8)
+      this.beatAge += dt
+      if (beat) { this.lastBeat = now; this.beats++; this.beatAge = 0 }
+      let to = value(opt.audioTo ?? common.audioTo, t)
+      if (typeof to === 'string') to = [to]
+      const want = {}
+      for (const n of to || []) want[n] = true
+      const floor = clamp01(Number(value(opt.audioFloor ?? common.audioFloor, t)))
+      const speed = want.speed ? Math.min(4, floor + (1 - floor) * 2 * Math.min(1.5, this.level)) : 1
+      return { on: true, speed, to: want, gain: 1, beat }
     }
 
     render (o, tree, st, swayAmt, t, alpha) {

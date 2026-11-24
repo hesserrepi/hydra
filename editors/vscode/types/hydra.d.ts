@@ -4104,6 +4104,7 @@ declare const snowflake: {
   defaults(habit?: SnowflakeHabit): SnowflakeOptions
 }
 type ProofSpineMode = 'grow' | 'lightning' | 'search' | 'assemble' | 'sway' | 'still'
+type ProofSpineAudioTarget = 'speed' | 'progress' | 'sway' | 'glow' | 'strike'
 type ProofSpineShape = 'spine' | 'fan' | 'river' | 'spiral' | 'ring' | 'star' | 'harmonograph'
 /** A value, or a function of the tree's age in seconds, read every frame. */
 type ProofSpineValue<T = number> = T | ((t: number) => T)
@@ -4169,6 +4170,16 @@ interface ProofSpineOptions {
   f2?: ProofSpineValue
   /** how fast the 'harmonograph' figure shrinks (0.5) */
   damp?: ProofSpineValue
+  /** listen: true = hydra's a.fft averaged, a number = one bin a.fft[n], or a function giving 0-1 */
+  audio?: boolean | number | (() => number)
+  /** what the sound drives (['speed', 'sway', 'glow', 'strike']) */
+  audioTo?: ProofSpineValue<ProofSpineAudioTarget | ProofSpineAudioTarget[]>
+  /** how strongly it responds (1) */
+  audioGain?: ProofSpineValue
+  /** animation speed in silence, for 'speed' (0.1) */
+  audioFloor?: ProofSpineValue
+  /** 0-1, how loud a beat must be, for 'strike' (0.5) */
+  audioPeak?: ProofSpineValue
 }
 interface ProofSpineTree {
   /** draw it on the p5 canvas; call from p5.draw */
@@ -4180,6 +4191,10 @@ interface ProofSpineTree {
   reseed(seed?: number): ProofSpineTree
   /** how far the current run is, 0-1 */
   readonly progress: number
+  /** smoothed loudness 0-1 while it listens */
+  readonly level: number
+  /** how many beats it has heard */
+  readonly beats: number
 }
 /**
  * A glowing proof tree: a jagged white-hot trunk (the proof), curved branches in thick halos (the lemmas it calls), lemma names on leader lines and faint dust. Pick its colour, seven overall shapes (spine, fan, river, spiral, ring, star, harmonograph) and five ways it evolves: grow, lightning, search, assemble, sway.

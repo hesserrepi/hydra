@@ -168,6 +168,12 @@
       "name": "proof-spine-shapes",
       "description": "Every shape in turn, like the figures of a harmonograph: the tree grows, holds,",
       "code": "// Every shape in turn, like the figures of a harmonograph: the tree grows, holds,\n// fades, and grows again in the next shape. The 'harmonograph' shape follows a\n// decaying Lissajous figure set by f1, f2 and damp.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nshapeRun = 14 + 4 + 1.5 // duration + hold + the fade between runs, in seconds\ntree = proofSpine.show(p5, {\n  mode: 'grow',\n  shape: (t) => proofSpine.shapes[Math.floor(t / shapeRun) % proofSpine.shapes.length],\n  f1: 3, // harmonograph frequencies\n  f2: 4,\n  color: '#d24dff',\n  labels: 14\n})\n\n// or draw your own trunk: s runs from the root (0) to the tip (1)\n// tree.set({ path: (s) => [0.3 * Math.sin(s * 9), s - 0.5] })\n\nsrc(s0).out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-audio",
+      "description": "The tree listens: it grows with the music and almost stops in silence, sways",
+      "code": "// The tree listens: it grows with the music and almost stops in silence, sways\n// and glows with the loudness, and every beat sends a pulse along the trunk.\n// Allow the microphone when the browser asks.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\na.setBins(4)\na.setSmooth(0.6)\n// a.show() // shows the bins and the cutoff; raise a.setCutoff(2) if quiet sounds trigger it\n\ntree = proofSpine.show(p5, {\n  mode: 'grow',\n  audio: true, // hydra's microphone, all bins averaged; or 0 for a.fft[0], or () => a.fft[0] * 2\n  audioTo: ['speed', 'sway', 'glow', 'strike'], // also 'progress': loud = fully grown, quiet = shrinks back\n  audioGain: 1.5,\n  audioFloor: 0.1, // speed in silence\n  audioPeak: 0.5 // how loud a beat must be\n})\n\nsrc(s0)\n  .modulate(noise(2, 0.1), () => 0.002 + a.fft[0] * 0.01)\n  .out()\n\n// try: tree.set({ mode: 'lightning' })  every beat is a strike\n//      tree.set({ audioTo: 'progress', mode: 'search' })\n//      tree.set({ audio: 0, audioTo: ['strike', 'glow'] })  the bass only\n"
     }
   ],
   "extensions": [
