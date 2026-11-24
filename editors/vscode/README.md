@@ -11,7 +11,10 @@ repository, with the bundled hyper-hydra and extra shaders extensions.
   flashes.
 - **Autocomplete** for every hydra source and method, hyper-hydra and extra shaders,
   with parameter names, default values and links to the docs, through
-  `types/hydra.d.ts` and the JavaScript language service.
+  `types/hydra.d.ts` and the JavaScript language service. Suggestions appear as you
+  type (`ctrl+space` to open them); parameter hints appear on `(` (`ctrl+shift+space`
+  to reopen them) and show every default on one line, e.g.
+  `thresh(threshold = 0.5, tolerance = 0.04)`, with the current parameter's default below.
 - **Errors inline**: an error in the hydra window underlines the code that caused it
   and turns the status bar item red.
 - **Status bar**: shows whether the hydra editor is running and a window is open;

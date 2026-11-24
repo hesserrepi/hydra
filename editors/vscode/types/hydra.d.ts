@@ -13,13 +13,17 @@ interface HydraSource {
   /** Render this chain to an output (default o0). */
   out(output?: HydraOutput): void
   /**
-   * rotate: coordinate transform
+   * `rotate(angle = 10, speed = 0)`
+   *
+   * coordinate transform
    * @param angle default 10
    * @param speed default 0
    */
   rotate(angle?: HydraParam, speed?: HydraParam): HydraSource
   /**
-   * scale: coordinate transform
+   * `scale(amount = 1.5, xMult = 1, yMult = 1, offsetX = 0.5, offsetY = 0.5)`
+   *
+   * coordinate transform
    * @param amount default 1.5
    * @param xMult default 1
    * @param yMult default 1
@@ -28,19 +32,25 @@ interface HydraSource {
    */
   scale(amount?: HydraParam, xMult?: HydraParam, yMult?: HydraParam, offsetX?: HydraParam, offsetY?: HydraParam): HydraSource
   /**
-   * pixelate: coordinate transform
+   * `pixelate(pixelX = 20, pixelY = 20)`
+   *
+   * coordinate transform
    * @param pixelX default 20
    * @param pixelY default 20
    */
   pixelate(pixelX?: HydraParam, pixelY?: HydraParam): HydraSource
   /**
-   * posterize: color transform
+   * `posterize(bins = 3, gamma = 0.6)`
+   *
+   * color transform
    * @param bins default 3
    * @param gamma default 0.6
    */
   posterize(bins?: HydraParam, gamma?: HydraParam): HydraSource
   /**
-   * shift: color transform
+   * `shift(r = 0.5, g = 0, b = 0, a = 0)`
+   *
+   * color transform
    * @param r default 0.5
    * @param g default 0
    * @param b default 0
@@ -48,7 +58,9 @@ interface HydraSource {
    */
   shift(r?: HydraParam, g?: HydraParam, b?: HydraParam, a?: HydraParam): HydraSource
   /**
-   * repeat: coordinate transform
+   * `repeat(repeatX = 3, repeatY = 3, offsetX = 0, offsetY = 0)`
+   *
+   * coordinate transform
    * @param repeatX default 3
    * @param repeatY default 3
    * @param offsetX default 0
@@ -56,7 +68,9 @@ interface HydraSource {
    */
   repeat(repeatX?: HydraParam, repeatY?: HydraParam, offsetX?: HydraParam, offsetY?: HydraParam): HydraSource
   /**
-   * modulateRepeat: modulates coordinates with another texture
+   * `modulateRepeat(texture, repeatX = 3, repeatY = 3, offsetX = 0.5, offsetY = 0.5)`
+   *
+   * modulates coordinates with another texture
    * @param repeatX default 3
    * @param repeatY default 3
    * @param offsetX default 0.5
@@ -64,41 +78,55 @@ interface HydraSource {
    */
   modulateRepeat(texture: HydraTexture, repeatX?: HydraParam, repeatY?: HydraParam, offsetX?: HydraParam, offsetY?: HydraParam): HydraSource
   /**
-   * repeatX: coordinate transform
+   * `repeatX(reps = 3, offset = 0)`
+   *
+   * coordinate transform
    * @param reps default 3
    * @param offset default 0
    */
   repeatX(reps?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * modulateRepeatX: modulates coordinates with another texture
+   * `modulateRepeatX(texture, reps = 3, offset = 0.5)`
+   *
+   * modulates coordinates with another texture
    * @param reps default 3
    * @param offset default 0.5
    */
   modulateRepeatX(texture: HydraTexture, reps?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * repeatY: coordinate transform
+   * `repeatY(reps = 3, offset = 0)`
+   *
+   * coordinate transform
    * @param reps default 3
    * @param offset default 0
    */
   repeatY(reps?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * modulateRepeatY: modulates coordinates with another texture
+   * `modulateRepeatY(texture, reps = 3, offset = 0.5)`
+   *
+   * modulates coordinates with another texture
    * @param reps default 3
    * @param offset default 0.5
    */
   modulateRepeatY(texture: HydraTexture, reps?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * kaleid: coordinate transform
+   * `kaleid(nSides = 4)`
+   *
+   * coordinate transform
    * @param nSides default 4
    */
   kaleid(nSides?: HydraParam): HydraSource
   /**
-   * modulateKaleid: modulates coordinates with another texture
+   * `modulateKaleid(texture, nSides = 4)`
+   *
+   * modulates coordinates with another texture
    * @param nSides default 4
    */
   modulateKaleid(texture: HydraTexture, nSides?: HydraParam): HydraSource
   /**
-   * scroll: coordinate transform
+   * `scroll(scrollX = 0.5, scrollY = 0.5, speedX = 0, speedY = 0)`
+   *
+   * coordinate transform
    * @param scrollX default 0.5
    * @param scrollY default 0.5
    * @param speedX default 0
@@ -106,118 +134,162 @@ interface HydraSource {
    */
   scroll(scrollX?: HydraParam, scrollY?: HydraParam, speedX?: HydraParam, speedY?: HydraParam): HydraSource
   /**
-   * scrollX: coordinate transform
+   * `scrollX(scrollX = 0.5, speed = 0)`
+   *
+   * coordinate transform
    * @param scrollX default 0.5
    * @param speed default 0
    */
   scrollX(scrollX?: HydraParam, speed?: HydraParam): HydraSource
   /**
-   * modulateScrollX: modulates coordinates with another texture
+   * `modulateScrollX(texture, scrollX = 0.5, speed = 0)`
+   *
+   * modulates coordinates with another texture
    * @param scrollX default 0.5
    * @param speed default 0
    */
   modulateScrollX(texture: HydraTexture, scrollX?: HydraParam, speed?: HydraParam): HydraSource
   /**
-   * scrollY: coordinate transform
+   * `scrollY(scrollY = 0.5, speed = 0)`
+   *
+   * coordinate transform
    * @param scrollY default 0.5
    * @param speed default 0
    */
   scrollY(scrollY?: HydraParam, speed?: HydraParam): HydraSource
   /**
-   * modulateScrollY: modulates coordinates with another texture
+   * `modulateScrollY(texture, scrollY = 0.5, speed = 0)`
+   *
+   * modulates coordinates with another texture
    * @param scrollY default 0.5
    * @param speed default 0
    */
   modulateScrollY(texture: HydraTexture, scrollY?: HydraParam, speed?: HydraParam): HydraSource
   /**
-   * add: blends in another texture
+   * `add(texture, amount = 1)`
+   *
+   * blends in another texture
    * @param amount default 1
    */
   add(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * sub: blends in another texture
+   * `sub(texture, amount = 1)`
+   *
+   * blends in another texture
    * @param amount default 1
    */
   sub(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * layer: blends in another texture
+   * `layer(texture)`
+   *
+   * blends in another texture
    */
   layer(texture: HydraTexture): HydraSource
   /**
-   * blend: blends in another texture
+   * `blend(texture, amount = 0.5)`
+   *
+   * blends in another texture
    * @param amount default 0.5
    */
   blend(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * mult: blends in another texture
+   * `mult(texture, amount = 1)`
+   *
+   * blends in another texture
    * @param amount default 1
    */
   mult(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * diff: blends in another texture
+   * `diff(texture)`
+   *
+   * blends in another texture
    */
   diff(texture: HydraTexture): HydraSource
   /**
-   * modulate: modulates coordinates with another texture
+   * `modulate(texture, amount = 0.1)`
+   *
+   * modulates coordinates with another texture
    * @param amount default 0.1
    */
   modulate(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * modulateScale: modulates coordinates with another texture
+   * `modulateScale(texture, multiple = 1, offset = 1)`
+   *
+   * modulates coordinates with another texture
    * @param multiple default 1
    * @param offset default 1
    */
   modulateScale(texture: HydraTexture, multiple?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * modulatePixelate: modulates coordinates with another texture
+   * `modulatePixelate(texture, multiple = 10, offset = 3)`
+   *
+   * modulates coordinates with another texture
    * @param multiple default 10
    * @param offset default 3
    */
   modulatePixelate(texture: HydraTexture, multiple?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * modulateRotate: modulates coordinates with another texture
+   * `modulateRotate(texture, multiple = 1, offset = 0)`
+   *
+   * modulates coordinates with another texture
    * @param multiple default 1
    * @param offset default 0
    */
   modulateRotate(texture: HydraTexture, multiple?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * modulateHue: modulates coordinates with another texture
+   * `modulateHue(texture, amount = 1)`
+   *
+   * modulates coordinates with another texture
    * @param amount default 1
    */
   modulateHue(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * invert: color transform
+   * `invert(amount = 1)`
+   *
+   * color transform
    * @param amount default 1
    */
   invert(amount?: HydraParam): HydraSource
   /**
-   * contrast: color transform
+   * `contrast(amount = 1.6)`
+   *
+   * color transform
    * @param amount default 1.6
    */
   contrast(amount?: HydraParam): HydraSource
   /**
-   * brightness: color transform
+   * `brightness(amount = 0.4)`
+   *
+   * color transform
    * @param amount default 0.4
    */
   brightness(amount?: HydraParam): HydraSource
   /**
-   * mask: blends in another texture
+   * `mask(texture)`
+   *
+   * blends in another texture
    */
   mask(texture: HydraTexture): HydraSource
   /**
-   * luma: color transform
+   * `luma(threshold = 0.5, tolerance = 0.1)`
+   *
+   * color transform
    * @param threshold default 0.5
    * @param tolerance default 0.1
    */
   luma(threshold?: HydraParam, tolerance?: HydraParam): HydraSource
   /**
-   * thresh: color transform
+   * `thresh(threshold = 0.5, tolerance = 0.04)`
+   *
+   * color transform
    * @param threshold default 0.5
    * @param tolerance default 0.04
    */
   thresh(threshold?: HydraParam, tolerance?: HydraParam): HydraSource
   /**
-   * color: color transform
+   * `color(r = 1, g = 1, b = 1, a = 1)`
+   *
+   * color transform
    * @param r default 1
    * @param g default 1
    * @param b default 1
@@ -225,64 +297,85 @@ interface HydraSource {
    */
   color(r?: HydraParam, g?: HydraParam, b?: HydraParam, a?: HydraParam): HydraSource
   /**
-   * saturate: color transform
+   * `saturate(amount = 2)`
+   *
+   * color transform
    * @param amount default 2
    */
   saturate(amount?: HydraParam): HydraSource
   /**
-   * hue: color transform
+   * `hue(hue = 0.4)`
+   *
+   * color transform
    * @param hue default 0.4
    */
   hue(hue?: HydraParam): HydraSource
   /**
-   * colorama: color transform
+   * `colorama(amount = 0.005)`
+   *
+   * color transform
    * @param amount default 0.005
    */
   colorama(amount?: HydraParam): HydraSource
   /**
-   * sum: color transform
-   * @param scale default 1
+   * `sum(scale)`
+   *
+   * color transform
    */
   sum(scale?: HydraTexture): HydraSource
   /**
-   * r: color transform
+   * `r(scale = 1, offset = 0)`
+   *
+   * color transform
    * @param scale default 1
    * @param offset default 0
    */
   r(scale?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * g: color transform
+   * `g(scale = 1, offset = 0)`
+   *
+   * color transform
    * @param scale default 1
    * @param offset default 0
    */
   g(scale?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * b: color transform
+   * `b(scale = 1, offset = 0)`
+   *
+   * color transform
    * @param scale default 1
    * @param offset default 0
    */
   b(scale?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * a: color transform
+   * `a(scale = 1, offset = 0)`
+   *
+   * color transform
    * @param scale default 1
    * @param offset default 0
    */
   a(scale?: HydraParam, offset?: HydraParam): HydraSource
   /**
-   * sepia: color transform (extra shaders/color, loaded automatically)
+   * `sepia(amount = 1)`
+   *
+   * color transform (extra shaders/color, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md
    */
   sepia(amount?: HydraParam): HydraSource
   /**
-   * levels: color transform (extra shaders/color, loaded automatically)
+   * `levels(levels = 3, amount = 1)`
+   *
+   * color transform (extra shaders/color, loaded automatically)
    * @param levels default 3
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md
    */
   levels(levels?: HydraParam, amount?: HydraParam): HydraSource
   /**
-   * monotone: color transform (extra shaders/color, loaded automatically)
+   * `monotone(levels = 3, hue = 0.6, amount = 1)`
+   *
+   * color transform (extra shaders/color, loaded automatically)
    * @param levels default 3
    * @param hue default 0.6
    * @param amount default 1
@@ -290,49 +383,65 @@ interface HydraSource {
    */
   monotone(levels?: HydraParam, hue?: HydraParam, amount?: HydraParam): HydraSource
   /**
-   * grarose: color transform (extra shaders/color, loaded automatically)
+   * `grarose(amount = 1)`
+   *
+   * color transform (extra shaders/color, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md
    */
   grarose(amount?: HydraParam): HydraSource
   /**
-   * grawave: color transform (extra shaders/color, loaded automatically)
+   * `grawave(amount = 1)`
+   *
+   * color transform (extra shaders/color, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md
    */
   grawave(amount?: HydraParam): HydraSource
   /**
-   * graua: color transform (extra shaders/color, loaded automatically)
+   * `graua(amount = 1)`
+   *
+   * color transform (extra shaders/color, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md
    */
   graua(amount?: HydraParam): HydraSource
   /**
-   * colcross: blends in another texture (extra shaders/color, loaded automatically)
+   * `colcross(texture, amount = 1)`
+   *
+   * blends in another texture (extra shaders/color, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md
    */
   colcross(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * coldot: blends in another texture (extra shaders/color, loaded automatically)
+   * `coldot(texture, amount = 1)`
+   *
+   * blends in another texture (extra shaders/color, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md
    */
   coldot(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * colboost: blends in another texture (extra shaders/color, loaded automatically)
+   * `colboost(texture, amount = 1)`
+   *
+   * blends in another texture (extra shaders/color, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md
    */
   colboost(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * colreflect: blends in another texture (extra shaders/color, loaded automatically)
+   * `colreflect(texture, amount = 1)`
+   *
+   * blends in another texture (extra shaders/color, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/color/README.md
    */
   colreflect(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * hsvshift: color transform (extra shaders/color, loaded automatically)
+   * `hsvshift(hue = 0, saturation = 1, value = 1)`
+   *
+   * color transform (extra shaders/color, loaded automatically)
    * @param hue default 0
    * @param saturation default 1
    * @param value default 1
@@ -340,115 +449,157 @@ interface HydraSource {
    */
   hsvshift(hue?: HydraParam, saturation?: HydraParam, value?: HydraParam): HydraSource
   /**
-   * ifpos: blends in another texture (extra shaders/cond, loaded automatically)
+   * `ifpos(texture, value = 1)`
+   *
+   * blends in another texture (extra shaders/cond, loaded automatically)
    * @param value default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/cond/README.md
    */
   ifpos(texture: HydraTexture, value?: HydraParam): HydraSource
   /**
-   * ifeven: blends in another texture (extra shaders/cond, loaded automatically)
+   * `ifeven(texture, value = 0, eps = 0.01)`
+   *
+   * blends in another texture (extra shaders/cond, loaded automatically)
    * @param value default 0
    * @param eps default 0.01
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/cond/README.md
    */
   ifeven(texture: HydraTexture, value?: HydraParam, eps?: HydraParam): HydraSource
   /**
-   * ifzero: blends in another texture (extra shaders/cond, loaded automatically)
+   * `ifzero(texture, value = 0, eps = 0.1)`
+   *
+   * blends in another texture (extra shaders/cond, loaded automatically)
    * @param value default 0
    * @param eps default 0.1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/cond/README.md
    */
   ifzero(texture: HydraTexture, value?: HydraParam, eps?: HydraParam): HydraSource
   /**
-   * splitview: blends in another texture (extra shaders/cond, loaded automatically)
+   * `splitview(texture, where = 0.5)`
+   *
+   * blends in another texture (extra shaders/cond, loaded automatically)
    * @param where default 0.5
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/cond/README.md
    */
   splitview(texture: HydraTexture, where?: HydraParam): HydraSource
   /**
-   * splitviewh: blends in another texture (extra shaders/cond, loaded automatically)
+   * `splitviewh(texture, where = 0.5)`
+   *
+   * blends in another texture (extra shaders/cond, loaded automatically)
    * @param where default 0.5
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/cond/README.md
    */
   splitviewh(texture: HydraTexture, where?: HydraParam): HydraSource
   /**
-   * dither: color transform (extra shaders/screen, loaded automatically)
+   * `dither()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   dither(): HydraSource
   /**
-   * dither2: color transform (extra shaders/screen, loaded automatically)
+   * `dither2()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   dither2(): HydraSource
   /**
-   * dither4: color transform (extra shaders/screen, loaded automatically)
+   * `dither4()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   dither4(): HydraSource
   /**
-   * ditherrnd: color transform (extra shaders/screen, loaded automatically)
+   * `ditherrnd()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   ditherrnd(): HydraSource
   /**
-   * ditherrndcolor: color transform (extra shaders/screen, loaded automatically)
+   * `ditherrndcolor()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   ditherrndcolor(): HydraSource
   /**
-   * erode: color transform (extra shaders/screen, loaded automatically)
+   * `erode()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   erode(): HydraSource
   /**
-   * dilate: color transform (extra shaders/screen, loaded automatically)
+   * `dilate()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   dilate(): HydraSource
   /**
-   * blur: color transform (extra shaders/screen, loaded automatically)
+   * `blur()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   blur(): HydraSource
   /**
-   * blurmore: color transform (extra shaders/screen, loaded automatically)
+   * `blurmore()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   blurmore(): HydraSource
   /**
-   * edge: color transform (extra shaders/screen, loaded automatically)
+   * `edge()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   edge(): HydraSource
   /**
-   * sobelx: color transform (extra shaders/screen, loaded automatically)
+   * `sobelx()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   sobelx(): HydraSource
   /**
-   * sobely: color transform (extra shaders/screen, loaded automatically)
+   * `sobely()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   sobely(): HydraSource
   /**
-   * sharpen: color transform (extra shaders/screen, loaded automatically)
+   * `sharpen()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   sharpen(): HydraSource
   /**
-   * emboss: color transform (extra shaders/screen, loaded automatically)
+   * `emboss()`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   emboss(): HydraSource
   /**
-   * altline: color transform (extra shaders/screen, loaded automatically)
+   * `altline(width = 1)`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @param width default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/screenspace/README.md
    */
   altline(width?: HydraParam): HydraSource
   /**
-   * pxsort: color transform (extra shaders/screen, loaded automatically)
+   * `pxsort(threshold = 0.2, frame = 0, dirX = 1, dirY = 0)`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @param threshold default 0.2
    * @param frame default 0
    * @param dirX default 1
@@ -457,7 +608,9 @@ interface HydraSource {
    */
   pxsort(threshold?: HydraParam, frame?: any, dirX?: HydraParam, dirY?: HydraParam): HydraSource
   /**
-   * pysort: color transform (extra shaders/screen, loaded automatically)
+   * `pysort(threshold = 0.2, frame = 0, dirX = 0, dirY = 1)`
+   *
+   * color transform (extra shaders/screen, loaded automatically)
    * @param threshold default 0.2
    * @param frame default 0
    * @param dirX default 0
@@ -466,31 +619,41 @@ interface HydraSource {
    */
   pysort(threshold?: HydraParam, frame?: any, dirX?: HydraParam, dirY?: HydraParam): HydraSource
   /**
-   * invtile: coordinate transform (extra shaders/space, loaded automatically)
+   * `invtile(amount = 1)`
+   *
+   * coordinate transform (extra shaders/space, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra
    */
   invtile(amount?: HydraParam): HydraSource
   /**
-   * invsqrt: coordinate transform (extra shaders/space, loaded automatically)
+   * `invsqrt(amount = 0.5)`
+   *
+   * coordinate transform (extra shaders/space, loaded automatically)
    * @param amount default 0.5
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra
    */
   invsqrt(amount?: HydraParam): HydraSource
   /**
-   * abslog: coordinate transform (extra shaders/space, loaded automatically)
+   * `abslog(amount = 1)`
+   *
+   * coordinate transform (extra shaders/space, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra
    */
   abslog(amount?: HydraParam): HydraSource
   /**
-   * swave: coordinate transform (extra shaders/space, loaded automatically)
+   * `swave(amount = 1)`
+   *
+   * coordinate transform (extra shaders/space, loaded automatically)
    * @param amount default 1
    * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra
    */
   swave(amount?: HydraParam): HydraSource
   /**
-   * centermag: coordinate transform (extra shaders/space, loaded automatically)
+   * `centermag(r = 0.4, h = 0.2, cx = 0, cy = 0)`
+   *
+   * coordinate transform (extra shaders/space, loaded automatically)
    * @param r default 0.4
    * @param h default 0.2
    * @param cx default 0
@@ -499,7 +662,9 @@ interface HydraSource {
    */
   centermag(r?: HydraParam, h?: HydraParam, cx?: HydraParam, cy?: HydraParam): HydraSource
   /**
-   * engrave: color transform (picture shaders/moebius, loaded automatically)
+   * `engrave(lines = 80, angle = 0.5, soft = 0.15, keep = 0)`
+   *
+   * color transform (picture shaders/moebius, loaded automatically)
    * @param lines default 80
    * @param angle default 0.5
    * @param soft default 0.15
@@ -508,131 +673,200 @@ interface HydraSource {
    */
   engrave(lines?: HydraParam, angle?: HydraParam, soft?: HydraParam, keep?: HydraParam): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `abs()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  abs(...args: HydraArg[]): HydraSource
+  abs(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `sign()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  sign(...args: HydraArg[]): HydraSource
+  sign(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `fract()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  fract(...args: HydraArg[]): HydraSource
+  fract(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `sin()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  sin(...args: HydraArg[]): HydraSource
+  sin(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `cos()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  cos(...args: HydraArg[]): HydraSource
+  cos(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `tan()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  tan(...args: HydraArg[]): HydraSource
+  tan(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `asin()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  asin(...args: HydraArg[]): HydraSource
+  asin(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `acos()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  acos(...args: HydraArg[]): HydraSource
+  acos(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `atan()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  atan(...args: HydraArg[]): HydraSource
+  atan(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `exp()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  exp(...args: HydraArg[]): HydraSource
+  exp(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `log()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  log(...args: HydraArg[]): HydraSource
+  log(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `exp2()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  exp2(...args: HydraArg[]): HydraSource
+  exp2(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `log2()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  log2(...args: HydraArg[]): HydraSource
+  log2(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `sqrt()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  sqrt(...args: HydraArg[]): HydraSource
+  sqrt(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `inversesqrt()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  inversesqrt(...args: HydraArg[]): HydraSource
+  inversesqrt(): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `mod(value = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param value default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  mod(...args: HydraArg[]): HydraSource
+  mod(value?: HydraParam): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `mod(texture)`
+   *
+   * blends in another texture (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  min(...args: HydraArg[]): HydraSource
+  mod(texture: HydraTexture): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `min(value = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param value default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  max(...args: HydraArg[]): HydraSource
+  min(value?: HydraParam): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `min(texture)`
+   *
+   * blends in another texture (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  step(...args: HydraArg[]): HydraSource
+  min(texture: HydraTexture): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `max(value = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param value default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  pow(...args: HydraArg[]): HydraSource
+  max(value?: HydraParam): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `max(texture)`
+   *
+   * blends in another texture (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  div(...args: HydraArg[]): HydraSource
+  max(texture: HydraTexture): HydraSource
+  /**
+   * `step(value = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param value default 1
+   * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
+   */
+  step(value?: HydraParam): HydraSource
+  /**
+   * `step(texture)`
+   *
+   * blends in another texture (hyper-hydra/arithmetics, loaded automatically)
+   * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
+   */
+  step(texture: HydraTexture): HydraSource
+  /**
+   * `pow(value = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param value default 1
+   * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
+   */
+  pow(value?: HydraParam): HydraSource
+  /**
+   * `pow(texture)`
+   *
+   * blends in another texture (hyper-hydra/arithmetics, loaded automatically)
+   * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
+   */
+  pow(texture: HydraTexture): HydraSource
+  /**
+   * `div(value = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param value default 1
+   * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
+   */
+  div(value?: HydraParam): HydraSource
+  /**
+   * `div(texture)`
+   *
+   * blends in another texture (hyper-hydra/arithmetics, loaded automatically)
+   * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
+   */
+  div(texture: HydraTexture): HydraSource
   /**
    * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
    * From hyper-hydra/arithmetics, loaded automatically.
@@ -658,191 +892,253 @@ interface HydraSource {
    */
   off(...args: HydraArg[]): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `bipolar(amp = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param amp default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  bipolar(...args: HydraArg[]): HydraSource
+  bipolar(amp?: HydraParam): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `unipolar(amp = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param amp default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  unipolar(...args: HydraArg[]): HydraSource
+  unipolar(amp?: HydraParam): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `range(min = 0, max = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param min default 0
+   * @param max default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  range(...args: HydraArg[]): HydraSource
+  range(min?: HydraParam, max?: HydraParam): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `birange(min = 0, max = 1)`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
+   * @param min default 0
+   * @param max default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  birange(...args: HydraArg[]): HydraSource
+  birange(min?: HydraParam, max?: HydraParam): HydraSource
   /**
-   * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
-   * From hyper-hydra/arithmetics, loaded automatically.
+   * `clamp()`
+   *
+   * color transform (hyper-hydra/arithmetics, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
    */
-  clamp(...args: HydraArg[]): HydraSource
+  clamp(): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `add2(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  add2(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  add2(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `average(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  average(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  average(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `colorBurn(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  colorBurn(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  colorBurn(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `colorDodge(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  colorDodge(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  colorDodge(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `darken(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  darken(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  darken(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `difference(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  difference(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  difference(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `divide(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  divide(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  divide(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `exclusion(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  exclusion(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  exclusion(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `glow(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  glow(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  glow(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `hardLight(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  hardLight(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  hardLight(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `hardMix(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  hardMix(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  hardMix(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `lighten(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  lighten(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  lighten(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `linearBurn(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  linearBurn(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  linearBurn(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `linearDodge(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  linearDodge(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  linearDodge(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `linearLight(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  linearLight(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  linearLight(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `multiply(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  multiply(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  multiply(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `negation(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  negation(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  negation(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `overlay(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  overlay(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  overlay(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `phoenix(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  phoenix(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  phoenix(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `pinLight(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  pinLight(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  pinLight(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `reflect(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  reflect(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  reflect(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `screen(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  screen(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  screen(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `softLight(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  softLight(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  softLight(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `subtract(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  subtract(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  subtract(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `vividLight(texture, amount = 1)`
+   *
+   * blends in another texture (hyper-hydra/blend, loaded automatically)
+   * @param amount default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  vividLight(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  vividLight(texture: HydraTexture, amount?: HydraParam): HydraSource
   /**
-   * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
-   * From hyper-hydra/blend, loaded automatically.
+   * `premultiply()`
+   *
+   * color transform (hyper-hydra/blend, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-blend.md
    */
-  premultiply(texture?: HydraTexture, amount?: HydraParam): HydraSource
+  premultiply(): HydraSource
   /**
    * Blending modes from raster image software (screen, overlay, softLight...). Also redefines layer, mask and luma for better alpha handling.
    * From hyper-hydra/blend, loaded automatically.
@@ -898,41 +1194,55 @@ interface HydraSource {
    */
   debug(...args: HydraArg[]): HydraSource
   /**
-   * Mirroring and inversion functions that make fractals when fed back.
-   * From hyper-hydra/fractals, loaded automatically.
+   * `mirrorX(pos = 0, coverage = 1)`
+   *
+   * coordinate transform (hyper-hydra/fractals, loaded automatically)
+   * @param pos default 0
+   * @param coverage default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-fractals.md
    */
-  mirrorX(...args: HydraArg[]): HydraSource
+  mirrorX(pos?: HydraParam, coverage?: HydraParam): HydraSource
   /**
-   * Mirroring and inversion functions that make fractals when fed back.
-   * From hyper-hydra/fractals, loaded automatically.
+   * `mirrorY(pos = 0, coverage = 1)`
+   *
+   * coordinate transform (hyper-hydra/fractals, loaded automatically)
+   * @param pos default 0
+   * @param coverage default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-fractals.md
    */
-  mirrorY(...args: HydraArg[]): HydraSource
+  mirrorY(pos?: HydraParam, coverage?: HydraParam): HydraSource
   /**
-   * Mirroring and inversion functions that make fractals when fed back.
-   * From hyper-hydra/fractals, loaded automatically.
+   * `mirrorX2(pos = 0, coverage = 1)`
+   *
+   * coordinate transform (hyper-hydra/fractals, loaded automatically)
+   * @param pos default 0
+   * @param coverage default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-fractals.md
    */
-  mirrorX2(...args: HydraArg[]): HydraSource
+  mirrorX2(pos?: HydraParam, coverage?: HydraParam): HydraSource
   /**
-   * Mirroring and inversion functions that make fractals when fed back.
-   * From hyper-hydra/fractals, loaded automatically.
+   * `mirrorY2(pos = 0, coverage = 1)`
+   *
+   * coordinate transform (hyper-hydra/fractals, loaded automatically)
+   * @param pos default 0
+   * @param coverage default 1
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-fractals.md
    */
-  mirrorY2(...args: HydraArg[]): HydraSource
+  mirrorY2(pos?: HydraParam, coverage?: HydraParam): HydraSource
   /**
-   * Mirroring and inversion functions that make fractals when fed back.
-   * From hyper-hydra/fractals, loaded automatically.
+   * `mirrorWrap()`
+   *
+   * coordinate transform (hyper-hydra/fractals, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-fractals.md
    */
-  mirrorWrap(...args: HydraArg[]): HydraSource
+  mirrorWrap(): HydraSource
   /**
-   * Mirroring and inversion functions that make fractals when fed back.
-   * From hyper-hydra/fractals, loaded automatically.
+   * `inversion()`
+   *
+   * coordinate transform (hyper-hydra/fractals, loaded automatically)
    * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-fractals.md
    */
-  inversion(...args: HydraArg[]): HydraSource
+  inversion(): HydraSource
   /**
    * Write GLSL code directly in your patches.
    * From hyper-hydra/glsl, loaded automatically.
@@ -976,17 +1286,23 @@ interface HydraSource {
    */
   glslModulate(...args: HydraArg[]): HydraSource
   /**
-   * Create gradients from css colors and use them for gradient mapping.
-   * From hyper-hydra/gradientmap, loaded automatically.
+   * `lookupX(tex, yOffset = 0, blending = 1)`
+   *
+   * color transform (hyper-hydra/gradientmap, loaded automatically)
+   * @param yOffset default 0
+   * @param blending default 1
    * @see https://github.com/geikha/hyper-hydra#hydra-gradientmap
    */
-  lookupX(...args: HydraArg[]): HydraSource
+  lookupX(tex?: HydraTexture, yOffset?: HydraParam, blending?: HydraParam): HydraSource
   /**
-   * Create gradients from css colors and use them for gradient mapping.
-   * From hyper-hydra/gradientmap, loaded automatically.
+   * `lookupY(tex, xOffset = 0, blending = 1)`
+   *
+   * color transform (hyper-hydra/gradientmap, loaded automatically)
+   * @param xOffset default 0
+   * @param blending default 1
    * @see https://github.com/geikha/hyper-hydra#hydra-gradientmap
    */
-  lookupY(...args: HydraArg[]): HydraSource
+  lookupY(tex?: HydraTexture, xOffset?: HydraParam, blending?: HydraParam): HydraSource
   /**
    * srcAbs and srcRel show sources at their original size or aspect ratio.
    * From hyper-hydra/src, loaded automatically.
@@ -2414,44 +2730,57 @@ declare class P5 extends _P5Library {
 declare var p5: P5
 
 /**
- * noise: source
+ * `noise(scale = 10, offset = 0.1)`
+ *
+ * source
  * @param scale default 10
  * @param offset default 0.1
  */
 declare function noise(scale?: HydraParam, offset?: HydraParam): HydraSource
 /**
- * voronoi: source
+ * `voronoi(scale = 5, speed = 0.3, blending = 0.3)`
+ *
+ * source
  * @param scale default 5
  * @param speed default 0.3
  * @param blending default 0.3
  */
 declare function voronoi(scale?: HydraParam, speed?: HydraParam, blending?: HydraParam): HydraSource
 /**
- * osc: source
+ * `osc(frequency = 60, sync = 0.1, offset = 0)`
+ *
+ * source
  * @param frequency default 60
  * @param sync default 0.1
  * @param offset default 0
  */
 declare function osc(frequency?: HydraParam, sync?: HydraParam, offset?: HydraParam): HydraSource
 /**
- * shape: source
+ * `shape(sides = 3, radius = 0.3, smoothing = 0.01)`
+ *
+ * source
  * @param sides default 3
  * @param radius default 0.3
  * @param smoothing default 0.01
  */
 declare function shape(sides?: HydraParam, radius?: HydraParam, smoothing?: HydraParam): HydraSource
 /**
- * gradient: source
+ * `gradient(speed = 0)`
+ *
+ * source
  * @param speed default 0
  */
 declare function gradient(speed?: HydraParam): HydraSource
 /**
- * src: source
- * @param tex default NaN
+ * `src(tex)`
+ *
+ * source
  */
 declare function src(tex?: HydraTexture): HydraSource
 /**
- * solid: source
+ * `solid(r = 0, g = 0, b = 0, a = 1)`
+ *
+ * source
  * @param r default 0
  * @param g default 0
  * @param b default 0
@@ -2459,32 +2788,42 @@ declare function src(tex?: HydraTexture): HydraSource
  */
 declare function solid(r?: HydraParam, g?: HydraParam, b?: HydraParam, a?: HydraParam): HydraSource
 /**
- * prev: source
+ * `prev()`
+ *
+ * source
  */
 declare function prev(): HydraSource
 /**
- * whitenoise: source (extra shaders/noise, loaded automatically)
+ * `whitenoise(size = 10, dynamic = 0)`
+ *
+ * source (extra shaders/noise, loaded automatically)
  * @param size default 10
  * @param dynamic default 0
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/noise/README.md
  */
 declare function whitenoise(size?: HydraParam, dynamic?: HydraParam): HydraSource
 /**
- * colornoise: source (extra shaders/noise, loaded automatically)
+ * `colornoise(size = 10, dynamic = 0)`
+ *
+ * source (extra shaders/noise, loaded automatically)
  * @param size default 10
  * @param dynamic default 0
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/noise/README.md
  */
 declare function colornoise(size?: HydraParam, dynamic?: HydraParam): HydraSource
 /**
- * unoise: source (extra shaders/noise, loaded automatically)
+ * `unoise(scale = 10, offset = 0.1)`
+ *
+ * source (extra shaders/noise, loaded automatically)
  * @param scale default 10
  * @param offset default 0.1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/noise/README.md
  */
 declare function unoise(scale?: HydraParam, offset?: HydraParam): HydraSource
 /**
- * turb: source (extra shaders/noise, loaded automatically)
+ * `turb(scale = 10, offset = 0.1, octaves = 3)`
+ *
+ * source (extra shaders/noise, loaded automatically)
  * @param scale default 10
  * @param offset default 0.1
  * @param octaves default 3
@@ -2492,7 +2831,9 @@ declare function unoise(scale?: HydraParam, offset?: HydraParam): HydraSource
  */
 declare function turb(scale?: HydraParam, offset?: HydraParam, octaves?: HydraParam): HydraSource
 /**
- * uturb: source (extra shaders/noise, loaded automatically)
+ * `uturb(scale = 10, offset = 0.1, octaves = 3)`
+ *
+ * source (extra shaders/noise, loaded automatically)
  * @param scale default 10
  * @param offset default 0.1
  * @param octaves default 3
@@ -2500,7 +2841,9 @@ declare function turb(scale?: HydraParam, offset?: HydraParam, octaves?: HydraPa
  */
 declare function uturb(scale?: HydraParam, offset?: HydraParam, octaves?: HydraParam): HydraSource
 /**
- * warp: source (extra shaders/noise, loaded automatically)
+ * `warp(scalei = 10, offset = 0.1, octaves = 2, octavesinner = 3, scale = 1)`
+ *
+ * source (extra shaders/noise, loaded automatically)
  * @param scalei default 10
  * @param offset default 0.1
  * @param octaves default 2
@@ -2510,7 +2853,9 @@ declare function uturb(scale?: HydraParam, offset?: HydraParam, octaves?: HydraP
  */
 declare function warp(scalei?: HydraParam, offset?: HydraParam, octaves?: HydraParam, octavesinner?: HydraParam, scale?: HydraParam): HydraSource
 /**
- * cwarp: source (extra shaders/noise, loaded automatically)
+ * `cwarp(scalei = 10, offset = 0.1, octaves = 2, octavesinner = 3, scale = 1, focus = 0.5)`
+ *
+ * source (extra shaders/noise, loaded automatically)
  * @param scalei default 10
  * @param offset default 0.1
  * @param octaves default 2
@@ -2521,7 +2866,9 @@ declare function warp(scalei?: HydraParam, offset?: HydraParam, octaves?: HydraP
  */
 declare function cwarp(scalei?: HydraParam, offset?: HydraParam, octaves?: HydraParam, octavesinner?: HydraParam, scale?: HydraParam, focus?: HydraParam): HydraSource
 /**
- * ncontour: source (extra shaders/noise, loaded automatically)
+ * `ncontour(thresh = 0.5, smooth = 0.1, octaves = 3, scale = 5, speed = 0.5, step = 2)`
+ *
+ * source (extra shaders/noise, loaded automatically)
  * @param thresh default 0.5
  * @param smooth default 0.1
  * @param octaves default 3
@@ -2532,7 +2879,9 @@ declare function cwarp(scalei?: HydraParam, offset?: HydraParam, octaves?: Hydra
  */
 declare function ncontour(thresh?: HydraParam, smooth?: HydraParam, octaves?: any, scale?: HydraParam, speed?: HydraParam, step?: HydraParam): HydraSource
 /**
- * blinking: source (extra shaders/softpattern, loaded automatically)
+ * `blinking(tiles = 5, scale = 5, speed = 0.5, phase = 0.03)`
+ *
+ * source (extra shaders/softpattern, loaded automatically)
  * @param tiles default 5
  * @param scale default 5
  * @param speed default 0.5
@@ -2541,7 +2890,9 @@ declare function ncontour(thresh?: HydraParam, smooth?: HydraParam, octaves?: an
  */
 declare function blinking(tiles?: HydraParam, scale?: HydraParam, speed?: HydraParam, phase?: HydraParam): HydraSource
 /**
- * blobs: source (extra shaders/softpattern, loaded automatically)
+ * `blobs(speed = 0.1, tresh = 0.2, soft = 0.05)`
+ *
+ * source (extra shaders/softpattern, loaded automatically)
  * @param speed default 0.1
  * @param tresh default 0.2
  * @param soft default 0.05
@@ -2549,7 +2900,9 @@ declare function blinking(tiles?: HydraParam, scale?: HydraParam, speed?: HydraP
  */
 declare function blobs(speed?: HydraParam, tresh?: HydraParam, soft?: HydraParam): HydraSource
 /**
- * concentric: source (extra shaders/softpattern, loaded automatically)
+ * `concentric(base = 5, octaves = 2, ampscale = 0.5, speed = 1)`
+ *
+ * source (extra shaders/softpattern, loaded automatically)
  * @param base default 5
  * @param octaves default 2
  * @param ampscale default 0.5
@@ -2558,7 +2911,9 @@ declare function blobs(speed?: HydraParam, tresh?: HydraParam, soft?: HydraParam
  */
 declare function concentric(base?: HydraParam, octaves?: HydraParam, ampscale?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * phasenoise: source (extra shaders/softpattern, loaded automatically)
+ * `phasenoise(base = 0, range = 0.1, scale = 5, speed = 0.5, phase = 0.03)`
+ *
+ * source (extra shaders/softpattern, loaded automatically)
  * @param base default 0
  * @param range default 0.1
  * @param scale default 5
@@ -2568,7 +2923,9 @@ declare function concentric(base?: HydraParam, octaves?: HydraParam, ampscale?: 
  */
 declare function phasenoise(base?: HydraParam, range?: HydraParam, scale?: HydraParam, speed?: HydraParam, phase?: HydraParam): HydraSource
 /**
- * sdfmove: source (extra shaders/softpattern, loaded automatically)
+ * `sdfmove(speed1 = 0.73, speed2 = 1, speed3 = -0.53)`
+ *
+ * source (extra shaders/softpattern, loaded automatically)
  * @param speed1 default 0.73
  * @param speed2 default 1
  * @param speed3 default -0.53
@@ -2576,7 +2933,9 @@ declare function phasenoise(base?: HydraParam, range?: HydraParam, scale?: Hydra
  */
 declare function sdfmove(speed1?: HydraParam, speed2?: HydraParam, speed3?: HydraParam): HydraSource
 /**
- * smoothsun: source (extra shaders/softpattern, loaded automatically)
+ * `smoothsun(threshold = 0.3, border = 0.2, speed = 1, ampscale = 0.5)`
+ *
+ * source (extra shaders/softpattern, loaded automatically)
  * @param threshold default 0.3
  * @param border default 0.2
  * @param speed default 1
@@ -2585,7 +2944,9 @@ declare function sdfmove(speed1?: HydraParam, speed2?: HydraParam, speed3?: Hydr
  */
 declare function smoothsun(threshold?: HydraParam, border?: HydraParam, speed?: HydraParam, ampscale?: HydraParam): HydraSource
 /**
- * pulse: source (extra shaders/pattern, loaded automatically)
+ * `pulse(edge = 0.5, width = 0.05, epsilon = 0.001)`
+ *
+ * source (extra shaders/pattern, loaded automatically)
  * @param edge default 0.5
  * @param width default 0.05
  * @param epsilon default 0.001
@@ -2593,7 +2954,9 @@ declare function smoothsun(threshold?: HydraParam, border?: HydraParam, speed?: 
  */
 declare function pulse(edge?: HydraParam, width?: HydraParam, epsilon?: HydraParam): HydraSource
 /**
- * pulsetrain: source (extra shaders/pattern, loaded automatically)
+ * `pulsetrain(train = 3, edge = 0.5, width = 0.05, epsilon = 0.001)`
+ *
+ * source (extra shaders/pattern, loaded automatically)
  * @param train default 3
  * @param edge default 0.5
  * @param width default 0.05
@@ -2602,19 +2965,25 @@ declare function pulse(edge?: HydraParam, width?: HydraParam, epsilon?: HydraPar
  */
 declare function pulsetrain(train?: HydraParam, edge?: HydraParam, width?: HydraParam, epsilon?: HydraParam): HydraSource
 /**
- * hextile: source (extra shaders/pattern, loaded automatically)
+ * `hextile(tiles = 10)`
+ *
+ * source (extra shaders/pattern, loaded automatically)
  * @param tiles default 10
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/pattern/README.md
  */
 declare function hextile(tiles?: HydraParam): HydraSource
 /**
- * checker: source (extra shaders/pattern, loaded automatically)
+ * `checker(repeats = 10)`
+ *
+ * source (extra shaders/pattern, loaded automatically)
  * @param repeats default 10
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/pattern/README.md
  */
 declare function checker(repeats?: HydraParam): HydraSource
 /**
- * spiral: source (extra shaders/pattern, loaded automatically)
+ * `spiral(a = 1, b = 5, thickness = 0.1)`
+ *
+ * source (extra shaders/pattern, loaded automatically)
  * @param a default 1
  * @param b default 5
  * @param thickness default 0.1
@@ -2622,7 +2991,9 @@ declare function checker(repeats?: HydraParam): HydraSource
  */
 declare function spiral(a?: HydraParam, b?: HydraParam, thickness?: HydraParam): HydraSource
 /**
- * brick: source (extra shaders/pattern, loaded automatically)
+ * `brick(width = 0.25, height = 0.08, gap = 0.01)`
+ *
+ * source (extra shaders/pattern, loaded automatically)
  * @param width default 0.25
  * @param height default 0.08
  * @param gap default 0.01
@@ -2630,7 +3001,9 @@ declare function spiral(a?: HydraParam, b?: HydraParam, thickness?: HydraParam):
  */
 declare function brick(width?: HydraParam, height?: HydraParam, gap?: HydraParam): HydraSource
 /**
- * wave: source (extra shaders/pattern, loaded automatically)
+ * `wave(time = 0, frequ = 10, loops = 3, thick = 0.025)`
+ *
+ * source (extra shaders/pattern, loaded automatically)
  * @param time default 0
  * @param frequ default 10
  * @param loops default 3
@@ -2639,7 +3012,9 @@ declare function brick(width?: HydraParam, height?: HydraParam, gap?: HydraParam
  */
 declare function wave(time?: HydraParam, frequ?: HydraParam, loops?: HydraParam, thick?: HydraParam): HydraSource
 /**
- * lissa: source (extra shaders/pattern, loaded automatically)
+ * `lissa(time = 0, frequ = 10, loops = 3, thick = 0.025)`
+ *
+ * source (extra shaders/pattern, loaded automatically)
  * @param time default 0
  * @param frequ default 10
  * @param loops default 3
@@ -2648,28 +3023,36 @@ declare function wave(time?: HydraParam, frequ?: HydraParam, loops?: HydraParam,
  */
 declare function lissa(time?: HydraParam, frequ?: HydraParam, loops?: HydraParam, thick?: HydraParam): HydraSource
 /**
- * squ: source (extra shaders/wave, loaded automatically)
+ * `squ(frequency = 10, speed = 0.1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function squ(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * usin: source (extra shaders/wave, loaded automatically)
+ * `usin(frequency = 10, speed = 0.1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function usin(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * saw: source (extra shaders/wave, loaded automatically)
+ * `saw(frequency = 10, speed = 0.1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function saw(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * harmonic: source (extra shaders/wave, loaded automatically)
+ * `harmonic(frequency = 10, speed = 0.1, phase1 = 0, phase2 = 0)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @param phase1 default 0
@@ -2678,35 +3061,45 @@ declare function saw(frequency?: HydraParam, speed?: HydraParam): HydraSource
  */
 declare function harmonic(frequency?: HydraParam, speed?: HydraParam, phase1?: HydraParam, phase2?: HydraParam): HydraSource
 /**
- * tri: source (extra shaders/wave, loaded automatically)
+ * `tri(frequency = 10, speed = 0.1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function tri(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * rsqu: source (extra shaders/wave, loaded automatically)
+ * `rsqu(frequency = 10, speed = 0.1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function rsqu(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * rusin: source (extra shaders/wave, loaded automatically)
+ * `rusin(frequency = 10, speed = 0.1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function rusin(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * rsaw: source (extra shaders/wave, loaded automatically)
+ * `rsaw(frequency = 10, speed = 0.1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function rsaw(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * rharmonic: source (extra shaders/wave, loaded automatically)
+ * `rharmonic(frequency = 10, speed = 0.1, phase1 = 0, phase2 = 0)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @param phase1 default 0
@@ -2715,28 +3108,36 @@ declare function rsaw(frequency?: HydraParam, speed?: HydraParam): HydraSource
  */
 declare function rharmonic(frequency?: HydraParam, speed?: HydraParam, phase1?: HydraParam, phase2?: HydraParam): HydraSource
 /**
- * rtri: source (extra shaders/wave, loaded automatically)
+ * `rtri(frequency = 10, speed = 0.1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 0.1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function rtri(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * stripes: source (extra shaders/wave, loaded automatically)
+ * `stripes(frequency = 10, speed = 1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function stripes(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * rstripes: source (extra shaders/wave, loaded automatically)
+ * `rstripes(frequency = 10, speed = 1)`
+ *
+ * source (extra shaders/wave, loaded automatically)
  * @param frequency default 10
  * @param speed default 1
  * @see https://gitlab.com/metagrowing/extra-shaders-for-hydra/-/blob/main/gallery/wave/README.md
  */
 declare function rstripes(frequency?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * moebius: source (picture shaders/moebius, loaded automatically)
+ * `moebius(size = 0.8, width = 0.13, lines = 12, twist = 3, flow = 0.1, fold = 1, eyes = 3)`
+ *
+ * source (picture shaders/moebius, loaded automatically)
  * @param size default 0.8
  * @param width default 0.13
  * @param lines default 12
@@ -2748,7 +3149,9 @@ declare function rstripes(frequency?: HydraParam, speed?: HydraParam): HydraSour
  */
 declare function moebius(size?: HydraParam, width?: HydraParam, lines?: HydraParam, twist?: HydraParam, flow?: HydraParam, fold?: HydraParam, eyes?: HydraParam): HydraSource
 /**
- * moebiusColor: source (picture shaders/moebius, loaded automatically)
+ * `moebiusColor(size = 0.8, width = 0.13, lines = 12, twist = 3, flow = 0.1, fold = 1, eyes = 3)`
+ *
+ * source (picture shaders/moebius, loaded automatically)
  * @param size default 0.8
  * @param width default 0.13
  * @param lines default 12
@@ -2760,7 +3163,9 @@ declare function moebius(size?: HydraParam, width?: HydraParam, lines?: HydraPar
  */
 declare function moebiusColor(size?: HydraParam, width?: HydraParam, lines?: HydraParam, twist?: HydraParam, flow?: HydraParam, fold?: HydraParam, eyes?: HydraParam): HydraSource
 /**
- * lissajous: source (picture shaders/lissajous, loaded automatically)
+ * `lissajous(a = 3, b = 2, phase = 0, thick = 0.006, speed = 0.1)`
+ *
+ * source (picture shaders/lissajous, loaded automatically)
  * @param a default 3
  * @param b default 2
  * @param phase default 0
@@ -2770,7 +3175,9 @@ declare function moebiusColor(size?: HydraParam, width?: HydraParam, lines?: Hyd
  */
 declare function lissajous(a?: HydraParam, b?: HydraParam, phase?: HydraParam, thick?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * lissajousTable: source (picture shaders/lissajous, loaded automatically)
+ * `lissajousTable(cols = 5, rows = 4, thick = 0.012, speed = 0.05)`
+ *
+ * source (picture shaders/lissajous, loaded automatically)
  * @param cols default 5
  * @param rows default 4
  * @param thick default 0.012
@@ -2779,7 +3186,9 @@ declare function lissajous(a?: HydraParam, b?: HydraParam, phase?: HydraParam, t
  */
 declare function lissajousTable(cols?: HydraParam, rows?: HydraParam, thick?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * chladni: source (picture shaders/chladni, loaded automatically)
+ * `chladni(n = 2, m = 5, sym = 1, thick = 0.004, speed = 0.2, grain = 0)`
+ *
+ * source (picture shaders/chladni, loaded automatically)
  * @param n default 2
  * @param m default 5
  * @param sym default 1
@@ -2790,7 +3199,9 @@ declare function lissajousTable(cols?: HydraParam, rows?: HydraParam, thick?: Hy
  */
 declare function chladni(n?: HydraParam, m?: HydraParam, sym?: HydraParam, thick?: HydraParam, speed?: HydraParam, grain?: HydraParam): HydraSource
 /**
- * chladniTable: source (picture shaders/chladni, loaded automatically)
+ * `chladniTable(cols = 4, rows = 3, seed = 0, speed = 0)`
+ *
+ * source (picture shaders/chladni, loaded automatically)
  * @param cols default 4
  * @param rows default 3
  * @param seed default 0
@@ -2799,53 +3210,71 @@ declare function chladni(n?: HydraParam, m?: HydraParam, sym?: HydraParam, thick
  */
 declare function chladniTable(cols?: HydraParam, rows?: HydraParam, seed?: HydraParam, speed?: HydraParam): HydraSource
 /**
- * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
- * From hyper-hydra/arithmetics, loaded automatically.
+ * `x(mult = 1)`
+ *
+ * source (hyper-hydra/arithmetics, loaded automatically)
+ * @param mult default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
  */
-declare function x(...args: HydraArg[]): HydraSource
+declare function x(mult?: HydraParam): HydraSource
 /**
- * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
- * From hyper-hydra/arithmetics, loaded automatically.
+ * `y(mult = 1)`
+ *
+ * source (hyper-hydra/arithmetics, loaded automatically)
+ * @param mult default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
  */
-declare function y(...args: HydraArg[]): HydraSource
+declare function y(mult?: HydraParam): HydraSource
 /**
- * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
- * From hyper-hydra/arithmetics, loaded automatically.
+ * `length(mult = 1)`
+ *
+ * source (hyper-hydra/arithmetics, loaded automatically)
+ * @param mult default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
  */
-declare function length(...args: HydraArg[]): HydraSource
+declare function length(mult?: HydraParam): HydraSource
 /**
- * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
- * From hyper-hydra/arithmetics, loaded automatically.
+ * `distance(px = 0, py = 0)`
+ *
+ * source (hyper-hydra/arithmetics, loaded automatically)
+ * @param px default 0
+ * @param py default 0
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
  */
-declare function distance(...args: HydraArg[]): HydraSource
+declare function distance(px?: HydraParam, py?: HydraParam): HydraSource
 /**
- * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
- * From hyper-hydra/arithmetics, loaded automatically.
+ * `xCenter(mult = 1)`
+ *
+ * source (hyper-hydra/arithmetics, loaded automatically)
+ * @param mult default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
  */
-declare function xCenter(...args: HydraArg[]): HydraSource
+declare function xCenter(mult?: HydraParam): HydraSource
 /**
- * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
- * From hyper-hydra/arithmetics, loaded automatically.
+ * `yCenter(mult = 1)`
+ *
+ * source (hyper-hydra/arithmetics, loaded automatically)
+ * @param mult default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
  */
-declare function yCenter(...args: HydraArg[]): HydraSource
+declare function yCenter(mult?: HydraParam): HydraSource
 /**
- * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
- * From hyper-hydra/arithmetics, loaded automatically.
+ * `lengthCenter(mult = 1)`
+ *
+ * source (hyper-hydra/arithmetics, loaded automatically)
+ * @param mult default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
  */
-declare function lengthCenter(...args: HydraArg[]): HydraSource
+declare function lengthCenter(mult?: HydraParam): HydraSource
 /**
- * Visual arithmetics: mod, step, pow, min, max, trigonometry, ranges and coordinate sources.
- * From hyper-hydra/arithmetics, loaded automatically.
+ * `distanceCenter(px = 0, py = 0)`
+ *
+ * source (hyper-hydra/arithmetics, loaded automatically)
+ * @param px default 0
+ * @param py default 0
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-arithmetics.md
  */
-declare function distanceCenter(...args: HydraArg[]): HydraSource
+declare function distanceCenter(px?: HydraParam, py?: HydraParam): HydraSource
 /**
  * Control hydra's canvas: size, alignment and pixel interpolation.
  * From hyper-hydra/canvas, loaded automatically.
@@ -2895,725 +3324,1105 @@ declare var yiq: any
  */
 declare var hydraColorspaces: any
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpen(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpen(...args: HydraArg[]): HydraSource
+declare function sharpen(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpenLuma(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpenLuma(...args: HydraArg[]): HydraSource
+declare function sharpenLuma(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpenOnY(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpenOnY(...args: HydraArg[]): HydraSource
+declare function sharpenOnY(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpenOnUV(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpenOnUV(...args: HydraArg[]): HydraSource
+declare function sharpenOnUV(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpenOnIQ(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpenOnIQ(...args: HydraArg[]): HydraSource
+declare function sharpenOnIQ(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpenMore(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpenMore(...args: HydraArg[]): HydraSource
+declare function sharpenMore(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpenMoreLuma(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpenMoreLuma(...args: HydraArg[]): HydraSource
+declare function sharpenMoreLuma(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpenMoreOnY(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpenMoreOnY(...args: HydraArg[]): HydraSource
+declare function sharpenMoreOnY(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpenMoreOnUV(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpenMoreOnUV(...args: HydraArg[]): HydraSource
+declare function sharpenMoreOnUV(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sharpenMoreOnIQ(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sharpenMoreOnIQ(...args: HydraArg[]): HydraSource
+declare function sharpenMoreOnIQ(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineSharpen(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineSharpen(...args: HydraArg[]): HydraSource
+declare function lineSharpen(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineSharpenLuma(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineSharpenLuma(...args: HydraArg[]): HydraSource
+declare function lineSharpenLuma(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineSharpenOnY(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineSharpenOnY(...args: HydraArg[]): HydraSource
+declare function lineSharpenOnY(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineSharpenOnUV(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineSharpenOnUV(...args: HydraArg[]): HydraSource
+declare function lineSharpenOnUV(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineSharpenOnIQ(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineSharpenOnIQ(...args: HydraArg[]): HydraSource
+declare function lineSharpenOnIQ(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `emboss(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function emboss(...args: HydraArg[]): HydraSource
+declare function emboss(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `embossLuma(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function embossLuma(...args: HydraArg[]): HydraSource
+declare function embossLuma(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `embossOnY(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function embossOnY(...args: HydraArg[]): HydraSource
+declare function embossOnY(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `embossOnUV(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function embossOnUV(...args: HydraArg[]): HydraSource
+declare function embossOnUV(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `embossOnIQ(tex0, k = 1, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param k default 1
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function embossOnIQ(...args: HydraArg[]): HydraSource
+declare function embossOnIQ(tex0?: HydraTexture, k?: HydraParam, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur(...args: HydraArg[]): HydraSource
+declare function blur(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blurLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blurLuma(...args: HydraArg[]): HydraSource
+declare function blurLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blurOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blurOnY(...args: HydraArg[]): HydraSource
+declare function blurOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blurOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blurOnUV(...args: HydraArg[]): HydraSource
+declare function blurOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blurOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blurOnIQ(...args: HydraArg[]): HydraSource
+declare function blurOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur5(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur5(...args: HydraArg[]): HydraSource
+declare function blur5(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur5Luma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur5Luma(...args: HydraArg[]): HydraSource
+declare function blur5Luma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur5OnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur5OnY(...args: HydraArg[]): HydraSource
+declare function blur5OnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur5OnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur5OnUV(...args: HydraArg[]): HydraSource
+declare function blur5OnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur5OnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur5OnIQ(...args: HydraArg[]): HydraSource
+declare function blur5OnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur7(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur7(...args: HydraArg[]): HydraSource
+declare function blur7(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur7Luma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur7Luma(...args: HydraArg[]): HydraSource
+declare function blur7Luma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur7OnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur7OnY(...args: HydraArg[]): HydraSource
+declare function blur7OnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur7OnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur7OnUV(...args: HydraArg[]): HydraSource
+declare function blur7OnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `blur7OnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function blur7OnIQ(...args: HydraArg[]): HydraSource
+declare function blur7OnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlur(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlur(...args: HydraArg[]): HydraSource
+declare function boxBlur(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlurLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlurLuma(...args: HydraArg[]): HydraSource
+declare function boxBlurLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlurOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlurOnY(...args: HydraArg[]): HydraSource
+declare function boxBlurOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlurOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlurOnUV(...args: HydraArg[]): HydraSource
+declare function boxBlurOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlurOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlurOnIQ(...args: HydraArg[]): HydraSource
+declare function boxBlurOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlur5(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlur5(...args: HydraArg[]): HydraSource
+declare function boxBlur5(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlur5Luma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlur5Luma(...args: HydraArg[]): HydraSource
+declare function boxBlur5Luma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlur5OnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlur5OnY(...args: HydraArg[]): HydraSource
+declare function boxBlur5OnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlur5OnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlur5OnUV(...args: HydraArg[]): HydraSource
+declare function boxBlur5OnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `boxBlur5OnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function boxBlur5OnIQ(...args: HydraArg[]): HydraSource
+declare function boxBlur5OnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `horizontalBlur(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function horizontalBlur(...args: HydraArg[]): HydraSource
+declare function horizontalBlur(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `horizontalBlurLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function horizontalBlurLuma(...args: HydraArg[]): HydraSource
+declare function horizontalBlurLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `horizontalBlurOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function horizontalBlurOnY(...args: HydraArg[]): HydraSource
+declare function horizontalBlurOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `horizontalBlurOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function horizontalBlurOnUV(...args: HydraArg[]): HydraSource
+declare function horizontalBlurOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `horizontalBlurOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function horizontalBlurOnIQ(...args: HydraArg[]): HydraSource
+declare function horizontalBlurOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `verticalBlur(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function verticalBlur(...args: HydraArg[]): HydraSource
+declare function verticalBlur(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `verticalBlurLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function verticalBlurLuma(...args: HydraArg[]): HydraSource
+declare function verticalBlurLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `verticalBlurOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function verticalBlurOnY(...args: HydraArg[]): HydraSource
+declare function verticalBlurOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `verticalBlurOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function verticalBlurOnUV(...args: HydraArg[]): HydraSource
+declare function verticalBlurOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `verticalBlurOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function verticalBlurOnIQ(...args: HydraArg[]): HydraSource
+declare function verticalBlurOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlur(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlur(...args: HydraArg[]): HydraSource
+declare function diagonalBlur(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlurLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlurLuma(...args: HydraArg[]): HydraSource
+declare function diagonalBlurLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlurOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlurOnY(...args: HydraArg[]): HydraSource
+declare function diagonalBlurOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlurOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlurOnUV(...args: HydraArg[]): HydraSource
+declare function diagonalBlurOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlurOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlurOnIQ(...args: HydraArg[]): HydraSource
+declare function diagonalBlurOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlur2(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlur2(...args: HydraArg[]): HydraSource
+declare function diagonalBlur2(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlur2Luma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlur2Luma(...args: HydraArg[]): HydraSource
+declare function diagonalBlur2Luma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlur2OnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlur2OnY(...args: HydraArg[]): HydraSource
+declare function diagonalBlur2OnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlur2OnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlur2OnUV(...args: HydraArg[]): HydraSource
+declare function diagonalBlur2OnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `diagonalBlur2OnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function diagonalBlur2OnIQ(...args: HydraArg[]): HydraSource
+declare function diagonalBlur2OnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlur(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlur(...args: HydraArg[]): HydraSource
+declare function lineBlur(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlurLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlurLuma(...args: HydraArg[]): HydraSource
+declare function lineBlurLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlurOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlurOnY(...args: HydraArg[]): HydraSource
+declare function lineBlurOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlurOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlurOnUV(...args: HydraArg[]): HydraSource
+declare function lineBlurOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlurOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlurOnIQ(...args: HydraArg[]): HydraSource
+declare function lineBlurOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlur5(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlur5(...args: HydraArg[]): HydraSource
+declare function lineBlur5(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlur5Luma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlur5Luma(...args: HydraArg[]): HydraSource
+declare function lineBlur5Luma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlur5OnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlur5OnY(...args: HydraArg[]): HydraSource
+declare function lineBlur5OnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlur5OnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlur5OnUV(...args: HydraArg[]): HydraSource
+declare function lineBlur5OnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `lineBlur5OnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function lineBlur5OnIQ(...args: HydraArg[]): HydraSource
+declare function lineBlur5OnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelY(...args: HydraArg[]): HydraSource
+declare function sobelY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelYLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelYLuma(...args: HydraArg[]): HydraSource
+declare function sobelYLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelYOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelYOnY(...args: HydraArg[]): HydraSource
+declare function sobelYOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelYOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelYOnUV(...args: HydraArg[]): HydraSource
+declare function sobelYOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelYOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelYOnIQ(...args: HydraArg[]): HydraSource
+declare function sobelYOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelX(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelX(...args: HydraArg[]): HydraSource
+declare function sobelX(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelXLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelXLuma(...args: HydraArg[]): HydraSource
+declare function sobelXLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelXOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelXOnY(...args: HydraArg[]): HydraSource
+declare function sobelXOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelXOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelXOnUV(...args: HydraArg[]): HydraSource
+declare function sobelXOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelXOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelXOnIQ(...args: HydraArg[]): HydraSource
+declare function sobelXOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonal(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonal(...args: HydraArg[]): HydraSource
+declare function sobelDiagonal(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonalLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonalLuma(...args: HydraArg[]): HydraSource
+declare function sobelDiagonalLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonalOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonalOnY(...args: HydraArg[]): HydraSource
+declare function sobelDiagonalOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonalOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonalOnUV(...args: HydraArg[]): HydraSource
+declare function sobelDiagonalOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonalOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonalOnIQ(...args: HydraArg[]): HydraSource
+declare function sobelDiagonalOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonal2(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonal2(...args: HydraArg[]): HydraSource
+declare function sobelDiagonal2(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonal2Luma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonal2Luma(...args: HydraArg[]): HydraSource
+declare function sobelDiagonal2Luma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonal2OnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonal2OnY(...args: HydraArg[]): HydraSource
+declare function sobelDiagonal2OnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonal2OnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonal2OnUV(...args: HydraArg[]): HydraSource
+declare function sobelDiagonal2OnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `sobelDiagonal2OnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function sobelDiagonal2OnIQ(...args: HydraArg[]): HydraSource
+declare function sobelDiagonal2OnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittY(...args: HydraArg[]): HydraSource
+declare function prewittY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittYLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittYLuma(...args: HydraArg[]): HydraSource
+declare function prewittYLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittYOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittYOnY(...args: HydraArg[]): HydraSource
+declare function prewittYOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittYOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittYOnUV(...args: HydraArg[]): HydraSource
+declare function prewittYOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittYOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittYOnIQ(...args: HydraArg[]): HydraSource
+declare function prewittYOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittX(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittX(...args: HydraArg[]): HydraSource
+declare function prewittX(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittXLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittXLuma(...args: HydraArg[]): HydraSource
+declare function prewittXLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittXOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittXOnY(...args: HydraArg[]): HydraSource
+declare function prewittXOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittXOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittXOnUV(...args: HydraArg[]): HydraSource
+declare function prewittXOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittXOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittXOnIQ(...args: HydraArg[]): HydraSource
+declare function prewittXOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonal(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonal(...args: HydraArg[]): HydraSource
+declare function prewittDiagonal(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonalLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonalLuma(...args: HydraArg[]): HydraSource
+declare function prewittDiagonalLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonalOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonalOnY(...args: HydraArg[]): HydraSource
+declare function prewittDiagonalOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonalOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonalOnUV(...args: HydraArg[]): HydraSource
+declare function prewittDiagonalOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonalOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonalOnIQ(...args: HydraArg[]): HydraSource
+declare function prewittDiagonalOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonal2(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonal2(...args: HydraArg[]): HydraSource
+declare function prewittDiagonal2(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonal2Luma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonal2Luma(...args: HydraArg[]): HydraSource
+declare function prewittDiagonal2Luma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonal2OnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonal2OnY(...args: HydraArg[]): HydraSource
+declare function prewittDiagonal2OnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonal2OnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonal2OnUV(...args: HydraArg[]): HydraSource
+declare function prewittDiagonal2OnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `prewittDiagonal2OnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function prewittDiagonal2OnIQ(...args: HydraArg[]): HydraSource
+declare function prewittDiagonal2OnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `edge(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function edge(...args: HydraArg[]): HydraSource
+declare function edge(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `edgeLuma(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function edgeLuma(...args: HydraArg[]): HydraSource
+declare function edgeLuma(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `edgeOnY(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function edgeOnY(...args: HydraArg[]): HydraSource
+declare function edgeOnY(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `edgeOnUV(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function edgeOnUV(...args: HydraArg[]): HydraSource
+declare function edgeOnUV(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
- * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
- * From hyper-hydra/convolutions, loaded automatically.
+ * `edgeOnIQ(tex0, jump = 1, amp = 1)`
+ *
+ * source (hyper-hydra/convolutions, loaded automatically)
+ * @param jump default 1
+ * @param amp default 1
  * @see https://github.com/geikha/hyper-hydra/blob/main/doc/hydra-convolutions.md
  */
-declare function edgeOnIQ(...args: HydraArg[]): HydraSource
+declare function edgeOnIQ(tex0?: HydraTexture, jump?: HydraParam, amp?: HydraParam): HydraSource
 /**
  * Convolution kernels as sources: blur, sharpen, sobel, prewitt, edge... or define your own.
  * From hyper-hydra/convolutions, loaded automatically.
