@@ -37,6 +37,41 @@ function send(res, status, data) {
   res.end(JSON.stringify(data))
 }
 
+const VIDEO_TYPES = { '.mp4': 'video/mp4', '.m4v': 'video/mp4', '.webm': 'video/webm', '.ogv': 'video/ogg', '.mov': 'video/quicktime' }
+
+function serveVids(dir) {
+  return (req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next()
+    let name
+    try { name = decodeURIComponent(req.url.split('?')[0]) } catch (e) { return next() }
+    const file = path.resolve(dir, '.' + path.posix.normalize('/' + name))
+    if (!file.startsWith(dir + path.sep)) return next()
+    let stat
+    try { stat = fs.statSync(file) } catch (e) { return next() }
+    if (!stat.isFile()) return next()
+    res.setHeader('Content-Type', VIDEO_TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream')
+    res.setHeader('Accept-Ranges', 'bytes')
+    res.setHeader('Cache-Control', 'no-cache')
+    let start = 0
+    let end = stat.size - 1
+    const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '')
+    if (range) {
+      if (range[1] === '') start = Math.max(0, stat.size - Number(range[2]))
+      else { start = Number(range[1]); if (range[2] !== '') end = Math.min(end, Number(range[2])) }
+      if (start > end || start >= stat.size) {
+        res.statusCode = 416
+        res.setHeader('Content-Range', `bytes */${stat.size}`)
+        return res.end()
+      }
+      res.statusCode = 206
+      res.setHeader('Content-Range', `bytes ${start}-${end}/${stat.size}`)
+    }
+    res.setHeader('Content-Length', end - start + 1)
+    if (req.method === 'HEAD') return res.end()
+    fs.createReadStream(file, { start, end }).pipe(res)
+  }
+}
+
 export default function hydraLive({ watch = process.env.HYDRA_WATCH } = {}) {
   const watching = (watch || '').split(',').map((p) => p.trim()).filter(Boolean).map((p) => path.resolve(p))
   let server
@@ -92,6 +127,10 @@ export default function hydraLive({ watch = process.env.HYDRA_WATCH } = {}) {
         if (/^\/spotify-callback\/?(\?|$)/.test(req.url)) req.url = req.url.replace(/^\/spotify-callback\/?/, '/spotify-callback.html')
         next()
       })
+
+      // videos in the repo's vids/ folder (kept out of git) are served at
+      // /vids/<name>, with Range support so a <video> can seek
+      server.middlewares.use('/vids', serveVids(path.resolve(server.config.root, 'vids')))
 
       server.ws.on('hydra:result', ({ id, ...result } = {}) => {
         const resolve = pending.get(id)

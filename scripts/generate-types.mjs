@@ -237,6 +237,30 @@ interface SongTrack {
 /** Seconds, or 'm:ss' / 'm:ss.d' text. */
 type SongTime = number | string
 type SongMatch = string | RegExp | ((track: SongTrack) => boolean)
+/** How song.video() / uboa() play a video along with a song. */
+interface SongVideoOptions {
+  /** The hydra source to play on (default s0). */
+  source?: HydraExternalSource
+  /** Song time where the video starts, e.g. '0:42' (default 0). */
+  at?: SongTime
+  /** Extra seconds; + = the video runs later (default 0). */
+  offset?: number
+  /** true: src(source).out(o0) when the song starts; a function shows it your own way; false: only play it. */
+  show?: boolean | ((source: HydraExternalSource, track: SongTrack) => void)
+  /** Runs when the song stops or another one starts. */
+  end?: (source: HydraExternalSource) => void
+  /** Also play the video's own sound (default false: the sound comes from Spotify). */
+  sound?: boolean
+  /** Repeat the video while the song plays (default false). */
+  loop?: boolean
+  /** Drift in seconds after which the video jumps instead of speeding up or slowing down (default 0.35). */
+  seekAfter?: number
+}
+interface SongVideo {
+  video: HTMLVideoElement
+  source: HydraExternalSource
+  remove(): void
+}
 /** Look of the lyrics; numbers and colours may be functions. See public/extensions/effects/hydra-song.js. */
 interface LyricsStyle {
   font?: string | (() => string)
@@ -249,6 +273,10 @@ interface LyricsStyle {
   outline?: string | null | (() => string | null)
   outlineWidth?: number | (() => number)
   shadow?: boolean | (() => boolean)
+  /** Colour of a soft light around the letters (replaces the shadow). */
+  glow?: string | null | (() => string | null)
+  /** How far the glow reaches, as a fraction of size (default 0.5). */
+  glowSize?: number | (() => number)
   /** Colour behind everything; null = transparent. */
   background?: string | null | (() => string | null)
   position?: 'center' | 'top' | 'bottom' | [number | (() => number), number | (() => number)] | (() => 'center' | 'top' | 'bottom' | [number, number])
@@ -322,10 +350,16 @@ const effectSignatures = {
   cue(time: SongTime, fn: (track: SongTrack) => void): typeof song
   /** Give the tempo so that song.beat counts beats. */
   bpm(bpm: number | null, firstBeat?: SongTime): typeof song
+  /** While a matching song plays, play this video on s0 at the song's position (muted). url null removes it. */
+  video(match: SongMatch, url: string | null, options?: SongVideoOptions): SongVideo | null
   /** Show or hide the small status line. */
   hud(show?: boolean): typeof song
   status(): string
 }`
+  },
+  uboa: {
+    global: `/** Play vids/uboa.mp4 on s0, in sync, only while Uboa - The Origin of My Depression plays on the connected Spotify account, with the synced lyrics (Newsreader, on s1) as translucent glowing light on top. */
+declare function uboa(options?: SongVideoOptions & { url?: string; /** Lyrics style, or false for no lyrics. */ lyrics?: LyricsStyle | false; /** Source for the lyrics (default s1). */ lyricsSource?: HydraExternalSource; /** Your own look for the words: (text, video) => chain. */ letters?: (text: HydraExternalSource, video: HydraExternalSource) => any }): SongVideo | null`
   },
   ink: {
     global: `declare const ink: {\n  (source: HydraTexture, mode?: InkMode | InkOptions, options?: InkOptions): HydraSource\n  /** Undo every deformation, or only the layer with this id. */\n  reset(id?: string): void\n}`,

@@ -38,8 +38,8 @@ ink(o1, 'fluid', { radius: 0.1 })
   .out()`]
   }),
   effect('song', {
-    description: 'Keep a sketch in time with a song playing in Spotify: song.time follows the playback position, song.on() runs a function when a song starts (also when you join late), song.cue() switches at set times, and the synced lyrics become a hydra source.',
-    provides: { globals: ['song'] },
+    description: 'Keep a sketch in time with a song playing in Spotify: song.time follows the playback position, song.on() runs a function when a song starts (also when you join late), song.cue() switches at set times, the synced lyrics become a hydra source, and song.video() / uboa() play a video in sync with the song.',
+    provides: { globals: ['song', 'uboa'] },
     examples: [`song.connect() // song.connect('your Spotify client id') the first time
 song.lyrics.init(s1, { size: 0.08 })
 osc(8, 0.05, 1.2)
@@ -51,6 +51,7 @@ song.lyrics.init(s1, { position: 'center', next: true })
 song.on('title', () => {
   noise(3).color(1, 0.4, 0.7).layer(src(s1)).out()
   song.cue('1:00', () => voronoi(8).layer(src(s1)).out())
-})`]
+})`, `// vids/uboa.mp4 plays on s0, in sync, while Uboa - The Origin of My Depression plays in Spotify
+uboa()`]
   })
 ]

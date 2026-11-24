@@ -69,6 +69,9 @@
 //                   word timing (null = no highlight)                  null
 //       outline     outline colour (null = none), outlineWidth 0.12 (of size)
 //       shadow      soft dark glow behind the text for readability    true
+//       glow        colour of a soft light around the letters (replaces
+//                   the shadow), e.g. 'rgba(255,235,210,0.9)'         null
+//       glowSize    how far the glow reaches, as a fraction of size   0.5
 //       background  colour behind everything (null = transparent)     null
 //       position    'center' | 'top' | 'bottom' or [x, y] in 0-1      'bottom'
 //       align       'center' | 'left' | 'right'                       'center'
@@ -84,6 +87,48 @@
 //   song.lyrics.load(url)      the same from a file
 //   song.lyrics.online = false never ask lrclib.net
 //   song.lyrics.forget()       empty the remembered lyrics
+//
+// Videos
+//   song.video(match, url, options)  while a matching song plays, the video
+//       plays on a hydra source (s0) at the song's position, so a music video
+//       or a clip with the vocals stays in sync: joining late, seeking or
+//       pausing in Spotify moves the video too, and small drift is evened out
+//       by playing a little faster or slower. The video is muted (the sound
+//       comes from Spotify). song.nudge / Ctrl+Alt+arrows shift it as well.
+//       Videos in the repo's vids/ folder are served at vids/<name> by
+//       npm run dev (vids/ is not committed to git).
+//       options
+//         source  the hydra source to play on                          s0
+//         at      song time where the video starts, e.g. '0:42'         0
+//         offset  extra seconds (+ = the video runs later)              0
+//         show    true: src(source).out(o0) when the song starts;
+//                 a function(source, track) to show it your own way;
+//                 false: only play it on the source                     true
+//         end     function(source) run when the song stops or changes   null
+//         sound   play the video's own sound too                        false
+//         loop    repeat the video while the song plays                 false
+//       Registering the same match again replaces the video;
+//       song.video(match, null) removes it.
+//   uboa(options)  the same for vids/uboa.mp4, only while Uboa - The Origin
+//       of My Depression plays on the connected Spotify account (songs started
+//       by hand with song.start do not count); also connects to Spotify.
+//       Same options, e.g. uboa({ show: (s) => src(s).kaleid(4).out() }).
+//       The video loops (in step with the song; loop: false plays it once)
+//       and is otherwise untouched. The synced lyrics are drawn on s1 in
+//       Newsreader from the font kit (public/fonts), centred, fading slowly,
+//       and made of light: added onto the video so it shows through them,
+//       with a soft warm glow around the letters that breathes slowly.
+//       lyrics: {...} changes the lyrics style (see Lyrics above), e.g.
+//       uboa({ lyrics: { font: '"Bricolage Grotesque"', weight: 800 } });
+//       letters: (text, video) => chain gives the words your own look, e.g.
+//       uboa({ letters: (t, v) => src(v).add(src(t).color(0.6, 0.8, 1)) })
+//       for colder light (the lyrics canvas is black behind the letters);
+//       lyricsSource: s2 draws them on another source; lyrics: false shows
+//       the video alone. If lrclib.net has no synced lyrics for the song,
+//       put an .lrc file in public/lyrics/
+//       named 'Uboa - The Origin of My Depression.lrc'.
+//       To try the video without Spotify:
+//       song.video('uboa', 'vids/uboa.mp4'); song.start('uboa', 30)
 //
 //   song.hud(true)  small status line (song, time, offset, lyrics); it is on
 //                   while connecting. song.status() returns the same as text.
@@ -439,7 +484,7 @@
     return { ...found, source: 'lrclib.net' }
   }
 
-  const defaultStyle = { font: 'Chivo, Helvetica, Arial, sans-serif', weight: 700, size: 0.08, color: 'white', highlight: null, outline: null, outlineWidth: 0.12, shadow: true, background: null, position: 'bottom', align: 'center', width: 0.86, uppercase: false, next: false, fade: 0.25, lead: 0 }
+  const defaultStyle = { font: 'Chivo, Helvetica, Arial, sans-serif', weight: 700, size: 0.08, color: 'white', highlight: null, outline: null, outlineWidth: 0.12, shadow: true, glow: null, glowSize: 0.5, background: null, position: 'bottom', align: 'center', width: 0.86, uppercase: false, next: false, fade: 0.25, lead: 0 }
 
   const lyrics = {
     lines: [],
@@ -592,11 +637,25 @@
       ctx.textBaseline = 'middle'
       ctx.textAlign = 'left'
       ctx.lineJoin = 'round'
-      if (val(st.shadow)) { ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = size * 0.25 } else { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0 }
+      const glow = val(st.glow)
+      if (val(st.shadow) && !glow) { ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = size * 0.25 } else { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0 }
       const pos = val(st.position)
       const up = pos === 'bottom'
       const y = Array.isArray(pos) ? val(pos[1]) * Ht : pos === 'top' ? size * 1.1 : pos === 'center' ? Ht / 2 : Ht - size * (val(st.next) ? 2.4 : 1.1)
       const anchor = up ? 1 : pos === 'top' ? 0 : 0.5
+      if (glow && line.text) {
+        // soft light around the letters: the line drawn blurred in the glow colour first
+        const color = st.color
+        const highlight = st.highlight
+        st.color = glow
+        st.highlight = null
+        ctx.filter = `blur(${Math.max(1, size * (val(st.glowSize) ?? 0.5) * 0.5)}px)`
+        this._drawLine(ctx, line, y, size, alpha, t, anchor)
+        this._drawLine(ctx, line, y, size, alpha * 0.6, t, anchor)
+        ctx.filter = 'none'
+        st.color = color
+        st.highlight = highlight
+      }
       const used = line.text ? this._drawLine(ctx, line, y, size, alpha, t, anchor) : 0
       if (val(st.next) && nextLine?.text) {
         const small = size * 0.6
@@ -696,11 +755,145 @@
     }
   }
 
+  // --------------------------------------------------------------- videos
+  // a video that plays while a song plays, held at the song's position
+  const videos = new Map() // key -> entry
+  const VIDEO_DEFAULTS = { at: 0, offset: 0, source: null, show: true, end: null, sound: false, loop: false, seekAfter: 0.35 }
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v))
+
+  function dropVideo(e) {
+    e.el.pause()
+    e.el.removeAttribute('src')
+    e.el.load()
+  }
+  function showVideo(e) {
+    e.source.init({ src: e.el, dynamic: true })
+    const show = e.o.show
+    try {
+      if (typeof show === 'function') show(e.source, track, song)
+      else if (show) scope.src(e.source).out(scope.o0)
+    } catch (err) { console.error('song: the show function of the video failed', err) }
+  }
+  function syncVideo(e) {
+    const el = e.el
+    const active = !!track && matches(e.match, track)
+    if (!active) {
+      if (e.track) {
+        e.track = null
+        el.pause()
+        if (typeof e.o.end === 'function') try { e.o.end(e.source, song) } catch (err) { console.error('song: the end function of the video failed', err) }
+      }
+      return
+    }
+    if (e.track !== track) { e.track = track; e.shown = false }
+    if (!e.ready) return
+    if (!e.shown) { e.shown = true; showVideo(e) }
+
+    const duration = el.duration || Infinity
+    let target = song.time - e.at + e.o.offset
+    if (e.o.loop && isFinite(duration)) target = ((target % duration) + duration) % duration
+    const inside = target >= 0 && target < duration
+    if (!song.playing || !inside) {
+      // paused, or the song is outside the video: hold the matching frame
+      if (!el.paused) { el.pause(); el.playbackRate = 1 }
+      const hold = clamp(target, 0, Math.max(0, duration - 0.05))
+      if (!el.seeking && Math.abs(el.currentTime - hold) > 0.05) el.currentTime = hold
+      return
+    }
+    const drift = el.currentTime - target // > 0: the video is ahead of the song
+    if (Math.abs(drift) > e.o.seekAfter) {
+      // joined late, seeked or drifted far: jump (not again until that seek is done)
+      if (!el.seeking && now() - e.lastSeek > 400) { el.playbackRate = 1; el.currentTime = target; e.lastSeek = now() }
+    } else {
+      // small drift: play a little faster or slower until it is gone
+      el.playbackRate = Math.abs(drift) < 0.03 ? 1 : 1 - clamp(drift * 0.6, -0.08, 0.08)
+    }
+    if (el.paused) el.play().catch((err) => { if (!e.playWarned) { e.playWarned = true; warn(`the video cannot start yet (${err.message}); click into the page once`) } })
+  }
+
+  function video(match, url, options = {}) {
+    if (typeof url === 'object' && url !== null) { options = url; url = options.url }
+    const key = options.key || keyOf(match)
+    const old = videos.get(key)
+    if (old) { videos.delete(key); dropVideo(old) }
+    if (!url) return null // song.video(match, null) removes it
+
+    const o = { ...VIDEO_DEFAULTS, ...options }
+    const source = o.source || scope.s0
+    if (!source?.init) throw new Error('song.video: options.source must be a hydra source such as s0')
+    const el = document.createElement('video')
+    el.crossOrigin = 'anonymous'
+    el.muted = !o.sound // the sound comes from Spotify
+    el.playsInline = true
+    el.preload = 'auto'
+    const e = { match, url, o, el, source, at: seconds(o.at), ready: false, shown: false, track: null, lastSeek: 0 }
+    el.addEventListener('loadeddata', () => {
+      e.ready = true
+      log(`video ${url} ready (${clockText(el.duration)}), plays with ${o.label || `"${match}"`}`)
+    })
+    el.addEventListener('error', () => {
+      warn(`the video ${url} could not be loaded (${el.error?.message || 'not found'}). Is the file there, and is the editor open through npm run dev?`)
+    })
+    el.src = url
+    el.load()
+    videos.set(key, e)
+    return { video: el, source, remove: () => video(match, null, { key }) }
+  }
+  song.video = video
+
+  // uboa(): vids/uboa.mp4 plays on s0 only while Uboa - The Origin of My
+  // Depression plays on the connected Spotify account (not for songs
+  // started by hand with song.start, and not for other Uboa songs).
+  const UBOA_VIDEO = 'vids/uboa.mp4'
+  const uboaSong = (t) =>
+    t.source === 'spotify' &&
+    (t.artists?.length ? t.artists : [t.artist]).some((a) => norm(a) === 'uboa') &&
+    /^the origin of my depression\b/.test(norm(t.name))
+  // the lyrics use the project's font kit (public/fonts, loaded on demand)
+  // centred, unhurried: lines fade in and out slowly
+  // the video stays exactly as it is; the words are made of light: they
+  // are added onto the picture, so the video shows through them, and a soft
+  // warm glow spreads around each letter. The light breathes very slowly.
+  // (The lyrics are drawn on black so they can simply be added as light.)
+  const luminous = (text, source) => scope.src(source)
+    .add(scope.src(text).color(1, 0.95, 0.88), () => 0.5 + 0.06 * Math.sin(now() / 2600))
+  const UBOA_LYRICS = { font: '"Newsreader", Georgia, serif', weight: 500, size: 0.1, position: 'center', width: 0.72, color: 'white', glow: 'rgba(255,225,190,0.9)', glowSize: 0.6, fade: 1.2, background: 'black' }
+  function loadFonts() {
+    if (window.hydraFonts) return window.hydraFonts.ready
+    if (!loadFonts.promise) {
+      loadFonts.promise = new Promise((resolve) => {
+        const el = document.createElement('script')
+        el.src = 'fonts/hydra-fonts.js'
+        el.onload = () => window.hydraFonts.ready.then(resolve)
+        el.onerror = () => { warn('could not load fonts/hydra-fonts.js; the lyrics use a fallback font'); resolve() }
+        document.head.appendChild(el)
+      })
+    }
+    return loadFonts.promise
+  }
+  function uboa(options = {}) {
+    if (!spotify.clientId) warn("uboa() needs Spotify: run song.connect('your client id') once (see the top of hydra-song.js)")
+    else if (!spotify.active) song.connect()
+    const { lyrics: lyricStyle = {}, lyricsSource, letters = luminous, ...rest } = options
+    let show = rest.show ?? true
+    if (lyricStyle !== false) {
+      const target = lyricsSource || scope.s1
+      loadFonts()
+      lyrics.init(target, { ...UBOA_LYRICS, ...lyricStyle })
+      // default look: the video untouched, the lyrics on top with the letter effect
+      if (typeof letters !== 'function') throw new Error('uboa: letters must be a function(text, video) that returns a hydra chain')
+      const look = letters
+      if (show === true) show = (source) => scope.src(source).layer(look(target, source)).out(scope.o0)
+    }
+    return video(uboaSong, rest.url || UBOA_VIDEO, { loop: true, ...rest, show, key: 'uboa', label: 'Uboa - The Origin of My Depression on Spotify' })
+  }
+
   // ----------------------------------------------------------------- loop
   let frame = 0
   let raf = 0
   const tick = () => {
     raf = requestAnimationFrame(tick)
+    videos.forEach(syncVideo)
     if (track) runCues(song.time)
     lyrics._draw()
     if (++frame % 6 === 0) hud.update()
@@ -727,8 +920,10 @@
       window.removeEventListener('storage', onStorage)
       channel?.close()
       hud.el?.remove()
+      videos.forEach(dropVideo)
     },
     parseLRC
   }
   scope.song = song
+  scope.uboa = uboa
 }

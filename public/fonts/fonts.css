@@ -1,0 +1,17 @@
+/* Same faces as hydra-fonts.js, for HTML/CSS (overlays, the editor UI).
+   Paths are relative to this file. All fonts: SIL Open Font License 1.1. */
+@font-face { font-family: 'Bricolage Grotesque'; src: url('bricolage-grotesque/BricolageGrotesque-Variable.ttf') format('truetype'); font-weight: 200 800; font-stretch: 75% 100%; font-display: block; }
+@font-face { font-family: 'Syne'; src: url('syne/Syne-Variable.ttf') format('truetype'); font-weight: 400 800; font-display: block; }
+@font-face { font-family: 'Anybody'; src: url('anybody/Anybody-Variable.ttf') format('truetype'); font-weight: 100 900; font-stretch: 50% 150%; font-display: block; }
+@font-face { font-family: 'Anybody'; src: url('anybody/Anybody-Italic-Variable.ttf') format('truetype'); font-weight: 100 900; font-stretch: 50% 150%; font-style: italic; font-display: block; }
+@font-face { font-family: 'Big Shoulders Display'; src: url('big-shoulders-display/BigShouldersDisplay-Variable.ttf') format('truetype'); font-weight: 100 900; font-display: block; }
+@font-face { font-family: 'Fraunces'; src: url('fraunces/Fraunces-Variable.ttf') format('truetype'); font-weight: 100 900; font-display: block; }
+@font-face { font-family: 'Fraunces'; src: url('fraunces/Fraunces-Italic-Variable.ttf') format('truetype'); font-weight: 100 900; font-style: italic; font-display: block; }
+@font-face { font-family: 'Martian Mono'; src: url('martian-mono/MartianMono-Variable.ttf') format('truetype'); font-weight: 100 800; font-stretch: 75% 112.5%; font-display: block; }
+@font-face { font-family: 'Dela Gothic One'; src: url('dela-gothic-one/DelaGothicOne-Regular.ttf') format('truetype'); font-weight: 400; font-display: block; }
+/* somber set, for projected poetry */
+@font-face { font-family: 'Newsreader'; src: url('newsreader/Newsreader-Variable.ttf') format('truetype'); font-weight: 200 800; font-display: block; }
+@font-face { font-family: 'Newsreader'; src: url('newsreader/Newsreader-Italic-Variable.ttf') format('truetype'); font-weight: 200 800; font-style: italic; font-display: block; }
+@font-face { font-family: 'Imbue'; src: url('imbue/Imbue-Variable.ttf') format('truetype'); font-weight: 100 900; font-display: block; }
+@font-face { font-family: 'Zen Old Mincho'; src: url('zen-old-mincho/ZenOldMincho-Regular.ttf') format('truetype'); font-weight: 400; font-display: block; }
+@font-face { font-family: 'Zen Old Mincho'; src: url('zen-old-mincho/ZenOldMincho-Black.ttf') format('truetype'); font-weight: 900; font-display: block; }

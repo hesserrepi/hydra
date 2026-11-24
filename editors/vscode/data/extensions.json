@@ -2124,15 +2124,17 @@
       "name": "hydra-song",
       "author": "hesserrepi",
       "documentation": "extensions/effects/hydra-song.js",
-      "description": "Keep a sketch in time with a song playing in Spotify: song.time follows the playback position, song.on() runs a function when a song starts (also when you join late), song.cue() switches at set times, and the synced lyrics become a hydra source.",
+      "description": "Keep a sketch in time with a song playing in Spotify: song.time follows the playback position, song.on() runs a function when a song starts (also when you join late), song.cue() switches at set times, the synced lyrics become a hydra source, and song.video() / uboa() play a video in sync with the song.",
       "examples": [
         "song.connect() // song.connect('your Spotify client id') the first time\nsong.lyrics.init(s1, { size: 0.08 })\nosc(8, 0.05, 1.2)\n  .modulate(noise(2), () => song.progress * 0.3)\n  .layer(src(s1))\n  .out()",
-        "// without Spotify: say which song plays and how far in it is\nsong.start('artist - title', 5)\nsong.lyrics.init(s1, { position: 'center', next: true })\nsong.on('title', () => {\n  noise(3).color(1, 0.4, 0.7).layer(src(s1)).out()\n  song.cue('1:00', () => voronoi(8).layer(src(s1)).out())\n})"
+        "// without Spotify: say which song plays and how far in it is\nsong.start('artist - title', 5)\nsong.lyrics.init(s1, { position: 'center', next: true })\nsong.on('title', () => {\n  noise(3).color(1, 0.4, 0.7).layer(src(s1)).out()\n  song.cue('1:00', () => voronoi(8).layer(src(s1)).out())\n})",
+        "// vids/uboa.mp4 plays on s0, in sync, while Uboa - The Origin of My Depression plays in Spotify\nuboa()"
       ],
       "autoload": true,
       "provides": {
         "globals": [
-          "song"
+          "song",
+          "uboa"
         ]
       }
     },
