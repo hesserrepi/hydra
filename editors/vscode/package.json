@@ -26,6 +26,7 @@
       { "command": "hydra.startServer", "title": "Start the local hydra server", "category": "Hydra" },
       { "command": "hydra.setupFolder", "title": "Set up autocomplete in this folder", "category": "Hydra" },
       { "command": "hydra.insertExample", "title": "Insert extension example", "category": "Hydra" },
+      { "command": "hydra.insertSource", "title": "Insert source", "category": "Hydra" },
       { "command": "hydra.newSketch", "title": "New sketch", "category": "Hydra" },
       { "command": "hydra.toggleRunOnSave", "title": "Toggle run on save", "category": "Hydra" }
     ],
@@ -33,7 +34,8 @@
       { "command": "hydra.runLine", "key": "ctrl+enter", "when": "editorTextFocus && hydra.isSketch" },
       { "command": "hydra.runBlock", "key": "alt+enter", "when": "editorTextFocus && hydra.isSketch" },
       { "command": "hydra.runFile", "key": "ctrl+shift+enter", "when": "editorTextFocus && hydra.isSketch" },
-      { "command": "hydra.hush", "key": "ctrl+shift+h", "when": "editorTextFocus && hydra.isSketch" }
+      { "command": "hydra.hush", "key": "ctrl+shift+h", "when": "editorTextFocus && hydra.isSketch" },
+      { "command": "hydra.insertSource", "key": "shift+tab", "when": "editorTextFocus && hydra.isSketch && !editorReadonly && !editorTabMovesFocus && !inSnippetMode && !suggestWidgetVisible && !inlineSuggestionVisible" }
     ],
     "menus": {
       "editor/title/run": [
@@ -43,7 +45,8 @@
         { "command": "hydra.runLine", "when": "editorLangId == javascript" },
         { "command": "hydra.runBlock", "when": "editorLangId == javascript" },
         { "command": "hydra.runFile", "when": "editorLangId == javascript" },
-        { "command": "hydra.insertExample", "when": "editorLangId == javascript" }
+        { "command": "hydra.insertExample", "when": "editorLangId == javascript" },
+        { "command": "hydra.insertSource", "when": "editorLangId == javascript" }
       ]
     },
     "configuration": {

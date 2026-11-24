@@ -1059,9 +1059,52 @@ const sketchExamples = fs.existsSync(examplesDir) ? fs.readdirSync(examplesDir).
     return { topic, name: file.replace(/^\d+-/, '').replace(/\.js$/, ''), description: code.match(/^\/\/ (.*)/)?.[1] || '', code }
   })) : []
 
+// sources for the 'Insert source' picker (Shift+Tab on an empty line in VS Code): every
+// function that starts a chain, never an effect (hyper-hydra's are left out on purpose). `snippet` is VS Code snippet syntax with the
+// defaults as placeholders; textures default to o0.
+const snippetText = (v) => String(v).replace(/[$}\\]/g, (c) => '\\' + c)
+const callSnippet = (name, def) => `${name}(${params(def).map((p, i) =>
+  `\${${i + 1}:${snippetText(p.type === 'HydraTexture' ? 'o0' : p.default != null ? fmt(p.default) : '')}}`).join(', ')})`
+const callLabel = (name, def) => `${name}(${params(def).map((p) =>
+  (p.type !== 'HydraTexture' && p.default != null ? `${p.name} = ${fmt(p.default)}` : p.name)).join(', ')})`
+const sources = []
+const seenSources = new Set()
+const addSource = (source) => { if (!seenSources.has(source.name)) { seenSources.add(source.name); sources.push(source) } }
+// prev() reads the output it is drawn into: WebGL refuses the feedback loop and it stays black
+for (const def of glslFunctions.filter((d) => d.type === 'src' && d.name !== 'prev')) {
+  addSource({ name: def.name, group: 'hydra', signature: callLabel(def.name, def), snippet: callSnippet(def.name, def) })
+}
+for (const [name, { def, ext }] of shaderDefs) {
+  if (def.type !== 'src') continue
+  const collection = collections.find((c) => c.id === ext.collection).name
+  addSource({ name, group: collection === 'extra shaders' ? `${collection}: ${ext.name}` : collection,
+    signature: callLabel(name, def), snippet: callSnippet(name, def), description: ext.description })
+}
+// drawn on a canvas: set it up as s0 and start the chain with src(s0)
+const p5Setup = 'p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n'
+const canvasSources = {
+  harmonograph: 'h = harmonograph(${1:s0})\nsrc(${1:s0})',
+  radiolaria: p5Setup + "r = radiolaria(p5, { form: '${1|bush,ring,cage,lattice,star,basket|}', life: 'cycle' })\np5.draw = () => { radiolaria.backdrop(p5); r.draw() }\nsrc(s0)",
+  snowflake: p5Setup + "f = snowflake(p5, { habit: '${1|bentley,plate,sectored,broad,stellar,dendrite,fern,feather,needle,thick|}', life: 'cycle' })\np5.draw = () => { snowflake.backdrop(p5); f.draw() }\nsrc(s0)",
+  proofSpine: p5Setup + "tree = proofSpine.show(p5, { mode: '${1|grow,lightning,search,assemble,sway,still|}', shape: '${2|spine,fan,river,spiral,ring,star,harmonograph|}' })\nsrc(s0)"
+}
+for (const ext of extensions.filter((e) => e.collection === 'p5-forms' || e.collection === 'curves')) {
+  for (const name of ext.provides.globals || []) {
+    if (!canvasSources[name]) continue
+    addSource({ name, group: `${collections.find((c) => c.id === ext.collection).name} (drawn into s0)`,
+      signature: `${name}(...)  then src(s0)`, snippet: canvasSources[name], description: ext.description })
+  }
+}
+const missingCanvas = Object.keys(canvasSources).filter((name) => !seenSources.has(name))
+if (missingCanvas.length) throw new Error(`canvas sources not in the registry: ${missingCanvas.join(', ')}`)
+// hydra first, then the shader collections, then the drawn ones
+const groupRank = (group) => (group === 'hydra' ? 0 : group.includes('(drawn into') ? 2 : 1)
+sources.sort((a, b) => groupRank(a.group) - groupRank(b.group))
+
 const data = {
   collections,
   sketches: sketchExamples,
+  sources,
   extensions: extensions.map(({ id, collection, name, author, documentation, description, examples, autoload, provides }) =>
     ({ id, collection, name: name || id.split('/')[1], author, documentation, description, examples, autoload, provides }))
 }

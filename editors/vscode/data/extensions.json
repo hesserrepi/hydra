@@ -231,6 +231,372 @@
       "code": "// No Spotify needed: the bundled test \"song\" (lyrics in public/lyrics/) shows how\n// the clock, the cues and the lyrics work. Run it, then try the lines at the end.\nsong.hud(true)\nsong.lyrics.init(s1, { size: 0.09, position: 'center', highlight: '#ffd54a', next: true })\n\nsong.on('hydra - test song', () => {\n  osc(10, 0.05, 1).color(0.3, 0.5, 1).layer(src(s1)).out()\n  song.cue(8, () => noise(3, 0.2).color(1, 0.4, 0.6).layer(src(s1)).out())\n  song.cue(16, () => voronoi(8, 0.4).kaleid(4).layer(src(s1)).out())\n  song.bpm(120)\n})\n\n// \"the song started just now\"\nsong.start('hydra - test song', 0)\n\n// noticed late? say where the song is, one line at a time (Ctrl+Enter):\n// song.start('hydra - test song', 9)   // it started 9 seconds ago\n// song.sync(17)                        // it is at 17 s now\n// song.nudge(-0.2)                     // lyrics came 0.2 s late: bring them earlier\n"
     }
   ],
+  "sources": [
+    {
+      "name": "noise",
+      "group": "hydra",
+      "signature": "noise(scale = 10, offset = 0.1)",
+      "snippet": "noise(${1:10}, ${2:0.1})"
+    },
+    {
+      "name": "voronoi",
+      "group": "hydra",
+      "signature": "voronoi(scale = 5, speed = 0.3, blending = 0.3)",
+      "snippet": "voronoi(${1:5}, ${2:0.3}, ${3:0.3})"
+    },
+    {
+      "name": "osc",
+      "group": "hydra",
+      "signature": "osc(frequency = 60, sync = 0.1, offset = 0)",
+      "snippet": "osc(${1:60}, ${2:0.1}, ${3:0})"
+    },
+    {
+      "name": "shape",
+      "group": "hydra",
+      "signature": "shape(sides = 3, radius = 0.3, smoothing = 0.01)",
+      "snippet": "shape(${1:3}, ${2:0.3}, ${3:0.01})"
+    },
+    {
+      "name": "gradient",
+      "group": "hydra",
+      "signature": "gradient(speed = 0)",
+      "snippet": "gradient(${1:0})"
+    },
+    {
+      "name": "src",
+      "group": "hydra",
+      "signature": "src(tex)",
+      "snippet": "src(${1:o0})"
+    },
+    {
+      "name": "solid",
+      "group": "hydra",
+      "signature": "solid(r = 0, g = 0, b = 0, a = 1)",
+      "snippet": "solid(${1:0}, ${2:0}, ${3:0}, ${4:1})"
+    },
+    {
+      "name": "whitenoise",
+      "group": "extra shaders: Noise generators",
+      "signature": "whitenoise(size = 10, dynamic = 0)",
+      "snippet": "whitenoise(${1:10}, ${2:0})",
+      "description": "Noise and turbulence sources inspired by F. Kenton Musgrave: turb, warp, cwarp, ncontour..."
+    },
+    {
+      "name": "colornoise",
+      "group": "extra shaders: Noise generators",
+      "signature": "colornoise(size = 10, dynamic = 0)",
+      "snippet": "colornoise(${1:10}, ${2:0})",
+      "description": "Noise and turbulence sources inspired by F. Kenton Musgrave: turb, warp, cwarp, ncontour..."
+    },
+    {
+      "name": "unoise",
+      "group": "extra shaders: Noise generators",
+      "signature": "unoise(scale = 10, offset = 0.1)",
+      "snippet": "unoise(${1:10}, ${2:0.1})",
+      "description": "Noise and turbulence sources inspired by F. Kenton Musgrave: turb, warp, cwarp, ncontour..."
+    },
+    {
+      "name": "turb",
+      "group": "extra shaders: Noise generators",
+      "signature": "turb(scale = 10, offset = 0.1, octaves = 3)",
+      "snippet": "turb(${1:10}, ${2:0.1}, ${3:3})",
+      "description": "Noise and turbulence sources inspired by F. Kenton Musgrave: turb, warp, cwarp, ncontour..."
+    },
+    {
+      "name": "uturb",
+      "group": "extra shaders: Noise generators",
+      "signature": "uturb(scale = 10, offset = 0.1, octaves = 3)",
+      "snippet": "uturb(${1:10}, ${2:0.1}, ${3:3})",
+      "description": "Noise and turbulence sources inspired by F. Kenton Musgrave: turb, warp, cwarp, ncontour..."
+    },
+    {
+      "name": "warp",
+      "group": "extra shaders: Noise generators",
+      "signature": "warp(scalei = 10, offset = 0.1, octaves = 2, octavesinner = 3, scale = 1)",
+      "snippet": "warp(${1:10}, ${2:0.1}, ${3:2}, ${4:3}, ${5:1})",
+      "description": "Noise and turbulence sources inspired by F. Kenton Musgrave: turb, warp, cwarp, ncontour..."
+    },
+    {
+      "name": "cwarp",
+      "group": "extra shaders: Noise generators",
+      "signature": "cwarp(scalei = 10, offset = 0.1, octaves = 2, octavesinner = 3, scale = 1, focus = 0.5)",
+      "snippet": "cwarp(${1:10}, ${2:0.1}, ${3:2}, ${4:3}, ${5:1}, ${6:0.5})",
+      "description": "Noise and turbulence sources inspired by F. Kenton Musgrave: turb, warp, cwarp, ncontour..."
+    },
+    {
+      "name": "ncontour",
+      "group": "extra shaders: Noise generators",
+      "signature": "ncontour(thresh = 0.5, smooth = 0.1, octaves = 3, scale = 5, speed = 0.5, step = 2)",
+      "snippet": "ncontour(${1:0.5}, ${2:0.1}, ${3:3}, ${4:5}, ${5:0.5}, ${6:2})",
+      "description": "Noise and turbulence sources inspired by F. Kenton Musgrave: turb, warp, cwarp, ncontour..."
+    },
+    {
+      "name": "blinking",
+      "group": "extra shaders: Soft patterns",
+      "signature": "blinking(tiles = 5, scale = 5, speed = 0.5, phase = 0.03)",
+      "snippet": "blinking(${1:5}, ${2:5}, ${3:0.5}, ${4:0.03})",
+      "description": "Patterns with smooth transitions, similar to osc() but with more complex shapes: blobs, blinking, smoothsun..."
+    },
+    {
+      "name": "blobs",
+      "group": "extra shaders: Soft patterns",
+      "signature": "blobs(speed = 0.1, tresh = 0.2, soft = 0.05)",
+      "snippet": "blobs(${1:0.1}, ${2:0.2}, ${3:0.05})",
+      "description": "Patterns with smooth transitions, similar to osc() but with more complex shapes: blobs, blinking, smoothsun..."
+    },
+    {
+      "name": "concentric",
+      "group": "extra shaders: Soft patterns",
+      "signature": "concentric(base = 5, octaves = 2, ampscale = 0.5, speed = 1)",
+      "snippet": "concentric(${1:5}, ${2:2}, ${3:0.5}, ${4:1})",
+      "description": "Patterns with smooth transitions, similar to osc() but with more complex shapes: blobs, blinking, smoothsun..."
+    },
+    {
+      "name": "phasenoise",
+      "group": "extra shaders: Soft patterns",
+      "signature": "phasenoise(base = 0, range = 0.1, scale = 5, speed = 0.5, phase = 0.03)",
+      "snippet": "phasenoise(${1:0}, ${2:0.1}, ${3:5}, ${4:0.5}, ${5:0.03})",
+      "description": "Patterns with smooth transitions, similar to osc() but with more complex shapes: blobs, blinking, smoothsun..."
+    },
+    {
+      "name": "sdfmove",
+      "group": "extra shaders: Soft patterns",
+      "signature": "sdfmove(speed1 = 0.73, speed2 = 1, speed3 = -0.53)",
+      "snippet": "sdfmove(${1:0.73}, ${2:1}, ${3:-0.53})",
+      "description": "Patterns with smooth transitions, similar to osc() but with more complex shapes: blobs, blinking, smoothsun..."
+    },
+    {
+      "name": "smoothsun",
+      "group": "extra shaders: Soft patterns",
+      "signature": "smoothsun(threshold = 0.3, border = 0.2, speed = 1, ampscale = 0.5)",
+      "snippet": "smoothsun(${1:0.3}, ${2:0.2}, ${3:1}, ${4:0.5})",
+      "description": "Patterns with smooth transitions, similar to osc() but with more complex shapes: blobs, blinking, smoothsun..."
+    },
+    {
+      "name": "pulse",
+      "group": "extra shaders: Op-art patterns",
+      "signature": "pulse(edge = 0.5, width = 0.05, epsilon = 0.001)",
+      "snippet": "pulse(${1:0.5}, ${2:0.05}, ${3:0.001})",
+      "description": "Op-art patterns: spiral, brick, checker, hextile, lissa, pulse..."
+    },
+    {
+      "name": "pulsetrain",
+      "group": "extra shaders: Op-art patterns",
+      "signature": "pulsetrain(train = 3, edge = 0.5, width = 0.05, epsilon = 0.001)",
+      "snippet": "pulsetrain(${1:3}, ${2:0.5}, ${3:0.05}, ${4:0.001})",
+      "description": "Op-art patterns: spiral, brick, checker, hextile, lissa, pulse..."
+    },
+    {
+      "name": "hextile",
+      "group": "extra shaders: Op-art patterns",
+      "signature": "hextile(tiles = 10)",
+      "snippet": "hextile(${1:10})",
+      "description": "Op-art patterns: spiral, brick, checker, hextile, lissa, pulse..."
+    },
+    {
+      "name": "checker",
+      "group": "extra shaders: Op-art patterns",
+      "signature": "checker(repeats = 10)",
+      "snippet": "checker(${1:10})",
+      "description": "Op-art patterns: spiral, brick, checker, hextile, lissa, pulse..."
+    },
+    {
+      "name": "spiral",
+      "group": "extra shaders: Op-art patterns",
+      "signature": "spiral(a = 1, b = 5, thickness = 0.1)",
+      "snippet": "spiral(${1:1}, ${2:5}, ${3:0.1})",
+      "description": "Op-art patterns: spiral, brick, checker, hextile, lissa, pulse..."
+    },
+    {
+      "name": "brick",
+      "group": "extra shaders: Op-art patterns",
+      "signature": "brick(width = 0.25, height = 0.08, gap = 0.01)",
+      "snippet": "brick(${1:0.25}, ${2:0.08}, ${3:0.01})",
+      "description": "Op-art patterns: spiral, brick, checker, hextile, lissa, pulse..."
+    },
+    {
+      "name": "wave",
+      "group": "extra shaders: Op-art patterns",
+      "signature": "wave(time = 0, frequ = 10, loops = 3, thick = 0.025)",
+      "snippet": "wave(${1:0}, ${2:10}, ${3:3}, ${4:0.025})",
+      "description": "Op-art patterns: spiral, brick, checker, hextile, lissa, pulse..."
+    },
+    {
+      "name": "lissa",
+      "group": "extra shaders: Op-art patterns",
+      "signature": "lissa(time = 0, frequ = 10, loops = 3, thick = 0.025)",
+      "snippet": "lissa(${1:0}, ${2:10}, ${3:3}, ${4:0.025})",
+      "description": "Op-art patterns: spiral, brick, checker, hextile, lissa, pulse..."
+    },
+    {
+      "name": "squ",
+      "group": "extra shaders: Periodic waves",
+      "signature": "squ(frequency = 10, speed = 0.1)",
+      "snippet": "squ(${1:10}, ${2:0.1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "usin",
+      "group": "extra shaders: Periodic waves",
+      "signature": "usin(frequency = 10, speed = 0.1)",
+      "snippet": "usin(${1:10}, ${2:0.1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "saw",
+      "group": "extra shaders: Periodic waves",
+      "signature": "saw(frequency = 10, speed = 0.1)",
+      "snippet": "saw(${1:10}, ${2:0.1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "harmonic",
+      "group": "extra shaders: Periodic waves",
+      "signature": "harmonic(frequency = 10, speed = 0.1, phase1 = 0, phase2 = 0)",
+      "snippet": "harmonic(${1:10}, ${2:0.1}, ${3:0}, ${4:0})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "tri",
+      "group": "extra shaders: Periodic waves",
+      "signature": "tri(frequency = 10, speed = 0.1)",
+      "snippet": "tri(${1:10}, ${2:0.1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "rsqu",
+      "group": "extra shaders: Periodic waves",
+      "signature": "rsqu(frequency = 10, speed = 0.1)",
+      "snippet": "rsqu(${1:10}, ${2:0.1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "rusin",
+      "group": "extra shaders: Periodic waves",
+      "signature": "rusin(frequency = 10, speed = 0.1)",
+      "snippet": "rusin(${1:10}, ${2:0.1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "rsaw",
+      "group": "extra shaders: Periodic waves",
+      "signature": "rsaw(frequency = 10, speed = 0.1)",
+      "snippet": "rsaw(${1:10}, ${2:0.1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "rharmonic",
+      "group": "extra shaders: Periodic waves",
+      "signature": "rharmonic(frequency = 10, speed = 0.1, phase1 = 0, phase2 = 0)",
+      "snippet": "rharmonic(${1:10}, ${2:0.1}, ${3:0}, ${4:0})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "rtri",
+      "group": "extra shaders: Periodic waves",
+      "signature": "rtri(frequency = 10, speed = 0.1)",
+      "snippet": "rtri(${1:10}, ${2:0.1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "stripes",
+      "group": "extra shaders: Periodic waves",
+      "signature": "stripes(frequency = 10, speed = 1)",
+      "snippet": "stripes(${1:10}, ${2:1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "rstripes",
+      "group": "extra shaders: Periodic waves",
+      "signature": "rstripes(frequency = 10, speed = 1)",
+      "snippet": "rstripes(${1:10}, ${2:1})",
+      "description": "Basic periodic sources: square, triangle, sawtooth and harmonic waves, straight or radial."
+    },
+    {
+      "name": "moebius",
+      "group": "picture shaders",
+      "signature": "moebius(size = 0.8, width = 0.13, lines = 12, twist = 3, flow = 0.1, fold = 1, eyes = 3)",
+      "snippet": "moebius(${1:0.8}, ${2:0.13}, ${3:12}, ${4:3}, ${5:0.1}, ${6:1}, ${7:3})",
+      "description": "A twisting Möbius band knotted into a trefoil, engraved with fine lines, with oval eyes cut through it. engrave() hatches any source the same way."
+    },
+    {
+      "name": "moebiusColor",
+      "group": "picture shaders",
+      "signature": "moebiusColor(size = 0.8, width = 0.13, lines = 12, twist = 3, flow = 0.1, fold = 1, eyes = 3)",
+      "snippet": "moebiusColor(${1:0.8}, ${2:0.13}, ${3:12}, ${4:3}, ${5:0.1}, ${6:1}, ${7:3})",
+      "description": "A twisting Möbius band knotted into a trefoil, engraved with fine lines, with oval eyes cut through it. engrave() hatches any source the same way."
+    },
+    {
+      "name": "lissajous",
+      "group": "picture shaders",
+      "signature": "lissajous(a = 3, b = 2, phase = 0, thick = 0.006, speed = 0.1)",
+      "snippet": "lissajous(${1:3}, ${2:2}, ${3:0}, ${4:0.006}, ${5:0.1})",
+      "description": "Lissajous figures as oscilloscope traces: one figure with any frequencies, or the whole table of ratios and phase shifts."
+    },
+    {
+      "name": "lissajousTable",
+      "group": "picture shaders",
+      "signature": "lissajousTable(cols = 5, rows = 4, thick = 0.012, speed = 0.05)",
+      "snippet": "lissajousTable(${1:5}, ${2:4}, ${3:0.012}, ${4:0.05})",
+      "description": "Lissajous figures as oscilloscope traces: one figure with any frequencies, or the whole table of ratios and phase shifts."
+    },
+    {
+      "name": "chladni",
+      "group": "picture shaders",
+      "signature": "chladni(n = 2, m = 5, sym = 1, thick = 0.004, speed = 0.2, grain = 0)",
+      "snippet": "chladni(${1:2}, ${2:5}, ${3:1}, ${4:0.004}, ${5:0.2}, ${6:0})",
+      "description": "The nodal lines of a vibrating square plate, as on Chladni's sound figures: one plate that morphs between grids, crosses and rings, or a table of engraved plates."
+    },
+    {
+      "name": "chladniTable",
+      "group": "picture shaders",
+      "signature": "chladniTable(cols = 4, rows = 3, seed = 0, speed = 0)",
+      "snippet": "chladniTable(${1:4}, ${2:3}, ${3:0}, ${4:0})",
+      "description": "The nodal lines of a vibrating square plate, as on Chladni's sound figures: one plate that morphs between grids, crosses and rings, or a table of engraved plates."
+    },
+    {
+      "name": "superformula",
+      "group": "curves",
+      "signature": "superformula(m = 6, n1 = 1, n2 = 1, n3 = 1, size = 0.8, thick = 0.006, fill = 0.15, turn = 0)",
+      "snippet": "superformula(${1:6}, ${2:1}, ${3:1}, ${4:1}, ${5:0.8}, ${6:0.006}, ${7:0.15}, ${8:0})",
+      "description": "Gielis' superformula: one outline whose numbers m, n1, n2, n3 turn it into stars, flowers, polygons and blobs. superbloom() lets it morph on its own, with echo layers lagging behind."
+    },
+    {
+      "name": "superbloom",
+      "group": "curves",
+      "signature": "superbloom(m = 6, wander = 2.5, n1 = 1.2, n23 = 1.6, nWander = 0.9, speed = 0.25, layers = 4, thick = 0.005, spin = 0.08)",
+      "snippet": "superbloom(${1:6}, ${2:2.5}, ${3:1.2}, ${4:1.6}, ${5:0.9}, ${6:0.25}, ${7:4}, ${8:0.005}, ${9:0.08})",
+      "description": "Gielis' superformula: one outline whose numbers m, n1, n2, n3 turn it into stars, flowers, polygons and blobs. superbloom() lets it morph on its own, with echo layers lagging behind."
+    },
+    {
+      "name": "radiolaria",
+      "group": "p5 forms (drawn into s0)",
+      "signature": "radiolaria(...)  then src(s0)",
+      "snippet": "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\nr = radiolaria(p5, { form: '${1|bush,ring,cage,lattice,star,basket|}', life: 'cycle' })\np5.draw = () => { radiolaria.backdrop(p5); r.draw() }\nsrc(s0)",
+      "description": "Growing radiolarian skeletons after Haeckel's Stephoidea plate, drawn with p5: spiny rings, lattice spheres, cages, thorny arms, symbionts around a red capsule. Six forms, every option can change over time."
+    },
+    {
+      "name": "snowflake",
+      "group": "p5 forms (drawn into s0)",
+      "signature": "snowflake(...)  then src(s0)",
+      "snippet": "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\nf = snowflake(p5, { habit: '${1|bentley,plate,sectored,broad,stellar,dendrite,fern,feather,needle,thick|}', life: 'cycle' })\np5.draw = () => { snowflake.backdrop(p5); f.draw() }\nsrc(s0)",
+      "description": "Snow crystals that grow like real ones, after Wilson Bentley's photomicrographs: a vapour-diffusion simulation on a hexagonal lattice grows plates, sectored plates, stellar and fern-like dendrites, with engraved relief. The weather can change while it grows; also a whole page and snowfall."
+    },
+    {
+      "name": "proofSpine",
+      "group": "p5 forms (drawn into s0)",
+      "signature": "proofSpine(...)  then src(s0)",
+      "snippet": "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\ntree = proofSpine.show(p5, { mode: '${1|grow,lightning,search,assemble,sway,still|}', shape: '${2|spine,fan,river,spiral,ring,star,harmonograph|}' })\nsrc(s0)",
+      "description": "A glowing proof tree: a jagged white-hot trunk (the proof), curved branches in thick halos (the lemmas it calls), lemma names on leader lines and faint dust. Pick its colour, seven overall shapes (spine, fan, river, spiral, ring, star, harmonograph) and five ways it evolves: grow, lightning, search, assemble, sway."
+    },
+    {
+      "name": "harmonograph",
+      "group": "curves (drawn into s0)",
+      "signature": "harmonograph(...)  then src(s0)",
+      "snippet": "h = harmonograph(${1:s0})\nsrc(${1:s0})",
+      "description": "A pen swung by damped pendulums, like a Lissajous figure that spirals inward. When the swing dies down it restarts with frequencies that have drifted a little, so the drawing keeps evolving. Draws on a canvas used as s0."
+    }
+  ],
   "extensions": [
     {
       "id": "hyper-hydra/arithmetics",

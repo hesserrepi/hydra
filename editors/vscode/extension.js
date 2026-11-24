@@ -273,6 +273,28 @@ function activate(context) {
     if (picked) editor.insertSnippet(new vscode.SnippetString().appendText(picked.example + '\n'))
   }))
 
+  // Shift+Tab on an empty line: pick a source (osc, noise, superbloom...) and insert it with its defaults.
+  // Anywhere else it does what Shift+Tab normally does (outdent).
+  register('hydra.insertSource', withEditor(async (editor) => {
+    const line = editor.document.lineAt(editor.selection.active.line)
+    if (!editor.selection.isEmpty || editor.selections.length > 1 || !line.isEmptyOrWhitespace) {
+      return vscode.commands.executeCommand('outdent')
+    }
+    const data = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'data', 'extensions.json'), 'utf8'))
+    const items = []
+    for (const source of data.sources || []) {
+      if (items.length === 0 || items[items.length - 1].group !== source.group) {
+        items.push({ label: source.group, kind: vscode.QuickPickItemKind.Separator, group: source.group })
+      }
+      items.push({ label: source.name, description: source.signature, detail: source.description, source, group: source.group })
+    }
+    const picked = await vscode.window.showQuickPick(items, { matchOnDescription: true, placeHolder: 'Insert a source' })
+    if (!picked) return
+    // insert after any indentation already on the line
+    const position = new vscode.Position(line.lineNumber, line.text.length)
+    return editor.insertSnippet(new vscode.SnippetString(picked.source.snippet), position)
+  }))
+
   register('hydra.newSketch', async () => {
     const document = await vscode.workspace.openTextDocument({
       language: 'javascript',
