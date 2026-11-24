@@ -13,7 +13,9 @@ commit and its `LICENSE` is the upstream license.
 reference pictures, see its README.
 
 `effects/` is not vendored: it holds interactive effects written for this editor,
-such as `hydra-ink.js` (drag to push the colours around like ink on water).
+such as `hydra-ink.js` (drag to push the colours around like ink on water) and
+`hydra-song.js` (follow a song playing in Spotify, run functions when it starts, show
+its synced lyrics).
 
 `p5-forms/` is not vendored either: p5.js drawing functions written for this editor,
 such as `radiolaria.js` (growing Haeckel radiolarians) and `snowflake.js` (snow

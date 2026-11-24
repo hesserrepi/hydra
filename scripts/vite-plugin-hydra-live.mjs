@@ -86,6 +86,13 @@ export default function hydraLive({ watch = process.env.HYDRA_WATCH } = {}) {
     configureServer(_server) {
       server = _server
 
+      // the Spotify login of hydra-song returns to /spotify-callback (see
+      // public/spotify-callback.html); without this the editor page would answer
+      server.middlewares.use((req, _res, next) => {
+        if (/^\/spotify-callback\/?(\?|$)/.test(req.url)) req.url = req.url.replace(/^\/spotify-callback\/?/, '/spotify-callback.html')
+        next()
+      })
+
       server.ws.on('hydra:result', ({ id, ...result } = {}) => {
         const resolve = pending.get(id)
         if (resolve) {

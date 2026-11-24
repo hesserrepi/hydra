@@ -3806,6 +3806,114 @@ declare const ink: {
   /** Undo every deformation, or only the layer with this id. */
   reset(id?: string): void
 }
+/** A song as hydra-song knows it. */
+interface SongTrack {
+  /** Spotify track id, null for a song started by hand. */
+  id: string | null
+  uri: string | null
+  name: string
+  /** First artist. */
+  artist: string
+  artists: string[]
+  album: string
+  /** Length in seconds (0 if unknown). */
+  duration: number
+  source: 'spotify' | 'manual'
+}
+/** Seconds, or 'm:ss' / 'm:ss.d' text. */
+type SongTime = number | string
+type SongMatch = string | RegExp | ((track: SongTrack) => boolean)
+/** Look of the lyrics; numbers and colours may be functions. See public/extensions/effects/hydra-song.js. */
+interface LyricsStyle {
+  font?: string | (() => string)
+  weight?: number | string | (() => number | string)
+  /** Text height as a fraction of the screen height (0.08). */
+  size?: number | (() => number)
+  color?: string | (() => string)
+  /** Colour of the words already sung, when the lyrics have word timing. */
+  highlight?: string | null | (() => string | null)
+  outline?: string | null | (() => string | null)
+  outlineWidth?: number | (() => number)
+  shadow?: boolean | (() => boolean)
+  /** Colour behind everything; null = transparent. */
+  background?: string | null | (() => string | null)
+  position?: 'center' | 'top' | 'bottom' | [number | (() => number), number | (() => number)] | (() => 'center' | 'top' | 'bottom' | [number, number])
+  align?: 'center' | 'left' | 'right'
+  /** Widest line as a fraction of the screen width (0.86). */
+  width?: number | (() => number)
+  uppercase?: boolean | (() => boolean)
+  /** Also show the following line, dimmed. */
+  next?: boolean | (() => boolean)
+  /** Seconds a line takes to fade in and out (0.25). */
+  fade?: number | (() => number)
+  /** Show each line this many seconds early. */
+  lead?: number | (() => number)
+}
+interface LyricsLine { time: number; text: string; words: { time: number; text: string }[] | null }
+interface SongLyrics {
+  /** Draw the current line on a canvas and use it as this hydra source: song.lyrics.init(s1), then src(s1). */
+  init(source?: any, style?: LyricsStyle): any
+  style(style: LyricsStyle): SongLyrics
+  /** Use this LRC text for the current song. */
+  set(lrc: string): SongLyrics
+  load(url: string): Promise<SongLyrics>
+  /** Empty the lyrics remembered in this browser. */
+  forget(): SongLyrics
+  /** Text of the line being sung ('' between lines or without lyrics). */
+  readonly line: string
+  readonly next: string
+  readonly index: number
+  /** 0-1 through the current line. */
+  readonly lineProgress: number
+  readonly current: LyricsLine | null
+  lines: LyricsLine[]
+  plain: string | null
+  status: 'none' | 'loading' | 'synced' | 'plain' | 'missing'
+  /** false: never ask lrclib.net. */
+  online: boolean
+  canvas: HTMLCanvasElement | null
+}
+/**
+ * Keep a sketch in time with a song playing in Spotify: song.time follows the playback position, song.on() runs a function when a song starts (also when you join late), song.cue() switches at set times, and the synced lyrics become a hydra source.
+ * From effects/song, loaded automatically.
+ * @see extensions/effects/hydra-song.js
+ */
+declare const song: {
+  /** Seconds into the song; keeps running between updates. */
+  readonly time: number
+  /** 0-1 through the song. */
+  readonly progress: number
+  readonly playing: boolean
+  readonly track: SongTrack | null
+  /** Seconds added by sync() / nudge(). */
+  readonly offset: number
+  /** Beats since the start, after song.bpm(). */
+  readonly beat: number
+  readonly connected: boolean
+  lyrics: SongLyrics
+  /** Follow what plays in Spotify. The client id is remembered, afterwards song.connect() is enough. */
+  connect(clientId?: string | { clientId?: string; interval?: number; redirectUri?: string; hud?: boolean }, options?: { interval?: number; redirectUri?: string; hud?: boolean }): typeof song
+  disconnect(): typeof song
+  logout(): typeof song
+  /** By hand: this song is playing and is `at` in now. song.start('artist - title', 5) */
+  start(name?: string | Partial<SongTrack> | SongTime, at?: SongTime): typeof song
+  /** The song is at this time now. */
+  sync(at: SongTime): typeof song
+  /** Shift everything by seconds (positive = later). Ctrl+Alt+Left/Right do it in 0.1 s steps. */
+  nudge(seconds?: number): typeof song
+  pause(): typeof song
+  resume(): typeof song
+  /** Run fn when a matching song starts, and right away if it is playing. '*' = songs nothing else matches. */
+  on(match: SongMatch, fn: (track: SongTrack) => void): typeof song
+  off(match?: SongMatch): typeof song
+  /** Inside a song.on function: run fn when the song reaches this time. */
+  cue(time: SongTime, fn: (track: SongTrack) => void): typeof song
+  /** Give the tempo so that song.beat counts beats. */
+  bpm(bpm: number | null, firstBeat?: SongTime): typeof song
+  /** Show or hide the small status line. */
+  hud(show?: boolean): typeof song
+  status(): string
+}
 type RadiolariaForm = 'ring' | 'cage' | 'lattice' | 'bush' | 'star' | 'basket'
 type RadiolariaPaletteName = 'haeckel' | 'cyanotype' | 'gilded' | 'ink' | 'neon'
 interface RadiolariaPalette {
