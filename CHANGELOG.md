@@ -1,6 +1,7 @@
 # Changelog
 # [Unreleased]
 ## Added
+- `radiolaria.swarm()`: spawns a radiolarian at a random free position on each audio peak, with a lifecycle and JSON parameter presets (examples 17-18)
 - bundled [hyper-hydra](https://github.com/geikha/hyper-hydra) and [extra-shaders-for-hydra](https://gitlab.com/metagrowing/extra-shaders-for-hydra) extensions, which load automatically the first time a sketch uses one of their functions
 - `hyper-hydra` and `extra shaders` tabs in the extensions window
 - `loadScript` calls to these extensions' usual URLs use the bundled copies
@@ -17,9 +18,12 @@
 - `chladni()` and `chladniTable()` picture shaders, after Chladni's sound figures
 - `radiolaria()`: growing radiolarian skeletons after Haeckel's Stephoidea plate, drawn with p5 (forms ring, cage, lattice, bush, star and basket), with `radiolaria.plate()` and five p5 + hydra examples; loads automatically and has autocomplete
 - `snowflake()`: snow crystals grown by a vapour-diffusion simulation after Wilson Bentley's photomicrographs (habits plate, sectored, broad, stellar, dendrite, fern, feather, needle, thick, or a random life story), with weather that can change while they grow, `snowflake.plate()`, `snowflake.snowfall()` and five p5 + hydra examples; loads automatically and has autocomplete
+- `proofSpine()`: a glowing proof tree drawn with p5 (jagged trunk, haloed branches, lemma names on leader lines, dust; `text: false` hides all names) in any colour, in seven shapes (spine, fan, river, spiral, ring, star, harmonograph, or your own path) and five animations (grow, lightning, search, assemble, sway) that can follow audio (`audio`, `audioTo`: speed, progress, sway, glow, strike), with seven p5 + hydra examples and a playground page at `/playgrounds/proof-spine.html` (every mode and shape, microphone, test beat or audio file); loads automatically and has autocomplete
 - parameter hints show every default of a function on one line, e.g. `thresh(threshold = 0.5, tolerance = 0.04)`
 - parameter names and defaults for about 160 hyper-hydra functions (arithmetics, blend, colorspaces, convolutions, fractals, gradientmap, swizzle), read from their definitions by `npm run types`; `add(0.5)`-style and `mod(texture)`-style calls show as two overloads
 - `ink()`: click and drag on the canvas to push the colours around like ink on water, in `push`, `fluid` or `comb` (marbling) mode; loads automatically and has autocomplete
+- `song`: keeps a sketch in time with a song playing in Spotify (`song.connect()`, `song.time`), runs a function when a song starts even if you join late (`song.on()`, `song.cue()`, `song.sync()`, `song.nudge()`), and shows the synced lyrics from a local `.lrc` file or lrclib.net as a hydra source (`song.lyrics.init(s1)`); loads automatically and has autocomplete
+- `curves` collection with its own extensions tab: `harmonograph()` (damped pendulums drawn on a canvas used as `s0`, restarting with drifted frequencies so the drawing keeps evolving, with an optional custom pen path) and the `superformula()` and `superbloom()` sources (Gielis' superformula, still or morphing on its own with echo layers); they load automatically, have autocomplete and four examples in `sketches/examples/curves`
 - the editor works offline: hydra-synth, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
 - bundled example gif and image for the hydra-gif and hydra-src examples
 

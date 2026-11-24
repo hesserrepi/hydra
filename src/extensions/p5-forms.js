@@ -55,5 +55,18 @@ p5.hide()
 s0.init({ src: p5.canvas })
 snowflake.snowfall(p5, { background: false })
 gradient(0.02).r().color(0.06, 0.1, 0.22).layer(src(s0)).out()`]
+  }),
+  p5Form('proof-spine', {
+    description: 'A glowing proof tree: a jagged white-hot trunk (the proof), curved branches in thick halos (the lemmas it calls), lemma names on leader lines and faint dust. Pick its colour, seven overall shapes (spine, fan, river, spiral, ring, star, harmonograph) and five ways it evolves: grow, lightning, search, assemble, sway.',
+    provides: { globals: ['proofSpine'] },
+    examples: [`p5 = new P5()
+p5.hide()
+s0.init({ src: p5.canvas })
+tree = proofSpine.show(p5, { mode: 'grow', color: '#d24dff' })
+src(s0).out()`, `p5 = new P5()
+p5.hide()
+s0.init({ src: p5.canvas })
+tree = proofSpine.show(p5, { mode: 'lightning', shape: 'star', color: '#7fd8ff' })
+src(s0).blend(src(o0).scale(1.004), 0.5).out()`]
   })
 ]
