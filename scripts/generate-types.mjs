@@ -51,7 +51,7 @@ function params(def) {
 function doc(lines) {
   const body = lines.filter((l) => l !== undefined && l !== null)
   if (body.length === 0) return ''
-  return `  /**\n${body.map((l) => `   * ${l}`).join('\n')}\n   */\n`
+  return `  /**\n${body.map((l) => (l ? `   * ${l}` : '   *')).join('\n')}\n   */\n`
 }
 
 function shaderDoc(def, origin) {
@@ -59,9 +59,14 @@ function shaderDoc(def, origin) {
     src: 'source', coord: 'coordinate transform', color: 'color transform',
     combine: 'blends in another texture', combineCoord: 'modulates coordinates with another texture'
   }[def.type] || def.type
+  // first line shows every default at once: VS Code puts it right under the signature in parameter hints
+  const hasDefault = (p) => p.default !== undefined && p.default !== null && p.type !== 'HydraTexture'
+  const call = params(def).map((p) => (hasDefault(p) ? `${p.name} = ${fmt(p.default)}` : p.name)).join(', ')
   return [
-    `${def.name}: ${kind}${origin ? ` (${origin})` : ''}`,
-    ...params(def).filter((p) => p.default !== undefined && p.default !== null).map((p) => `@param ${p.name} default ${fmt(p.default)}`)
+    `\`${def.name}(${call})\``,
+    '',
+    `${kind}${origin ? ` (${origin})` : ''}`,
+    ...params(def).filter(hasDefault).map((p) => `@param ${p.name} default ${fmt(p.default)}`)
   ]
 }
 
@@ -102,7 +107,45 @@ for (const [name, { def, ext }] of shaderDefs) {
   }
 }
 
-// hyper-hydra: names come from the registry, signatures are kept loose
+// hyper-hydra: names come from the registry. Most of its functions are setFunction() calls too:
+// run each file against a permissive stub of hydra to read their parameters and defaults.
+// Functions it builds some other way keep a loose (...args) signature.
+function hyperDefinitions(file) {
+  const defs = new Map()
+  const setFunction = (def) => { if (def?.name && !defs.has(def.name)) defs.set(def.name, def) }
+  const stub = new Proxy(function () {}, {
+    get: (t, k) => (k === 'setFunction' ? setFunction : k === Symbol.toPrimitive ? () => 0
+      : k === Symbol.iterator ? [][Symbol.iterator] : k === 'then' ? undefined : k === 'length' ? 0 : stub),
+    apply: () => stub,
+    construct: () => stub,
+    set: () => true
+  })
+  const synth = new Proxy({ setFunction }, { get: (t, k) => (k in t ? t[k] : stub) })
+  const context = vm.createContext({
+    hydraSynth: { synth, regl: stub, sandbox: { makeGlobal: true }, o: [stub, stub, stub, stub], s: [stub, stub, stub, stub] },
+    location: { href: '' }, console: { log () {}, warn () {}, error () {} }, document: stub, navigator: stub,
+    setTimeout () {}, setInterval () {}, requestAnimationFrame () {}, width: 1280, height: 720
+  })
+  for (const name of ['o0', 'o1', 'o2', 'o3', 's0', 's1', 's2', 's3', 'src', 'osc', 'noise', 'solid', 'loadScript']) context[name] = stub
+  context.window = context.global = context.globalThis = context
+  try { vm.runInContext(read(`public/extensions/${file}`), context, { timeout: 2000 }) } catch (e) { /* keep what was defined before the stub ran out */ }
+  return defs
+}
+// hyper-hydra/arithmetics wraps two definitions in one function: add(0.5) uses _add_single, add(texture, amount) uses _add
+function hyperSignatures(name, defs, lines, declare) {
+  const own = defs.get(name) || defs.get('_' + name)
+  const single = defs.get('_' + name + '_single')
+  if (!own) return null
+  const one = (def) => doc(lines({ ...def, name })) + `${declare}${name}(${signature(def)}): HydraSource`
+  if (!single) return one(own)
+  const value = { ...single, inputs: single.inputs.map((i) => ({ ...i, name: 'value' })) }
+  return one(value) + '\n' + one({ ...own, type: 'combine' })
+}
+const hyperDefs = new Map()
+for (const ext of extensions.filter((e) => e.collection === 'hyper-hydra' && e.autoload)) {
+  for (const [name, def] of hyperDefinitions(ext.file)) if (!hyperDefs.has(name)) hyperDefs.set(name, def)
+}
+
 const sourceGlobals = new Set(['arithmetics', 'convolutions', 'src', 'vec4', 'text'])
 const propertyMethods = new Set(['rgb', 'cmyk', 'hsv', 'hsl', 'yuv', 'yiq']) // colorspaces: s.hsv.hOffsetFrom(...)
 const arraysOut = []
@@ -125,16 +168,20 @@ for (const ext of extensions.filter((e) => e.collection === 'hyper-hydra' && e.a
       globalsOut.push(doc(lines).replace(/^ {2}/gm, '') + `declare var ${name}: any`)
     } else {
       const returns = sourceGlobals.has(short) ? 'HydraSource' : 'any'
-      globalsOut.push(doc(lines).replace(/^ {2}/gm, '') + `declare function ${name}(...args: HydraArg[]): ${returns}`)
+      const typed = hyperSignatures(name, hyperDefs, (def) => [...shaderDoc(def, extOrigin(ext)), `@see ${ext.documentation}`], 'declare function ')
+      globalsOut.push(typed ? typed.replace(/^ {2}/gm, '') : doc(lines).replace(/^ {2}/gm, '') + `declare function ${name}(...args: HydraArg[]): ${returns}`)
     }
   }
   for (const name of methods) {
     if (seenMethods.has(name)) continue
     seenMethods.add(name)
     if (propertyMethods.has(name)) methodsOut.push(doc(lines) + `  ${name}: any`)
-    else if (short === 'blend') methodsOut.push(doc(lines) + `  ${name}(texture?: HydraTexture, amount?: HydraParam): HydraSource`)
+    else if (short === 'blend' && !hyperDefs.has(name)) methodsOut.push(doc(lines) + `  ${name}(texture?: HydraTexture, amount?: HydraParam): HydraSource`)
     else if (short === 'swizzle') methodsOut.push(`  /** Swizzle channels, from hyper-hydra/swizzle. @see ${ext.documentation} */\n  ${name}(): HydraSource`)
-    else methodsOut.push(doc(lines) + `  ${name}(...args: HydraArg[]): HydraSource`)
+    else {
+      const typed = hyperSignatures(name, hyperDefs, (def) => [...shaderDoc(def, extOrigin(ext)), `@see ${ext.documentation}`], '  ')
+      methodsOut.push(typed || doc(lines) + `  ${name}(...args: HydraArg[]): HydraSource`)
+    }
   }
   for (const name of arrays) {
     if (seenArrays.has(name)) continue
