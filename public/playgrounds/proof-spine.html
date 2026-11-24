@@ -1,0 +1,592 @@
+<!doctype html>
+<!-- proofSpine() playground: npm run dev, then open http://localhost:5173/playgrounds/proof-spine.html
+     Every mode, shape and colour, the microphone, a test beat or an audio file, and hydra effects.
+     The same page (with the libraries from a CDN) is published as a claude.ai artifact. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}</style>
+</head>
+<body>
+<title>Proof Spine Playground</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300;400;600&display=swap">
+<style>
+/* Layout: one screen — the tree fills the stage, a narrow instrument panel of controls beside it (below it on a phone). Single dark look on purpose: it's a light-on-black visual tool. */
+:root {
+  --bg: #07050a;
+  --panel: #110d17;
+  --line: #2a2133;
+  --fg: #e9e2f0;
+  --muted: #9a8fa8;
+  --accent: #d24dff;
+  --mono: "Martian Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font: 12px/1.45 var(--mono); }
+.app { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 320px; }
+.stage { position: relative; min-width: 0; min-height: 0; background: #000; overflow: hidden; }
+.stage canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; }
+.stage .hud { position: absolute; z-index: 2; left: max(12px, env(safe-area-inset-left, 0px)); bottom: 12px; right: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; pointer-events: none; }
+.hud span { background: rgba(10, 6, 14, 0.75); border: 1px solid var(--line); padding: 4px 8px; border-radius: 3px; color: var(--muted); }
+.hud span b { color: var(--fg); font-weight: 600; }
+.panel { background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto; padding-block: 14px 24px; padding-left: 16px; padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 16px; }
+h1 { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; margin: 0; }
+h1 small { display: block; font-weight: 300; color: var(--muted); letter-spacing: 0; margin-top: 2px; }
+fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+legend { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 6px; padding: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chips button, .btn { font: inherit; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 3px; padding: 5px 8px; cursor: pointer; }
+.chips button:hover, .btn:hover { border-color: var(--muted); }
+.chips button[aria-pressed="true"] { border-color: var(--accent); color: #fff; background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.btn.primary { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 28%, transparent); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.row { display: grid; grid-template-columns: 78px minmax(0, 1fr) 44px; gap: 8px; align-items: center; }
+.row label { color: var(--muted); }
+.row output { text-align: right; font-variant-numeric: tabular-nums; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.colors { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; }
+.swatch[aria-pressed="true"] { border-color: #fff; }
+input[type="color"] { width: 34px; height: 26px; border: 1px solid var(--line); background: transparent; padding: 0; cursor: pointer; }
+.switch { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+.switch input { accent-color: var(--accent); width: 16px; height: 16px; }
+select { font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 3px; padding: 5px; width: 100%; }
+.split { display: flex; gap: 6px; flex-wrap: wrap; }
+pre { margin: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; padding: 10px; overflow-x: auto; font-size: 11px; line-height: 1.5; white-space: pre; color: var(--fg); }
+.note { color: var(--muted); font-size: 11px; margin: 0; }
+.hide { display: none !important; }
+.meter { position: relative; height: 8px; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; background: var(--bg); }
+.meter #meter { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--accent); }
+.meter #peakmark { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--fg); left: 50%; }
+.meter.beat { border-color: var(--fg); }
+label.btn { display: inline-block; }
+@media (max-width: 760px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: 56vh auto; height: auto; }
+  .stage { height: 56vh; }
+  .panel { border-left: 0; border-top: 1px solid var(--line); padding-left: max(16px, env(safe-area-inset-left, 0px)); }
+}
+</style>
+
+<div class="app">
+  <div class="stage" id="stage">
+    <div class="hud" aria-live="polite">
+      <span id="hud-now"><b>grow</b> · spine</span>
+      <span id="hud-tour" class="hide"></span>
+      <span id="hud-err" class="hide"></span>
+    </div>
+  </div>
+  <div class="panel">
+    <h1>proofSpine() playground<small>the same code as the hydra source in PR #14</small></h1>
+
+    <fieldset>
+      <legend>Test everything</legend>
+      <div class="split">
+        <button class="btn primary" id="tour" type="button">Run every mode × shape</button>
+        <button class="btn" id="restart" type="button">Restart</button>
+        <button class="btn" id="reseed" type="button">New tree</button>
+      </div>
+      <p class="note" id="tour-note">Plays each of the 5 animations in each of the 7 shapes, about 7 seconds each, with names on and off. Press again to stop.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Animation</legend>
+      <div class="chips" id="modes"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Shape</legend>
+      <div class="chips" id="shapes"></div>
+      <div class="row shape-arg" data-for="star"><label for="arms">arms</label><input id="arms" type="range" min="2" max="12" step="1" value="5"><output for="arms"></output></div>
+      <div class="row shape-arg" data-for="spiral"><label for="turns">turns</label><input id="turns" type="range" min="0.5" max="4" step="0.1" value="1.6"><output for="turns"></output></div>
+      <div class="row shape-arg" data-for="harmonograph"><label for="f1">f1</label><input id="f1" type="range" min="1" max="7" step="1" value="2"><output for="f1"></output></div>
+      <div class="row shape-arg" data-for="harmonograph"><label for="f2">f2</label><input id="f2" type="range" min="1" max="7" step="1" value="3"><output for="f2"></output></div>
+      <div class="row shape-arg" data-for="harmonograph"><label for="damp">damp</label><input id="damp" type="range" min="0" max="1.5" step="0.05" value="0.5"><output for="damp"></output></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Colour</legend>
+      <div class="colors" id="colors">
+        <input id="color" type="color" value="#d24dff" aria-label="Pick any colour">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Names</legend>
+      <label class="switch"><input id="text" type="checkbox" checked> show names and legend</label>
+      <div class="row"><label for="labels">names</label><input id="labels" type="range" min="0" max="40" step="1" value="22"><output for="labels"></output></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Look</legend>
+      <div class="row"><label for="branches">branches</label><input id="branches" type="range" min="20" max="600" step="10" value="320"><output for="branches"></output></div>
+      <div class="row"><label for="halo">halo</label><input id="halo" type="range" min="0" max="3" step="0.1" value="1"><output for="halo"></output></div>
+      <div class="row"><label for="glow">glow</label><input id="glow" type="range" min="0" max="3" step="0.1" value="1"><output for="glow"></output></div>
+      <div class="row"><label for="dust">dust</label><input id="dust" type="range" min="0" max="3" step="0.1" value="1"><output for="dust"></output></div>
+      <div class="row"><label for="size">size</label><input id="size" type="range" min="0.3" max="1.2" step="0.02" value="0.92"><output for="size"></output></div>
+      <div class="row"><label for="seed">seed</label><input id="seed" type="range" min="1" max="200" step="1" value="1"><output for="seed"></output></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Motion</legend>
+      <div class="row"><label for="speed">speed</label><input id="speed" type="range" min="0.1" max="4" step="0.1" value="1"><output for="speed"></output></div>
+      <div class="row"><label for="sway">sway</label><input id="sway" type="range" min="0" max="4" step="0.1" value="0"><output for="sway"></output></div>
+      <label class="switch"><input id="scrub-on" type="checkbox"> scrub by hand (progress)</label>
+      <div class="row"><label for="progress">progress</label><input id="progress" type="range" min="0" max="1" step="0.005" value="0.5" disabled><output for="progress"></output></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Sound</legend>
+      <div class="split">
+        <button class="btn primary" id="mic" type="button">Use microphone</button>
+        <button class="btn" id="beat" type="button">Play test beat</button>
+        <label class="btn" for="file">Use an audio file</label>
+        <input id="file" type="file" accept="audio/*" class="hide">
+      </div>
+      <div class="meter" aria-hidden="true"><i id="meter"></i><i id="peakmark"></i></div>
+      <p class="note" id="sound-note">Use microphone listens to you the way hydra's a.fft does in the editor. The test beat is 120 bpm with a silent gap every fourth bar, so you can see the tree slow down in silence.</p>
+      <div class="chips" id="audioTo"></div>
+      <div class="row"><label for="audioGain">gain</label><input id="audioGain" type="range" min="0.2" max="4" step="0.1" value="1.5"><output for="audioGain"></output></div>
+      <div class="row"><label for="audioPeak">beat at</label><input id="audioPeak" type="range" min="0.1" max="1" step="0.05" value="0.5"><output for="audioPeak"></output></div>
+      <div class="row"><label for="audioFloor">silence</label><input id="audioFloor" type="range" min="0" max="1" step="0.05" value="0.1"><output for="audioFloor"></output></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Through hydra</legend>
+      <select id="fx" aria-label="hydra effect on the source">
+        <option value="none">plain source, src(s0)</option>
+        <option value="wobble">watery wobble, modulate(noise)</option>
+        <option value="trail">echo trail, blend(o0)</option>
+        <option value="kaleid">kaleidoscope, kaleid(4)</option>
+        <option value="tint">colour shift, hue + contrast</option>
+      </select>
+      <p class="note" id="fx-note">Runs the canvas through hydra-synth as s0, the way the editor does.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Code for the editor</legend>
+      <pre id="code"></pre>
+      <div class="split"><button class="btn" id="copy" type="button">Copy code</button></div>
+    </fieldset>
+  </div>
+</div>
+
+<script src="../vendor/p5/p5.min.js"></script>
+<script src="../vendor/hydra-synth.js"></script>
+<script src="../extensions/p5-forms/proof-spine.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id)
+  const stage = $('stage')
+  const MODES = proofSpine.modes
+  const SHAPES = proofSpine.shapes
+  const SWATCHES = ['#d24dff', '#ff4d8d', '#ffb347', '#f4f05a', '#5cf29a', '#40c8ff', '#7d7dff', '#ffffff']
+  const DEFAULT_SWAY = { sway: 1 }
+
+  const state = {
+    mode: 'grow', shape: 'spine', color: '#d24dff', text: true, labels: 22,
+    branches: 320, halo: 1, glow: 1, dust: 1, size: 0.92, seed: 1,
+    speed: 1, sway: 0, arms: 5, turns: 1.6, f1: 2, f2: 3, damp: 0.5,
+    scrub: false, progress: 0.5, fx: 'none',
+    listening: false, audioTo: ['speed', 'sway', 'glow', 'strike'], audioGain: 1.5, audioPeak: 0.5, audioFloor: 0.1
+  }
+
+  // ---------- p5 canvas with the tree
+  let tree = null
+  let pp = null
+  let lastErr = ''
+  const showErr = (msg) => {
+    const el = $('hud-err')
+    el.textContent = msg
+    el.classList.toggle('hide', !msg)
+  }
+  const options = () => {
+    const o = {
+      mode: state.mode, shape: state.shape, color: state.color, text: state.text,
+      labels: state.labels === 0 ? false : state.labels, branches: state.branches,
+      halo: state.halo, glow: state.glow, dust: state.dust, size: state.size, seed: state.seed,
+      speed: state.speed, arms: state.arms, turns: state.turns, f1: state.f1, f2: state.f2, damp: state.damp
+    }
+    if (state.sway > 0 || state.mode === 'sway') o.sway = state.mode === 'sway' && state.sway === 0 ? 1 : state.sway
+    else o.sway = undefined
+    o.progress = state.scrub ? state.progress : undefined
+    o.audio = state.listening ? soundLevel : false
+    o.audioTo = state.audioTo.slice()
+    o.audioGain = state.audioGain
+    o.audioPeak = state.audioPeak
+    o.audioFloor = state.audioFloor
+    return o
+  }
+  const sketch = (p) => {
+    p.setup = () => {
+      const r = stage.getBoundingClientRect()
+      p.pixelDensity(1)
+      const c = p.createCanvas(Math.max(200, Math.round(r.width)), Math.max(200, Math.round(r.height)))
+      c.parent(stage)
+      c.elt.id = 'p5c'
+      tree = proofSpine(p, options())
+      startHydra()
+    }
+    p.draw = () => {
+      try { tree.draw(); if (lastErr) { lastErr = ''; showErr('') } } catch (e) { if (String(e) !== lastErr) { lastErr = String(e); showErr(lastErr); console.error(e) } }
+      if (state.scrub === false && frameTick++ % 6 === 0) $('progress').value = tree.progress, $('progress').nextElementSibling.textContent = tree.progress.toFixed(2)
+    }
+    p.windowResized = () => {
+      const r = stage.getBoundingClientRect()
+      p.resizeCanvas(Math.max(200, Math.round(r.width)), Math.max(200, Math.round(r.height)))
+      if (hydra) hydra.setResolution(p.width, p.height)
+    }
+  }
+  let frameTick = 0
+  pp = new p5(sketch)
+
+  // ---------- hydra on top, using the p5 canvas as s0
+  let hydra = null
+  let hcanvas = null
+  const startHydra = () => {
+    if (typeof Hydra === 'undefined') {
+      $('fx').disabled = true
+      $('fx-note').textContent = 'hydra-synth did not load here, so the plain p5 canvas is shown.'
+      return
+    }
+    try {
+      hcanvas = document.createElement('canvas')
+      hcanvas.width = pp.width
+      hcanvas.height = pp.height
+      stage.insertBefore(hcanvas, stage.querySelector('.hud'))
+      hydra = new Hydra({ canvas: hcanvas, detectAudio: false, makeGlobal: false, width: pp.width, height: pp.height })
+      hydra.synth.s0.init({ src: pp.canvas })
+      pp.canvas.style.visibility = 'hidden' // hydra shows it
+      applyFx()
+    } catch (e) {
+      hydra = null
+      if (hcanvas) hcanvas.remove()
+      pp.canvas.style.visibility = 'visible'
+      $('fx').disabled = true
+      $('fx-note').textContent = 'hydra could not start (' + e.message + '), so the plain p5 canvas is shown.'
+    }
+  }
+  const FX = {
+    none: (h) => h.src(h.s0).out(),
+    wobble: (h) => h.src(h.s0).modulate(h.noise(1.5, 0.05), 0.006).out(),
+    trail: (h) => h.src(h.s0).blend(h.src(h.o0).scale(1.004), 0.55).out(),
+    kaleid: (h) => h.src(h.s0).kaleid(4).out(),
+    tint: (h) => h.src(h.s0).hue(() => h.time * 0.03).contrast(1.2).out()
+  }
+  const FX_CODE = {
+    none: 'src(s0).out()',
+    wobble: 'src(s0).modulate(noise(1.5, 0.05), 0.006).out()',
+    trail: 'src(s0).blend(src(o0).scale(1.004), 0.55).out()',
+    kaleid: 'src(s0).kaleid(4).out()',
+    tint: 'src(s0).hue(() => time * 0.03).contrast(1.2).out()'
+  }
+  const applyFx = () => {
+    if (!hydra) return
+    FX[state.fx](hydra.synth)
+    hcanvas.style.visibility = 'visible'
+  }
+
+  // ---------- controls
+  const chips = (el, names, key) => {
+    names.forEach((n) => {
+      const b = document.createElement('button')
+      b.type = 'button'
+      b.textContent = n
+      b.dataset.value = n
+      b.addEventListener('click', () => { stopTour(); set({ [key]: n }) })
+      el.appendChild(b)
+    })
+  }
+  chips($('modes'), MODES, 'mode')
+  chips($('shapes'), SHAPES, 'shape')
+  SWATCHES.forEach((c) => {
+    const b = document.createElement('button')
+    b.type = 'button'
+    b.className = 'swatch'
+    b.style.background = c
+    b.dataset.value = c
+    b.setAttribute('aria-label', 'colour ' + c)
+    b.addEventListener('click', () => set({ color: c }))
+    $('colors').insertBefore(b, $('color'))
+  })
+  $('color').addEventListener('input', (e) => set({ color: e.target.value }))
+  $('text').addEventListener('change', (e) => set({ text: e.target.checked }))
+  const NUM = ['audioGain', 'audioPeak', 'audioFloor', 'labels', 'branches', 'halo', 'glow', 'dust', 'size', 'seed', 'speed', 'sway', 'arms', 'turns', 'f1', 'f2', 'damp', 'progress']
+  NUM.forEach((k) => $(k).addEventListener('input', (e) => set({ [k]: Number(e.target.value) })))
+  $('scrub-on').addEventListener('change', (e) => set({ scrub: e.target.checked }))
+  $('fx').addEventListener('change', (e) => set({ fx: e.target.value }))
+  $('restart').addEventListener('click', () => tree && tree.restart())
+  $('reseed').addEventListener('click', () => set({ seed: 1 + Math.floor(Math.random() * 200) }))
+  $('copy').addEventListener('click', () => {
+    const text = $('code').textContent
+    const done = () => { $('copy').textContent = 'Copied'; setTimeout(() => { $('copy').textContent = 'Copy code' }, 1400) }
+    try {
+      navigator.clipboard.writeText(text).then(done, () => selectCode())
+    } catch (e) { selectCode() }
+  })
+  const selectCode = () => {
+    const r = document.createRange()
+    r.selectNodeContents($('code'))
+    const s = window.getSelection()
+    s.removeAllRanges()
+    s.addRange(r)
+    $('copy').textContent = 'Selected, press Ctrl+C'
+  }
+
+  const fmt = (v) => (typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toFixed(2)) : v)
+  const set = (patch) => {
+    const before = { mode: state.mode, shape: state.shape }
+    Object.assign(state, patch)
+    if (patch.mode && patch.mode !== before.mode && !tour) {
+      // sway mode sways by default; the others don't
+      if (patch.mode === 'sway' && state.sway === 0) state.sway = 1
+      else if (before.mode === 'sway' && state.sway === 1) state.sway = 0
+    }
+    render()
+    if (tree) {
+      tree.set(options())
+      if (patch.mode || patch.shape || patch.seed !== undefined) tree.restart()
+    }
+    if (patch.fx) applyFx()
+  }
+  const render = () => {
+    document.querySelectorAll('#modes button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.value === state.mode)))
+    document.querySelectorAll('#shapes button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.value === state.shape)))
+    document.querySelectorAll('.swatch').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.value.toLowerCase() === String(state.color).toLowerCase())))
+    document.querySelectorAll('.shape-arg').forEach((r) => r.classList.toggle('hide', r.dataset.for !== state.shape))
+    document.documentElement.style.setProperty('--accent', state.color)
+    $('color').value = state.color
+    $('text').checked = state.text
+    $('scrub-on').checked = state.scrub
+    $('progress').disabled = !state.scrub
+    $('fx').value = state.fx
+    NUM.forEach((k) => {
+      if (k === 'progress' && !state.scrub) return
+      $(k).value = state[k]
+      $(k).nextElementSibling.textContent = fmt(state[k])
+    })
+    document.querySelectorAll('#audioTo button').forEach((b) => b.setAttribute('aria-pressed', String(state.audioTo.includes(b.dataset.value))))
+    $('hud-now').innerHTML = '<b>' + state.mode + '</b> · ' + state.shape + (state.text ? '' : ' · no names') + (state.listening ? ' · listening' : '')
+    $('code').textContent = code()
+  }
+  const code = () => {
+    const o = options()
+    const d = proofSpine.defaults(state.mode)
+    const parts = []
+    const keys = ['mode', 'shape', 'color', 'text', 'labels', 'branches', 'halo', 'glow', 'dust', 'size', 'seed', 'speed', 'sway']
+    if (state.shape === 'star') keys.push('arms')
+    if (state.shape === 'spiral') keys.push('turns')
+    if (state.shape === 'harmonograph') keys.push('f1', 'f2', 'damp')
+    for (const k of keys) {
+      let v = o[k]
+      if (v === undefined) continue
+      if (k === 'labels' && v === 22 && d.labels === true) continue
+      if (k !== 'mode' && k !== 'color' && d[k] === v) continue
+      if (k === 'sway' && state.mode === 'sway' && v === 1) continue
+      if (k === 'text' && v === true) continue
+      if (k === 'labels' && !state.text) continue
+      parts.push('  ' + k + ': ' + (typeof v === 'string' ? "'" + v + "'" : fmt(v)))
+    }
+    let head = 'p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n'
+    if (state.listening) {
+      head += 'a.setBins(4)\n'
+      parts.push('  audio: true', '  audioTo: [' + state.audioTo.map((x) => "'" + x + "'").join(', ') + ']', '  audioGain: ' + fmt(state.audioGain), '  audioPeak: ' + fmt(state.audioPeak), '  audioFloor: ' + fmt(state.audioFloor))
+    }
+    return head + '\ntree = proofSpine.show(p5, {\n' + parts.join(',\n') + '\n})\n\n' + FX_CODE[state.fx]
+  }
+
+  // ---------- sound: a test beat or a file, read through an analyser
+  let actx = null
+  let analyser = null
+  let bins = null
+  let beatTimer = 0
+  let fileEl = null
+  let micStream = null
+  let micNode = null
+  let speakerAnalyser = null
+  const ensureAudio = () => {
+    if (actx) { analyser = speakerAnalyser; bins = new Uint8Array(analyser.frequencyBinCount); return actx }
+    actx = new (window.AudioContext || window.webkitAudioContext)()
+    analyser = actx.createAnalyser()
+    analyser.fftSize = 1024
+    analyser.smoothingTimeConstant = 0.5
+    analyser.connect(actx.destination)
+    bins = new Uint8Array(analyser.frequencyBinCount)
+    speakerAnalyser = analyser
+    return actx
+  }
+  // loudness 0-1: the low and middle bins, where kicks and voices are
+  function soundLevel () {
+    if (!analyser) return 0
+    analyser.getByteFrequencyData(bins)
+    let sum = 0
+    const n = 96
+    for (let i = 1; i <= n; i++) sum += bins[i]
+    return Math.min(1, (sum / n / 255) * 1.6)
+  }
+  const kick = (when, loud) => {
+    const o = actx.createOscillator()
+    const g = actx.createGain()
+    o.frequency.setValueAtTime(140, when)
+    o.frequency.exponentialRampToValueAtTime(42, when + 0.18)
+    g.gain.setValueAtTime(0.0001, when)
+    g.gain.exponentialRampToValueAtTime(0.9 * loud, when + 0.005)
+    g.gain.exponentialRampToValueAtTime(0.0001, when + 0.35)
+    o.connect(g).connect(analyser)
+    o.start(when)
+    o.stop(when + 0.4)
+  }
+  const pad = (when, dur) => {
+    const o = actx.createOscillator()
+    const g = actx.createGain()
+    o.type = 'triangle'
+    o.frequency.value = [110, 98, 131, 87][Math.floor(when / 2) % 4]
+    g.gain.setValueAtTime(0.0001, when)
+    g.gain.linearRampToValueAtTime(0.12, when + 0.2)
+    g.gain.linearRampToValueAtTime(0.0001, when + dur)
+    o.connect(g).connect(analyser)
+    o.start(when)
+    o.stop(when + dur + 0.05)
+  }
+  let nextBeat = 0
+  let beatIndex = 0
+  const scheduleBeat = () => {
+    while (nextBeat < actx.currentTime + 0.3) {
+      const bar = Math.floor(beatIndex / 4)
+      const inBar = beatIndex % 4
+      const silent = bar % 4 === 3 // every fourth bar is quiet
+      if (!silent) {
+        kick(nextBeat, inBar === 0 ? 1 : 0.75)
+        if (inBar === 0) pad(nextBeat, 1.9)
+      }
+      nextBeat += 0.5
+      beatIndex++
+    }
+  }
+  const stopSound = () => {
+    clearInterval(beatTimer)
+    beatTimer = 0
+    if (fileEl) { fileEl.pause(); fileEl = null }
+    if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null }
+    if (micNode) { micNode.disconnect(); micNode = null }
+    $('beat').textContent = 'Play test beat'
+    $('mic').textContent = 'Use microphone'
+    set({ listening: false })
+  }
+  $('beat').addEventListener('click', async () => {
+    if (beatTimer) { stopSound(); return }
+    stopSound()
+    ensureAudio()
+    await actx.resume()
+    nextBeat = actx.currentTime + 0.05
+    beatIndex = 0
+    beatTimer = setInterval(scheduleBeat, 50)
+    scheduleBeat()
+    $('beat').textContent = 'Stop the beat'
+    set({ listening: true })
+  })
+  $('mic').addEventListener('click', async () => {
+    if (micStream) { stopSound(); return }
+    stopSound()
+    ensureAudio()
+    try {
+      await actx.resume()
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } })
+    } catch (err) {
+      micStream = null
+      $('sound-note').textContent = 'The microphone is not available here (' + (err && err.name ? err.name : 'refused') + '). On claude.ai the page is not allowed to use it: open the local copy with npm run dev at localhost:5173/playgrounds/proof-spine.html, or use the test beat or a file.'
+      return
+    }
+    // listen only: the microphone goes to the analyser, not the speakers
+    const quiet = actx.createAnalyser()
+    quiet.fftSize = 1024
+    quiet.smoothingTimeConstant = 0.5
+    micNode = actx.createMediaStreamSource(micStream)
+    micNode.connect(quiet)
+    analyser = quiet
+    bins = new Uint8Array(quiet.frequencyBinCount)
+    $('mic').textContent = 'Stop the microphone'
+    $('sound-note').textContent = 'Listening to the microphone. Raise gain if the meter barely moves; the white mark is where a beat counts.'
+    set({ listening: true })
+  })
+  $('file').addEventListener('change', async (e) => {
+    const f = e.target.files && e.target.files[0]
+    if (!f) return
+    stopSound()
+    ensureAudio()
+    await actx.resume()
+    fileEl = new Audio(URL.createObjectURL(f))
+    fileEl.loop = true
+    actx.createMediaElementSource(fileEl).connect(analyser)
+    try { await fileEl.play() } catch (err) { $('sound-note').textContent = 'This file could not be played: ' + err.message }
+    $('sound-note').textContent = 'Playing ' + f.name + '. Press Play test beat or pick another file to change it.'
+    set({ listening: true })
+  })
+  const TARGETS = ['speed', 'progress', 'sway', 'glow', 'strike']
+  TARGETS.forEach((n) => {
+    const b = document.createElement('button')
+    b.type = 'button'
+    b.textContent = n
+    b.dataset.value = n
+    b.addEventListener('click', () => {
+      const has = state.audioTo.includes(n)
+      set({ audioTo: has ? state.audioTo.filter((x) => x !== n) : [...state.audioTo, n] })
+    })
+    $('audioTo').appendChild(b)
+  })
+  // the level meter
+  let lastBeats = 0
+  const meter = () => {
+    if (tree && state.listening) {
+      $('meter').style.width = Math.min(100, tree.level * 100) + '%'
+      $('peakmark').style.left = (state.audioPeak * 100) + '%'
+      if (tree.beats !== lastBeats) {
+        lastBeats = tree.beats
+        $('meter').parentElement.classList.add('beat')
+        setTimeout(() => $('meter').parentElement.classList.remove('beat'), 120)
+      }
+    } else $('meter').style.width = '0'
+    requestAnimationFrame(meter)
+  }
+  requestAnimationFrame(meter)
+
+  // ---------- the tour: every mode in every shape, names on and off
+  let tour = null
+  const steps = []
+  SHAPES.forEach((shape, si) => MODES.filter((m) => m !== 'still').forEach((mode, mi) => steps.push({ shape, mode, text: (si + mi) % 3 !== 2 })))
+  const SECONDS = 7
+  const stopTour = () => {
+    if (!tour) return
+    clearInterval(tour.timer)
+    tour = null
+    $('tour').textContent = 'Run every mode × shape'
+    $('hud-tour').classList.add('hide')
+    set({ speed: 1, sway: state.mode === 'sway' ? 1 : 0 })
+  }
+  const playStep = () => {
+    const s = steps[tour.i % steps.length]
+    // fit one full run of each animation into the step
+    const run = { grow: 19.5, search: 23.5, assemble: 19.5, lightning: 8, sway: 14 }[s.mode]
+    set({ shape: s.shape, mode: s.mode, text: s.text, speed: +(run / SECONDS).toFixed(2), sway: s.mode === 'sway' ? 1 : 0, scrub: false })
+    $('hud-tour').textContent = 'tour ' + ((tour.i % steps.length) + 1) + ' / ' + steps.length
+    $('hud-tour').classList.remove('hide')
+    tour.i++
+  }
+  $('tour').addEventListener('click', () => {
+    if (tour) { stopTour(); return }
+    tour = { i: 0, timer: 0 }
+    $('tour').textContent = 'Stop the tour'
+    playStep()
+    tour.timer = setInterval(playStep, SECONDS * 1000)
+  })
+
+  window.addEventListener('error', (e) => showErr(String(e.message || e)))
+  render()
+})()
+</script>
+
+</body>
+</html>

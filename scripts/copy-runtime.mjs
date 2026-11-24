@@ -11,6 +11,8 @@ const dest = join(root, 'public', 'vendor')
 // [package, file inside the package, file inside public/vendor]
 const files = [
   ['hydra-synth', 'dist/hydra-synth.js', 'hydra-synth.js'],
+  ['p5', 'lib/p5.min.js', 'p5/p5.min.js'], // for public/playgrounds/
+  ['p5', 'license.txt', 'p5/license.txt'],
   ['@highlightjs/cdn-assets', 'highlight.min.js', 'highlight.js/highlight.min.js'],
   ['@highlightjs/cdn-assets', 'languages/glsl.min.js', 'highlight.js/languages/glsl.min.js'],
   ['@highlightjs/cdn-assets', 'LICENSE', 'highlight.js/LICENSE'],
