@@ -110,6 +110,13 @@
 //       of My Depression plays on the connected Spotify account (songs started
 //       by hand with song.start do not count); also connects to Spotify.
 //       Same options, e.g. uboa({ show: (s) => src(s).kaleid(4).out() }).
+//       The synced lyrics are drawn on s1 in Newsreader 600 from the font kit
+//       (public/fonts) and shown over the video. Change them with
+//       uboa({ lyrics: { font: '"Bricolage Grotesque"', weight: 800 } })
+//       (any lyrics style, see Lyrics above), lyricsSource: s2 for another
+//       source, or lyrics: false for the video alone. If lrclib.net has no
+//       synced lyrics for the song, put an .lrc file in public/lyrics/
+//       named 'Uboa - The Origin of My Depression.lrc'.
 //       To try the video without Spotify:
 //       song.video('uboa', 'vids/uboa.mp4'); song.start('uboa', 30)
 //
@@ -818,10 +825,34 @@
     t.source === 'spotify' &&
     (t.artists?.length ? t.artists : [t.artist]).some((a) => norm(a) === 'uboa') &&
     /^the origin of my depression\b/.test(norm(t.name))
+  // the lyrics use the project's font kit (public/fonts, loaded on demand)
+  const UBOA_LYRICS = { font: '"Newsreader", Georgia, serif', weight: 600, size: 0.075, position: 'bottom', shadow: true }
+  function loadFonts() {
+    if (window.hydraFonts) return window.hydraFonts.ready
+    if (!loadFonts.promise) {
+      loadFonts.promise = new Promise((resolve) => {
+        const el = document.createElement('script')
+        el.src = 'fonts/hydra-fonts.js'
+        el.onload = () => window.hydraFonts.ready.then(resolve)
+        el.onerror = () => { warn('could not load fonts/hydra-fonts.js; the lyrics use a fallback font'); resolve() }
+        document.head.appendChild(el)
+      })
+    }
+    return loadFonts.promise
+  }
   function uboa(options = {}) {
     if (!spotify.clientId) warn("uboa() needs Spotify: run song.connect('your client id') once (see the top of hydra-song.js)")
     else if (!spotify.active) song.connect()
-    return video(uboaSong, options.url || UBOA_VIDEO, { ...options, key: 'uboa', label: 'Uboa - The Origin of My Depression on Spotify' })
+    const { lyrics: lyricStyle = {}, lyricsSource, ...rest } = options
+    let show = rest.show ?? true
+    if (lyricStyle !== false) {
+      const target = lyricsSource || scope.s1
+      loadFonts()
+      lyrics.init(target, { ...UBOA_LYRICS, ...lyricStyle })
+      // default look: the video with the synced lyrics on top
+      if (show === true) show = (source) => scope.src(source).layer(scope.src(target)).out(scope.o0)
+    }
+    return video(uboaSong, rest.url || UBOA_VIDEO, { ...rest, show, key: 'uboa', label: 'Uboa - The Origin of My Depression on Spotify' })
   }
 
   // ----------------------------------------------------------------- loop
