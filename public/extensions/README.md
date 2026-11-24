@@ -19,7 +19,7 @@ its synced lyrics).
 
 `p5-forms/` is not vendored either: p5.js drawing functions written for this editor,
 such as `radiolaria.js` (growing Haeckel radiolarians) and `snowflake.js` (snow
-crystals after Wilson Bentley), used in hydra through
+crystals after Wilson Bentley) and `proof-spine.js` (a glowing proof tree), used in hydra through
 `s0.init({ src: p5.canvas })`.
 
 `curves/` is not vendored either: simple geometric curves that keep evolving,

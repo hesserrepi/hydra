@@ -177,6 +177,48 @@
       "code": "// Compares the swarm parameter presets: press 1-9 to load one, 0 for the next, click to spawn.\n// click to trigger a specimen by hand. The name and the level meter are drawn\n// on the canvas, so a setting can be judged without reading the code.\n// Start with 'silent-pulse' or 'silent-mouse' to test without a microphone.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nswarm = radiolaria.swarm(p5, { preset: 'silent-pulse', debug: true })\nnames = ['default']\nradiolaria.loadPresets().then((index) => { names = index.presets.map((x) => x.name) })\n\nshow = (text) => {\n  p5.push()\n  p5.noStroke()\n  p5.fill(255, 220)\n  p5.textSize(14)\n  p5.textFont('monospace')\n  p5.text(text, 12, 24)\n  p5.pop()\n}\n\np5.draw = () => {\n  swarm.draw()\n  show(`${swarm.preset}   1-9 load   0 next   click spawn`)\n}\np5.keyPressed = () => {\n  const k = Number(p5.key)\n  if (Number.isNaN(k)) return\n  const i = k === 0 ? (names.indexOf(swarm.preset) + 1) % names.length : k - 1\n  if (names[i]) swarm.clear(false).load(names[i])\n}\np5.mousePressed = () => swarm.trigger()\n\nsrc(s0).out()\n"
     },
     {
+      "topic": "p5",
+      "name": "proof-spine-grow",
+      "description": "A proof tree growing from its root: the trunk creeps down, branches unfurl as it",
+      "code": "// A proof tree growing from its root: the trunk creeps down, branches unfurl as it\n// passes them and the lemma names fade in. proofSpine() loads automatically; every\n// option is documented in public/extensions/p5-forms/proof-spine.js.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine(p5, {\n  mode: 'grow', // 'grow', 'lightning', 'search', 'assemble', 'sway' or 'still'\n  shape: 'spine', // 'spine', 'fan', 'river', 'spiral', 'ring', 'star', 'harmonograph'\n  color: '#d24dff', // any CSS colour, [r, g, b] or a hue 0-1\n  duration: 14, // seconds to grow\n  hold: 4 // seconds it stays grown, then it fades and grows again\n})\np5.draw = () => tree.draw()\n\nsrc(s0)\n  .modulate(noise(1.5, 0.05), 0.004)\n  .out()\n\n// try: tree.reseed(), tree.set({ color: '#ffb347' }), tree.set({ vary: true })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-lightning",
+      "description": "Lightning: a stepped leader zigzags along the trunk, the whole tree flashes,",
+      "code": "// Lightning: a stepped leader zigzags along the trunk, the whole tree flashes,\n// flickers and dies down. Every strike is a new tree.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine.show(p5, {\n  mode: 'lightning',\n  color: '#8fd3ff',\n  period: 3.5, // seconds between strikes\n  afterglow: 0.1, // how much of the last tree stays visible\n  legend: false\n})\n\n// a short echo of the last frames makes the flicker linger\nsrc(s0)\n  .blend(src(o0).scale(1.003), 0.45)\n  .out()\n\n// try: tree.set({ shape: 'star', arms: 6 }), tree.set({ afterglow: 0.3 })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-search",
+      "description": "A proof search: a cursor walks the trunk and probes every branch. Lemmas that",
+      "code": "// A proof search: a cursor walks the trunk and probes every branch. Lemmas that\n// get used light up and their names type out; dead ends fade. At the end a pulse\n// runs back to the root and the goal is proved. Your own names work too.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine.show(p5, {\n  mode: 'search',\n  color: '#ffb347',\n  goal: 'everything_is_fine',\n  labels: ['coffee_first', 'read_the_docs', 'small_steps', 'ask_a_friend', 'try_again',\n    'sleep_on_it', 'draw_a_picture', 'simplify', 'invert_the_problem', 'check_the_edges',\n    'work_backwards', 'find_a_pattern', 'name_the_thing', 'go_for_a_walk'],\n  duration: 20\n})\n\nsrc(s0).out()\n\n// try: tree.set({ shape: 'river' }), tree.set({ labels: 30 }), tree.set({ goal: 'qed' })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-assemble",
+      "description": "The lemmas drift in out of the dust and settle into place, from the leaves",
+      "code": "// The lemmas drift in out of the dust and settle into place, from the leaves\n// towards the root; then the trunks light up and the goal is proved.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine.show(p5, {\n  mode: 'assemble',\n  shape: 'star',\n  arms: 5,\n  color: [0.55, 1, 0.6], // r, g, b 0-1\n  vary: true // a new tree every run\n})\n\nsrc(s0)\n  .modulate(osc(3, 0.03).rotate(0.7), 0.003)\n  .out()\n\n// try: tree.set({ shape: 'spiral', turns: 2 }), tree.set({ arms: 8 })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-sway",
+      "description": "Fully grown and alive: the branches sway like weed in a current, the halos",
+      "code": "// Fully grown and alive: the branches sway like weed in a current, the halos\n// breathe, and pulses of light run from the branch tips into the trunk. The\n// colour can be a function of time; here its hue drifts slowly.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\ntree = proofSpine.show(p5, {\n  mode: 'sway',\n  shape: 'fan',\n  color: (t) => (0.8 + t * 0.01) % 1, // a hue 0-1\n  sway: 1.2 // how far they sway (also works in the other modes)\n})\n\n// a slow feedback trail; the tree's background is opaque so it doesn't build up\nsrc(s0)\n  .blend(src(o0).scale(1.002).rotate(0.0005), 0.6)\n  .out()\n\n// try: tree.set({ shape: 'ring' }), tree.set({ sway: 3 }), tree.set({ halo: 2 })\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-shapes",
+      "description": "Every shape in turn, like the figures of a harmonograph: the tree grows, holds,",
+      "code": "// Every shape in turn, like the figures of a harmonograph: the tree grows, holds,\n// fades, and grows again in the next shape. The 'harmonograph' shape follows a\n// decaying Lissajous figure set by f1, f2 and damp.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\nshapeRun = 14 + 4 + 1.5 // duration + hold + the fade between runs, in seconds\ntree = proofSpine.show(p5, {\n  mode: 'grow',\n  shape: (t) => proofSpine.shapes[Math.floor(t / shapeRun) % proofSpine.shapes.length],\n  f1: 3, // harmonograph frequencies\n  f2: 4,\n  color: '#d24dff',\n  labels: 14\n})\n\n// or draw your own trunk: s runs from the root (0) to the tip (1)\n// tree.set({ path: (s) => [0.3 * Math.sin(s * 9), s - 0.5] })\n\nsrc(s0).out()\n"
+    },
+    {
+      "topic": "p5",
+      "name": "proof-spine-audio",
+      "description": "The tree listens: it grows with the music and almost stops in silence, sways",
+      "code": "// The tree listens: it grows with the music and almost stops in silence, sways\n// and glows with the loudness, and every beat sends a pulse along the trunk.\n// Allow the microphone when the browser asks.\np5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\n\na.setBins(4)\na.setSmooth(0.6)\n// a.show() // shows the bins and the cutoff; raise a.setCutoff(2) if quiet sounds trigger it\n\ntree = proofSpine.show(p5, {\n  mode: 'grow',\n  audio: true, // hydra's microphone, all bins averaged; or 0 for a.fft[0], or () => a.fft[0] * 2\n  audioTo: ['speed', 'sway', 'glow', 'strike'], // also 'progress': loud = fully grown, quiet = shrinks back\n  audioGain: 1.5,\n  audioFloor: 0.1, // speed in silence\n  audioPeak: 0.5 // how loud a beat must be\n})\n\nsrc(s0)\n  .modulate(noise(2, 0.1), () => 0.002 + a.fft[0] * 0.01)\n  .out()\n\n// try: tree.set({ mode: 'lightning' })  every beat is a strike\n//      tree.set({ audioTo: 'progress', mode: 'search' })\n//      tree.set({ audio: 0, audioTo: ['strike', 'glow'] })  the bass only\n"
+    },
+    {
       "topic": "song",
       "name": "song-spotify",
       "description": "Follow the song that plays in Spotify and show its lyrics.",
@@ -1762,6 +1804,24 @@
       "provides": {
         "globals": [
           "snowflake"
+        ]
+      }
+    },
+    {
+      "id": "p5-forms/proof-spine",
+      "collection": "p5-forms",
+      "name": "proof-spine",
+      "author": "hesserrepi",
+      "documentation": "https://github.com/hesserrepi/hydra/blob/main/public/extensions/p5-forms/proof-spine.js",
+      "description": "A glowing proof tree: a jagged white-hot trunk (the proof), curved branches in thick halos (the lemmas it calls), lemma names on leader lines and faint dust. Pick its colour, seven overall shapes (spine, fan, river, spiral, ring, star, harmonograph) and five ways it evolves: grow, lightning, search, assemble, sway.",
+      "examples": [
+        "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\ntree = proofSpine.show(p5, { mode: 'grow', color: '#d24dff' })\nsrc(s0).out()",
+        "p5 = new P5()\np5.hide()\ns0.init({ src: p5.canvas })\ntree = proofSpine.show(p5, { mode: 'lightning', shape: 'star', color: '#7fd8ff' })\nsrc(s0).blend(src(o0).scale(1.004), 0.5).out()"
+      ],
+      "autoload": true,
+      "provides": {
+        "globals": [
+          "proofSpine"
         ]
       }
     },
