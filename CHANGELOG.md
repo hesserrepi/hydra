@@ -26,6 +26,7 @@
 - `curves` collection with its own extensions tab: `harmonograph()` (damped pendulums drawn on a canvas used as `s0`, restarting with drifted frequencies so the drawing keeps evolving, with an optional custom pen path) and the `superformula()` and `superbloom()` sources (Gielis' superformula, still or morphing on its own with echo layers); they load automatically, have autocomplete and four examples in `sketches/examples/curves`
 - the editor works offline: hydra-synth, the Chivo font, the translations, the extension catalog and the libraries `hydra-debug` loads are served locally instead of from CDNs
 - bundled example gif and image for the hydra-gif and hydra-src examples
+- VS Code: `shift+tab` on an empty line of a sketch opens a list of every source (hydra, hyper-hydra, extra and picture shaders, curves, p5 forms) and inserts the picked one with its defaults (`Hydra: Insert source`)
 
 ## Changed
 - hydra-synth is now the version installed by npm (1.4.0) instead of the latest one on jsdelivr
